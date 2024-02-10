@@ -1,0 +1,35 @@
+<%- include('essentials/header') %>
+
+
+  <link rel="stylesheet" href="/css/login.css">
+</head>
+<body>
+  <div class="container login-container">
+    <div class="login-form">
+        <h2>Admin Login</h2>
+        <form action="/admin_login" method="post" id="add-form">
+            <div class="form-group">
+              <label for="adminname">Admin Id</label>
+              <input type="email" name="adminname" class="input-text" placeholder="Enter your name" required>
+            </div>
+            <div class="form-group">
+              <label for="email">Password</label>
+              <input type="password" name="password" class="input-text" placeholder="Enter password" required>
+            </div>
+            
+            <button type="submit" class="btn btn-primary login-btn">Log In</button>
+            <div class="register-link">
+                <p>Login as a user &nbsp;&nbsp;<a href="/">Sign In</a></p>
+            </div>
+        </form>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+  <%- include('essentials/footer') %>
+
+</body>
+</html>
