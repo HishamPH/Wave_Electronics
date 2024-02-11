@@ -13,8 +13,8 @@ const upload = require('../middlewares/multer')
 
 // --------------------------Userlist----------------------------------
 
-// router.route('/userslist')
-//     .get(userController.getUser)
+router.route('/users')
+    .get(adminController.getUser)
 
 // router.route('/userlist/:_id')
 //     .get(userController.blockUser)
@@ -30,8 +30,8 @@ router.get('/category/delete/:id',Category.deleteCategory);
 
 // -------------------------------product-----------------------------------------------------
 
-// router.route("/product")
-// .get(productController.getProduct)
+router.route("/products")
+.get(productController.getProduct)
 
 router.route("/addproduct")
 .get(productController.getAddProduct)

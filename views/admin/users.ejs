@@ -159,20 +159,24 @@
               <th>status</th>
           </tr>
       </thead>
+      <tbody>
+        <% user.forEach((row,index) => { %>
+            <tr>
+                <td><%= index+1 %></td>
+                <td><%= row.name %></td>
+                <td><%= row.email %></td>
+                <td>                                    
+                    <a href="/delete/<%= row._id %>" class="text-success"><button class="btn">Active</button></i></a>                                    
+                </td>
+            </tr>
+        <% }) %>
+    </tbody>
     </table> 
     
 
 
     <!-- ======= Footer ======= -->
-  <footer id="footer" class="footer">
-    <div class="copyright">
-      &copy; Copyright <strong><span>NiceAdmin</span></strong>. All Rights Reserved
-    </div>
-    <div class="credits">
- 
-      Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
-    </div>
-  </footer><!-- End Footer -->
+
 
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 

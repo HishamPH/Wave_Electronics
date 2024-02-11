@@ -1,0 +1,54 @@
+<%- include('../essentials/header') %>
+
+
+  <link rel="stylesheet" href="/css/login.css">
+</head>
+<body>
+    
+  <div class="container login-container">
+    <div class="login-form">
+        <h2>Add new user</h2>
+        <form action="/signup" method="post" id="add-form" onsubmit="return validateForm()">
+            <div class="form-group">
+              <label for="name">Username:</label>
+              <input type="text" name="name" class="input-text" placeholder="Enter your username" required oninput="validateName(this)">
+              <small class="text-muted" id="nameError"></small>
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" name="email" class="input-text" placeholder="Enter email" required oninput="validateEmail(this)">
+              <small class="text-muted" id="emailError"></small>
+            </div>
+            <div class="form-group">
+              <label for="phone">Phone</label>
+              <input type="tel" name="phone" class="input-text" placeholder="Enter Phone" pattern="[0-9]{10}" required oninput="validatePhone(this)">
+              <small class="text-muted" id="phoneError"></small>
+            </div>
+            <div class="form-group">
+              <label for="password">Password:</label>
+              <input type="password" name="password" class="input-text" placeholder="Enter your password" required minlength="8" oninput="validatePassword(this)">
+            </div>
+            
+            <%if(message){%>
+              <div class="text-white text-center">
+                  <p class="test text-danger"><%= message.message %></p>
+              </div>
+            <%}%>
+
+            
+            <button type="submit" class="btn btn-primary login-btn">Sign Up</button>
+            <div class="register-link">
+                <p>Already have an account? &nbsp;&nbsp;<a href="/">Sign In</a></p>
+            </div>
+        </form>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+  <%- include('../essentials/footer') %>
+
+</body>
+</html>

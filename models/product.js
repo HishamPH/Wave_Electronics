@@ -34,7 +34,7 @@ const ProductsSchema = new mongoose.Schema({
     }
   },
   Category: {
-    type: Schema.Types.ObjectId,
+    type: Schema.Types.String,
     required: true,
     ref: 'Categories'
   },

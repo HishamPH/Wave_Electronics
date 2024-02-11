@@ -75,13 +75,7 @@ app.post("/admin/login",(req,res)=>{
 })
 
 
-app.get("/admin/products",(req,res)=>{
-  res.render("admin/products");
-})
 
-app.get("/admin/addproduct",(req,res)=>{
-  res.render("admin/addproduct");
-})
 
 
 
@@ -93,7 +87,7 @@ app.get("/logout",(req,res)=>{
 })
 
 app.use('/admin',adminRouter)
-
+app.use('/',userRouter);
 app.listen(PORT,()=>{
   console.log(`server running on port ${PORT}`)
 });

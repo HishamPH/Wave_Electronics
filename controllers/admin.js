@@ -3,7 +3,6 @@ const User = require('../models/users')
 module.exports = {
   getUser:async(req,res)=>{
     const user = await User.find()
-
     res.render('admin/users',{user});
   },
 

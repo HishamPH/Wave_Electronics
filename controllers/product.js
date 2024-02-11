@@ -3,16 +3,17 @@ const Category = require('../models/category')
 
 module.exports = {
   getProduct:async(req,res)=>{
-
+    let pd = await Product.find();
+    res.render("admin/products",{pd});
   },
   getAddProduct: async (req, res) => {
     const cat = await Category.find();
     res.render("admin/addproduct",{cat});
   },
   postAddProduct: async (req, res) => {
-        console.log(req.files);
+        // console.log(req.files);
         const images = [];
-        const category = await Category.findOne({ Name: req.body.Category });
+        const category = await Category.findOne({ Name: req.body.Category});
         for (let i = 1; i <= 3; i++) {
             const fieldName = `image${i}`;
             if (req.files[fieldName] && req.files[fieldName][0]) {
@@ -25,7 +26,7 @@ module.exports = {
             Price: req.body.Price,
             Description: req.body.Description,
             stock: req.body.stock,
-            Category: category._id,
+            Category: category.Name,
             Status: Status,
             spec1: req.body.spec1,
             discount: req.body.discount,
