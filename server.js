@@ -8,6 +8,14 @@ const db = require('./config/db');
 const PORT = 3000;
 const app = express();
 const Category = require("./models/category");
+
+const adminRouter = require('./routes/admin')
+const userRouter = require('./routes/user')
+
+const cors = require('cors');
+
+app.use(cors());
+app.options('*',cors());
 app.use(express.urlencoded({extended:false}));
 app.use(express.json());
 const mongoose = require('mongoose')
@@ -35,68 +43,56 @@ const isAuthenticatedAdmin = (req, res, next) => {
   if(req.session && req.session.admin){
     next();
   }else {
-    res.redirect('/');
+    res.redirect('/admin');
   }
 };
 
 function checkAuthenticated(req,res,next){
   if(req.session.username){
-    res.redirect('/home');
+    res.redirect('/admin/panel');
   }
   next();
 }
 
 
-app.get('/index',isAuthenticatedAdmin,(req,res)=>{
-  res.render('index');
+app.get('/admin/panel',isAuthenticatedAdmin,(req,res)=>{
+  res.render('admin/index');
 });
 
-app.get("/",checkAuthenticated,(req,res)=>{
+app.get("/admin",checkAuthenticated,(req,res)=>{
   if(req.session.admin){
-      res.redirect('/index')
-  }else res.render("admin_login")
+      res.redirect('/admin/panel')
+  }else res.render("admin/admin_login")
 })
-app.post("/admin_login",(req,res)=>{
+app.post("/admin/login",(req,res)=>{
   const admin_id="admin@gmail.com";
   const admin_password='admin123'
   if(admin_id==req.body.adminname&&admin_password==req.body.password){
       req.session.admin=true
-      res.redirect("/index")
+      res.redirect("/admin/panel")
   }
   
 })
 
 
-app.get("/products",(req,res)=>{
-  res.render("products");
+app.get("/admin/products",(req,res)=>{
+  res.render("admin/products");
 })
 
-app.get("/addproduct",(req,res)=>{
-  res.render("addproduct");
+app.get("/admin/addproduct",(req,res)=>{
+  res.render("admin/addproduct");
 })
 
 
-app.get("/category",async(req,res)=>{
-  const cat = await Category.find();
-  console.log(cat);
-  res.render("category",{cat});
-})
-// console.log(Category.keys());
-app.get("/addcategory",(req,res)=>{
-  res.render("addcategory");
-})
 
-app.post("/addcategory",async(req,res)=>{
-  const userData = await Category.create(req.body);
-  res.redirect('/category')
-})
 
 
 app.get("/logout",(req,res)=>{
   req.session.destroy();
-  res.redirect('/');
+  res.redirect('/admin');
 })
 
+app.use('/admin',adminRouter)
 
 app.listen(PORT,()=>{
   console.log(`server running on port ${PORT}`)

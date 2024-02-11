@@ -1,4 +1,4 @@
-<%- include('essentials/header') %>
+<%- include('../essentials/header') %>
 
 
   <link rel="stylesheet" href="/css/login.css">
@@ -7,7 +7,7 @@
   <div class="container login-container">
     <div class="login-form">
         <h2>Admin Login</h2>
-        <form action="/admin_login" method="post" id="add-form">
+        <form action="/admin/login" method="post" id="add-form">
             <div class="form-group">
               <label for="adminname">Admin Id</label>
               <input type="email" name="adminname" class="input-text" placeholder="Enter your name" required>
@@ -29,7 +29,7 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 
-  <%- include('essentials/footer') %>
+  <%- include('../essentials/footer') %>
 
 </body>
 </html>

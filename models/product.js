@@ -20,19 +20,11 @@ const ProductsSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  BrandName: {
-    type: Schema.Types.ObjectId,
-    required: true,
-    ref: 'brand'
-  },
-  Tags: {
-    type: Array,
-  },
   images: {
     type: Array,
     required: true,
   },
-  AvailableQuantity: {
+  stock: {
     type: Number,
     validate: {
       validator: function(value) {
@@ -46,7 +38,7 @@ const ProductsSchema = new mongoose.Schema({
     required: true,
     ref: 'Categories'
   },
-  DiscountAmount: {
+  discount: {
     type: Number,
     validate: {
       validator: function (value) {
@@ -55,40 +47,27 @@ const ProductsSchema = new mongoose.Schema({
       message: 'Discount amount must be a positive number and less than the Price.'
     }
   },
+  Display:{
+    type:Boolean,
+    reqired:true,
+    default:true
+  },
   Status: {
-    type: String,
-    required: true,
-  },
-  Variation: {
-    type: String,
-  },
-  ProductType: {
-    type: String,
-  },
-  UpdatedOn: {
-    type: String
-  },
-  Display: {
     type: String,
     required: true
   },
-  Specification1: {
+  spec1: {
     type: String
   },
-  deletedAt: {
-    type: Date
+  spec2: {
+    type: String
   },
-  IsInOffer: {
-    type: Boolean,
-    default: false,
+  rating:{
+    type:Number,
   },
-  offer: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Offer',
-  },
-  offerPrice: {
-    type: Number,
-  },
+  reviews:{
+    type:String,
+  }
 });
 
 const Products = mongoose.model("Products", ProductsSchema);

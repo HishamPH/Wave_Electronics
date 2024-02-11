@@ -110,7 +110,7 @@
     <ul class="sidebar-nav" id="sidebar-nav">
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="/index">
+        <a class="nav-link collapsed" href="/admin/panel">
           <i class="bi bi-grid"></i>
           <span>Dashboard</span>
         </a>
@@ -118,27 +118,32 @@
 
       
       <li class="nav-item">
-        <a class="nav-link collapsed"href="/products">
+        <a class="nav-link collapsed"href="/admin/products">
           <i class="bi bi-person"></i>
           <span>Products</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" data-bs-target="#ct-nav" data-bs-toggle="collapse" href="/category">
+        <a class="nav-link" data-bs-target="#ct-nav" data-bs-toggle="collapse" href="/admin/category">
           <i class="bi bi-person"></i>
           <span>category</span>
           <i class="bi bi-chevron-down ms-auto"></i>
         </a>
         <ul id="ct-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
-            <a href="/addcategory">
+            <a href="/admin/addcategory">
               <i class="bi bi-circle"></i><span>add category</span>
             </a>
           </li>
          
         </ul>
       </li>
-
+      <li class="nav-item">
+        <a class="nav-link" href="/admin/users">
+          <i class="bi bi-person"></i>
+          <span>Users</span>
+        </a>
+      </li>
       <li class="nav-heading">Pages</li>
 
       <li class="nav-item">
@@ -157,7 +162,7 @@
       <h1>Category</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/index">Home</a></li>
+          <li class="breadcrumb-item"><a href="/admin/panel">Home</a></li>
           <li class="breadcrumb-item active">category</li>
         </ol>
       </nav>
@@ -166,7 +171,7 @@
       <div class="container mt-3 ">
         <div class="d-flex justify-content-between">
             <h1 class="icons">Categories</h1>
-            <a href="/addcategory">
+            <a href="/admin/addcategory">
                 <button class="btn btn-success">ADD CATEGORY</button>
             </a>
         </div>
@@ -176,8 +181,11 @@
           <% cat.forEach((row,index)=>{ %>
           <div class="col-9"><%=row.Name %></div>
           <div class="col-3 d-flex justify-content-between">
-            <button href="/edit/<% =row._id %>" class="btn btn-primary rounded-pill ">EDIT</button>
-            <button href="/delete/<% =row._id %>" class="btn btn-danger  rounded-pill">REMOVE</button>
+            <button href="/edit/<%= row._id %>" class="btn btn-primary rounded-pill ">EDIT</button>
+            <a href="/admin/category/delete/<%= row._id %>">
+              <button  class="btn btn-danger  rounded-pill">REMOVE</button>
+            </a>
+            
           </div>
           <% }) %>
        
