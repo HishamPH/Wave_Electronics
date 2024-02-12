@@ -11,7 +11,20 @@ const productController=require("../controllers/product")
 
 
 router.route('/signup')
-.get(userController.addUser)
+.get(userController.getaddUser)
 .post(userController.postAddUser);
+
+
+router.route('/homepage')
+.get(userController.getHomePage);
+
+
+router.route('/login')
+.get(userController.getLogin)
+.post(userController.postLogin);
+
+
+router.route('/detail/:id')
+.get(userController.getDetailPage);
 
 module.exports = router;

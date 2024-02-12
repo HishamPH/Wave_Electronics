@@ -74,20 +74,19 @@ app.post("/admin/login",(req,res)=>{
   
 })
 
-
-
-
-
-
-
-
 app.get("/logout",(req,res)=>{
-  req.session.destroy();
-  res.redirect('/admin');
+  if(req.session.admin){
+    req.session.destroy();
+    res.redirect('/admin');
+  }else{
+    req.session.destroy();
+    res.redirect('/user/homepage');
+  }
+  
 })
 
 app.use('/admin',adminRouter)
-app.use('/',userRouter);
+app.use('/user',userRouter);
 app.listen(PORT,()=>{
   console.log(`server running on port ${PORT}`)
 });
