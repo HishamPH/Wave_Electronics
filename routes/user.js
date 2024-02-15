@@ -15,6 +15,14 @@ router.route('/signup')
 .post(userController.postAddUser);
 
 
+router.route('/emailverification')
+.get(userController.getEmailVerification)
+.post(userController.postEmailVerification)
+
+
+router.route('/landpage')
+.get(userController.getLandPage);
+
 router.route('/homepage')
 .get(userController.getHomePage);
 

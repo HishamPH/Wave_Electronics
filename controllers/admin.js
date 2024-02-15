@@ -8,7 +8,9 @@ module.exports = {
 
   blockUser:async(req,res)=>{
     let id = req.params.id;
-    await User.findByIdAndUpdate({_id:id},{status:true});
+    await User.findByIdAndUpdate(id,[{
+      $set:{status:{$not:"$status"}}
+    }]);
     res.redirect('/admin/users');
   }
 }

@@ -166,7 +166,15 @@
                 <td><%= row.name %></td>
                 <td><%= row.email %></td>
                 <td>                                    
-                    <a href="/delete/<%= row._id %>" class="text-success"><button class="btn">Active</button></i></a>                                    
+                  <a href="/admin/users/<%= row._id%>">
+                    <% if(row.status){ %>
+                    <button class="btn btn-success">active
+                    </button>
+                    <% }else{ %>
+                    <button class="btn btn-danger">blocked
+                    </button>
+                    <% } %>
+                  </a>                                    
                 </td>
             </tr>
         <% }) %>

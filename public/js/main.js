@@ -164,3 +164,36 @@
   }
 
 })();
+
+
+//=================image preview handle=======================
+
+function handleImagePreview(input, preview) {
+  input.addEventListener('change', function () {
+      const file = input.files[0];
+      if (file) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+              preview.src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+      } else {
+          preview.src = "";
+      }
+  });
+}
+
+// Get references to the input and image elements for each image
+const imageInput1 = document.getElementById('image1');
+const imageInput2 = document.getElementById('image2');
+const imageInput3 = document.getElementById('image3');
+
+const imagePreview1 = document.getElementById('imagePreview1');
+const imagePreview2 = document.getElementById('imagePreview2');
+const imagePreview3 = document.getElementById('imagePreview3');
+
+
+// Handle image previews for each input
+handleImagePreview(imageInput1, imagePreview1);
+handleImagePreview(imageInput2, imagePreview2);
+handleImagePreview(imageInput3, imagePreview3);

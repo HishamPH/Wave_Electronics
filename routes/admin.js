@@ -16,8 +16,8 @@ const upload = require('../middlewares/multer')
 router.route('/users')
     .get(adminController.getUser)
 
-// router.route('/userlist/:_id')
-//     .get(userController.blockUser)
+router.route('/users/:id')
+    .get(adminController.blockUser)
 
 //---------------------Category---------------------
 router.get('/category',Category.category);

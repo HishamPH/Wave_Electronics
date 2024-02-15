@@ -74,15 +74,9 @@ app.post("/admin/login",(req,res)=>{
   
 })
 
-app.get("/logout",(req,res)=>{
-  if(req.session.admin){
-    req.session.destroy();
-    res.redirect('/admin');
-  }else{
-    req.session.destroy();
-    res.redirect('/user/homepage');
-  }
-  
+app.get("/user/logout",(req,res)=>{
+  req.session.destroy();
+  res.redirect('/user/landpage');
 })
 
 app.use('/admin',adminRouter)
