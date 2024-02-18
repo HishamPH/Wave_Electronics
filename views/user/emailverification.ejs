@@ -39,16 +39,7 @@
                     <span class="h1 text-uppercase text-dark bg-warning px-2 ml-n1">ELECTRONICS</span>
                 </a>
             </div>
-            <div class="col-lg-4 col-6 text-left">
-              <div class="input-group d-flex align-items-center h-100">
-                <input type="text" class="form-control" placeholder="Search for products">
-                <div class="input-group-append h-50 ">
-                  <span class="input-group-text bg-transparent text-primary ">
-                      <i class="fa fa-search "></i>
-                  </span>
-                </div>
-              </div>
-            </div>
+           
           
            
          
@@ -57,49 +48,9 @@
     <!-- Topbar End -->
 
 
-    <!-- Navbar Start -->
-    <div class="container-fluid bg-dark mb-30">
-        <div class="row px-xl-5">
-            <div class="col-lg-3 d-none d-lg-block">
-                <a class="btn d-flex align-items-center justify-content-between bg-warning w-100" data-toggle="collapse" href="#navbar-vertical" style="height: 65px; padding: 0 30px;">
-                    <h6 class="text-dark m-0"><i class="fa fa-bars mr-2"></i>Categories</h6>
-                    <i class="fa fa-angle-down text-dark"></i>
-                </a>
-               
-            </div>
-            <div class="col-lg-9">
-                <nav class="navbar navbar-expand-lg bg-dark navbar-dark py-3 py-lg-0 px-0">
-                    <a href="" class="text-decoration-none d-block d-lg-none">
-                        <span class="h1 text-uppercase text-dark bg-light px-2">Multi</span>
-                        <span class="h1 text-uppercase text-light bg-primary px-2 ml-n1">Shop</span>
-                    </a>
-                    <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
-                        <div class="navbar-nav mr-auto py-0">
-                            <a href="#" class="nav-item nav-link active">Home</a>
-                            <a href="#" class="nav-item nav-link">Shop</a>
-                            <a href="#" class="nav-item nav-link">Shop Detail</a>
-                            <div class="nav-item dropdown">
-                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages <i class="fa fa-angle-down mt-1"></i></a>
-                                <div class="dropdown-menu bg-primary rounded-0 border-0 m-0">
-                                    <a href="#" class="dropdown-item">Shopping Cart</a>
-                                    <a href="#" class="dropdown-item">Checkout</a>
-                                </div>
-                            </div>
-                            <a href="#" class="nav-item nav-link">Contact</a>
-                        </div>
-                      
-                    </div>
-                </nav>
-            </div>
-        </div>
-    </div>
-    <!-- Navbar End -->
 
     <main class="cd__main">
-      <!-- Start DEMO HTML (Use the following code into your project)-->
+     
       <body class="container-fluid bg-body-tertiary d-block">
         <div class="row justify-content-center">
           <div class="col-12 col-md-6 col-lg-4" style="min-width: 500px;">
@@ -107,32 +58,25 @@
               <div class="card-body p-5 text-center">
                 <h4>Verify</h4>
                 <p>Your code was sent to you via email</p>
-                <!-- <form action="/user/emailverification" method="post"></form>
-                <input type="number" name="otp">
-                <div class="otp-field mb-4">
-                  
-                  <input type="number">
-                  <input type="number" disabled />
-                  <input type="number" disabled />
-                  <input type="number" disabled /> 
-                
-                </div>
-                <button type="submit" class="btn btn-primary mb-3">
-                  Verify
-                </button>
-                </form> -->
                 <form action="/user/emailverification" method="post" id="add-form">
-                  <div class="form-group">
-                    <label for="username">Username:</label>
-                    <input type="text" id="username" name="otp" class="input-text" placeholder="Enter your username" required>
-                  </div>
-                  
-      
-                
-      
-                  
-                  <button type="submit" class="btn btn-primary login-btn">Sign in</button>
+                    
+                    <div class="otp-field mb-4">
+                    
+                        <input name="otp" type="number">
+                        <input name="otp" type="number" disabled />
+                        <input name="otp" type="number" disabled />
+                        <input name="otp" type="number" disabled /> 
+                    
+                    </div>
+                    <button type="submit" class="btn btn-primary mb-3">Verify</button>
                 </form>
+                <!-- <form action="/user/emailverification" method="post" id="add-form">
+                  <div class="form-group">
+                    <label for="username">OTP:</label>
+                    <input type="text" id="username" name="otp" class="input-text text-dark" placeholder="Enter the code here" required>
+                  </div>
+                  <button type="submit" class="btn btn-primary login-btn">Verify</button>
+                </form> -->
                 <p class="resend text-muted mb-0">
                   Didn't receive code? <a href="/user/resendotp">Request again</a>
                 </p>

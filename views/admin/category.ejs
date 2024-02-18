@@ -181,7 +181,10 @@
           <% cat.forEach((row,index)=>{ %>
           <div class="col-9"><%=row.Name %></div>
           <div class="col-3 d-flex justify-content-between">
-            <button href="/edit/<%= row._id %>" class="btn btn-primary rounded-pill ">EDIT</button>
+            <a href="/admin/editcategory/<%= row._id %>">
+              <button  class="btn btn-primary rounded-pill ">EDIT</button>
+            </a>
+            
             <a href="/admin/category/delete/<%= row._id %>">
               <button  class="btn btn-danger  rounded-pill">REMOVE</button>
             </a>

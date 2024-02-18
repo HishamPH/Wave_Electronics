@@ -26,6 +26,10 @@ router.get('/addcategory',Category.addCategory);
 
 router.post('/addcategory',Category.postAddCategory);
 
+router.route('/editcategory/:id')
+.get(Category.getEditCategory)
+.post(Category.postEditCategory)
+
 router.get('/category/delete/:id',Category.deleteCategory);
 
 // -------------------------------product-----------------------------------------------------
@@ -37,15 +41,15 @@ router.route("/addproduct")
 .get(productController.getAddProduct)
 .post(upload.fields([{ name: 'image1', maxCount: 1 }, { name: 'image2', maxCount: 1 }, { name: 'image3', maxCount: 1 }]),productController.postAddProduct)
 
-// router.route('/product/:_id')
-// .get(productController.blockProduct)
+router.route('/products/block/:id')
+.get(productController.blockProduct)
 
 // router.route('/viewproductdetails/:_id')
 // .get(productController.getviewProductDetails)
 
-// router.route('/editproduct/:_id')
-// .get(productController.getEditProduct)
-// .post(upload.fields([{ name: 'image1', maxCount: 1 }, { name: 'image2', maxCount: 1 }, { name: 'image3', maxCount: 1 }]),productController.postEditProduct)
+router.route('/editproduct/:id')
+.get(productController.getEditProduct)
+.post(upload.fields([{ name: 'image1', maxCount: 1 }, { name: 'image2', maxCount: 1 }, { name: 'image3', maxCount: 1 }]),productController.postEditProduct)
 
 
 

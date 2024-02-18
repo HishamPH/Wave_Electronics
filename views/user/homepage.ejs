@@ -138,34 +138,26 @@
         </div>
     </div>
     <!-- Featured End -->
-    <div class="col-lg-12">
-      <div class="mx-4 row bg-black">
+    <div class="container mt-5">
+        <div class="row">
         <% pd.forEach((row,index)=>{%>
-        <a class="col-xxl-3 col-md-4" href="/user/detail/<%= row._id %>">
-          <div class="" style="" >
-            <div class="card info-card sales-card " style="">
-              <img class="card-img-top img-fluid"  style="" src="/images/<%= row.images[0]  %>">
-              <div class="card-body">
-                <h5 class="card-title">₹ <%= row.Price  %></h5>
-                <div class="d-flex align-items-center">
-                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                    <i class="bi bi-cart"></i>
-                  </div>
-                  <div class="ps-3">
-                    <h6><%= row.spec1 %></h6>
-  
-                  </div>
-                </div>
+          <div class="col-md-3">
+            <div class="card">
+              <img src="/images/<%= row.images[0]  %>" class="card-img-top card-img-auto" alt="Product Image" style="object-fit: cover;">
+              <div class="card-body bg-light">
+                <a href="/user/detail/<%= row._id %>">
+                    <h5 class="card-title"><%= row.ProductName  %></h5>
+                    <p class="card-text"><%= row.spec1 %></p>
+                    <p class="card-text text-danger fw-bold">Price: ₹<%= row.Price  %></p>
+                </a>
+                
+                <button class="btn btn-primary rounded-pill">Add to cart</button>
               </div>
-  
             </div>
           </div>
-        </a>
-        <%});%>
-        
-
+          <%});%>
+       
         </div>
-      </div>
     </div>
  
 

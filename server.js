@@ -79,6 +79,11 @@ app.get("/user/logout",(req,res)=>{
   res.redirect('/user/landpage');
 })
 
+app.get('/admin/logout',(req,res)=>{
+  req.session.destroy();
+  res.redirect('/admin');
+})
+
 app.use('/admin',adminRouter)
 app.use('/user',userRouter);
 app.listen(PORT,()=>{

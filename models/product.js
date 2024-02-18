@@ -66,7 +66,7 @@ const ProductsSchema = new mongoose.Schema({
     type:Number,
   },
   reviews:{
-    type:String,
+    type:Array,
   }
 });
 

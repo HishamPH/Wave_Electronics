@@ -6,11 +6,11 @@ const otpFunc = require('../utility/otpfunctions')
 
 module.exports = {
   getLandPage:async(req,res)=>{
-    let pd = await Products.find()
+    let pd = await Products.find({Display:true})
     res.render('user/landpage',{pd});
   },
   getHomePage:async(req,res)=>{
-    let pd = await Products.find()
+    let pd = await Products.find({Display:true})
     console.log('getting home page')
     if(req.session.user){
       console.log('got home page',req.session.user)
@@ -75,28 +75,26 @@ module.exports = {
     }
   },
   getEmailVerification:async(req,res)=>{
-
-    
     const Email = req.session.user.email;
-      setTimeout(() => {
-          OTP.deleteOne({ Email: Email })
-              .then(() => {
-                  console.log("Document deleted successfully");
-              })
-              .catch((err) => {
-                  console.error(err);
-              });
-      }, 60000);
-      res.render("user/emailverification");
+    setTimeout(() => {
+      OTP.deleteOne({ Email: Email })
+        .then(() => {
+          console.log("Document deleted successfully");
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    }, 60000);
+    res.render("user/emailverification");
   },
   postEmailVerification:async(req,res)=>{
     console.log(req.body)
-    const  otp  = req.body.otp;
+    let  otp  = req.body.otp;
+    console.log(otp.join(''));
     const Email = req.session.user.email;
     const matchedOTPrecord = await OTP.findOne({
         Email: Email,
     })
-    console.log('hello')
     // const { expiresAt } = matchedOTPrecord;
     // if (expiresAt) {
     //     if (expiresAt < Date.now()) {
@@ -106,22 +104,37 @@ module.exports = {
     // } else {
     //     console.log("ExpiresAt is not defined in the OTP record.");
     // }
-    if (Number(otp) == matchedOTPrecord.otp) {
-        console.log('not hello')
+    if (Number(otp.join('')) == matchedOTPrecord.otp) {
         req.session.OtpValid = true;
         let data = await User.create(req.session.user)
         req.session.name = data.name
         res.redirect('/user/homepage')
     } else {
         console.log("Entered OTP does not match stored OTP.");
-        req.flash("error", "Invalid OTP. Please try again.");
         res.redirect("/user/emailverification");
     }
+  },
+  resendOTP:async(req,res)=>{
+      let email = req.session.user.email
+      let a = await OTP.countDocuments()
+      if(!a){
+        let otpval = otpFunc.generateOTP()
+        otpFunc.sendOTP(req,res,email,otpval)
+      }
+      res.redirect('/user/emailverification') 
   },
   getDetailPage:async(req,res)=>{
     let id = req.params.id;
     let pd = await Products.findById(id);
     res.render('user/productdetail',{pd})
+  },
+  review:async(req,res)=>{
+    let id = req.params.id
+    let review = req.body.review
+    await Products.findByIdAndUpdate(id,[{
+      $addToSet:{reviews:review}
+    }])
+    res.redirect(`/user/detail/${id}`)
   }
 }
 

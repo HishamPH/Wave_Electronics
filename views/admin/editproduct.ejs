@@ -56,7 +56,7 @@
 
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
             <img src="/img/profile-img.jpg" alt="Profile" class="rounded-circle">
-            <span class="d-none d-md-block dropdown-toggle ps-2">J. Smith</span>
+            <span class="d-none d-md-block dropdown-toggle ps-2">Hisham</span>
           </a><!-- End Profile Iamge Icon -->
 
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
@@ -116,12 +116,12 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" data-bs-target="#pd-nav" data-bs-toggle="collapse" href="/admin/products">
+        <a class="nav-link collapsed" data-bs-target="#pd-nav" href="/admin/products">
           <i class="bi bi-person"></i>
           <span>Products</span>
-          <i class="bi bi-chevron-down ms-auto"></i>
+          <i class="bi bi-chevron-up ms-auto"></i>
         </a>
-        <ul id="pd-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <ul id="pd-nav" class="nav-content  nav-link" data-bs-parent="#sidebar-nav">
           <li>
             <a href="/admin/addproduct">
               <i class="bi bi-circle"></i><span>Add Product</span>
@@ -142,7 +142,6 @@
           <span>Users</span>
         </a>
       </li>
-
       <li class="nav-heading">Pages</li>
 
       <li class="nav-item">
@@ -162,57 +161,112 @@
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="/admin/panel">Home</a></li>
-          <li class="breadcrumb-item active">products</li>
+          <li class="breadcrumb-item"><a href="/admin/products">products</a></li>
+          <li class="breadcrumb-item active">edit product</li>
         </ol>
       </nav>
-      <div class="d-flex align-items-center justify-content-end">
-        <a href="/admin/addproduct" class="btn btn-secondary">add product</a>
-      </div>
+      
       
     </div><!-- End Page Title -->
+    <div class="d-flex"></div>
+    <div class="col-md-12 d-flex justify-content-center">
+      
+
+      <form action="/admin/editproduct/<%= pd._id  %>" method="post" enctype="multipart/form-data"
+          class="card p-3 bg-light mb-3 text-dark">
+          <div class="d-flex justify-content-center align-items-center">
+            <select class="" id="category" name="Category" required
+                style="width:38%;height: 35px;border-radius: 5px;margin-right: 4%;">
+                <option value="<%= pd.Category%>" selected disabled>category:</option>
+                <%cat.forEach((x) => {%>
+                    <option><%=x.Name%></option>
+                <%})%>
+            </select>
+          </div>
     
-    <table class="table table-bordered table-hover mt-3">
-      <thead class="table-dark">
-          <tr>
-              <th>Serial No</th>
-              <th>Product Name</th>
-              <th>Category</th>
-              <th>Price</th>
-              <th>Available Quantity</th>
-              <th>Status</th>
-              <th>Action</th>
-          </tr>
-      </thead>
-      <tbody>
-        <% pd.forEach((row,index) => { %>
-            <tr>
-                <td><%= index+1 %></td>
-                <td><%= row.ProductName %></td>
-                <td><%= row.Category %></td>
-                <td><%= row.Price %></td>
-                <td><%= row.stock %></td>
-                <td><%= row.Status %></td>
-                <td>
-                  <a href="/admin/editproduct/<%= row._id%>">edit</a>                                    
-                  <a href="/admin/products/block/<%= row._id%>">
-                    <% if(row.Display){ %>
-                    <button class="btn btn-success">active
-                    </button>
-                    <% }else{ %>
-                    <button class="btn btn-danger">blocked
-                    </button>
-                    <% } %>
-                  </a>                                      
-                </td>
-            </tr>
-        <% }) %>
-    </tbody>
-    </table> 
-    
+          <div class="form-group">
+              <label for="productName">Product Name:</label>
+              <input type="text" name="ProductName" class="form-control bg-light" id="productName"
+                  placeholder="Enter product name" value="<%= pd.ProductName  %>" required />
+          </div>
+          
+          <br>
+          <div class="form-group">
+              <label for="productDescription">Product Description:</label>
+              <textarea class="form-control bg-light" name="Description" id="productDescription"
+                  rows="4" placeholder="Enter product description" required><%= pd.Description  %></textarea>
+          </div>
+          <br>
+          <div class="form-group">
+              <label for="Specification1">Product Specification:</label>
+              <textarea class="form-control bg-light" name="spec1"
+                  id="Specification1" placeholder="Enter product Specification"
+                  required><%= pd.spec1  %></textarea>
+
+          </div>
+          <br>
+
+          <div class=""> <!-- Added bg-light and text-center classes -->
+              <h3>Media</h3>
+              <div class="form-group my-2">
+                  <label for="image1">Image 1:</label>
+                  <input type="file" name="image1" class="form-control imageInput" id="image1"
+                      accept="image/*" />
+                  <img src="/images/<%= pd.images[0]  %>" alt="Image 1" class="img-fluid imagePreview"
+                      style="max-height: 50px;width: auto;" id="imagePreview1">
+              </div>
+              <div class="form-group my-2">
+                  <label for="image2">Image 2:</label>
+                  <input type="file" name="image2" class="form-control imageInput" id="image2"
+                      accept="image/*" />
+                  <img src="/images/<%= pd.images[1]  %>" alt="Image 2" class="img-fluid imagePreview"
+                      style="max-height: 50px;width: auto; " id="imagePreview2">
+              </div>
+              <div class="form-group my-2">
+                  <label for="image3">Image 3:</label>
+                  <input type="file" name="image3" class="form-control imageInput" id="image3"
+                      accept="image/*" />
+                  <img src="/images/<%= pd.images[2]  %>" alt="Image 3" class="img-fluid imagePreview"
+                      style="max-height: 50px;width: auto; " id="imagePreview3">
+              </div>
+          </div>
 
 
+          <div class="">
+              <h2>Pricing</h2>
+              <div class="form-group">
+                  <label for="basePrice">Base Price:</label>
+                  <input type="number" name="Price" class="form-control bg-light" id="basePrice"
+                      placeholder="Enter base price" value="<%= pd.Price  %>" required />
+              </div>
+              <br>
+              <div class="form-group">
+                  <label for="discountAmount">Discount Amount:</label>
+                  <input type="number" name="discount" class="form-control bg-light"
+                      id="discountAmount" placeholder="Enter discount amount" value="<%= pd.discount  %>" required />
+              </div>
+          </div>
+
+          <div class="">
+              <h2>Stock</h2>
+
+              <div class="form-group">
+                  <label for="quantity">Quantity:</label>
+                  <input type="number" name="stock" class="form-control bg-light"
+                      id="quantity" placeholder="Enter quantity" value="<%= pd.stock  %>" required />
+              </div>
+          </div>
+          <div class="d-flex justify-content-center mb-3">
+            <button type="submit" class="btn btn-primary mt-3 mb-0">Edit Product</button>
+          </div>
+
+    </div>
+    
     <!-- ======= Footer ======= -->
-  
+    
+
+    
+
 
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 

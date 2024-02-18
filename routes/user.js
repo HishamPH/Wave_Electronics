@@ -19,6 +19,9 @@ router.route('/emailverification')
 .get(userController.getEmailVerification)
 .post(userController.postEmailVerification)
 
+router.route('/resendotp')
+.get(userController.resendOTP)
+
 
 router.route('/landpage')
 .get(userController.getLandPage);
@@ -34,5 +37,8 @@ router.route('/login')
 
 router.route('/detail/:id')
 .get(userController.getDetailPage);
+
+router.route('/review/:id')
+.post(userController.review)
 
 module.exports = router;

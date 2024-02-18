@@ -1,4 +1,5 @@
 const Category = require("../models/category");
+const { rawListeners } = require("../models/users");
 
 module.exports = {
   category : async(req,res)=>{
@@ -17,6 +18,18 @@ module.exports = {
     let id = req.params.id;
     await Category.findByIdAndDelete(id);
     res.redirect('/admin/category');
+  },
+  getEditCategory:async(req,res)=>{
+    let id = req.params.id
+    let cat = await Category.findById(id)
+    res.render('admin/editcategory',{cat})
+  },
+  postEditCategory:async(req,res)=>{
+    let id = req.params.id
+    await Category.findByIdAndUpdate(id,[{
+      $set:{Name:req.body.Name}
+    }])
+    res.redirect('/admin/category')
   }
 }
 
