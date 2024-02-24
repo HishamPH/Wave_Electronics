@@ -11,9 +11,9 @@ module.exports = {
   },
   getHomePage:async(req,res)=>{
     let pd = await Products.find({Display:true})
-    console.log('getting home page')
+    // console.log('getting home page')
     if(req.session.user){
-      console.log('got home page',req.session.user)
+      // console.log('got home page',req.session.user)
       res.render('user/homepage',{message:req.session.name,pd});
     }
 
@@ -131,10 +131,124 @@ module.exports = {
   review:async(req,res)=>{
     let id = req.params.id
     let review = req.body.review
-    await Products.findByIdAndUpdate(id,[{
-      $addToSet:{reviews:review}
-    }])
+    await Products.updateOne({_id:id},{
+      $push:{reviews:review}
+    })
     res.redirect(`/user/detail/${id}`)
+  },
+  getAddress:async(req,res)=>{
+    let name = req.session.user.username;
+    const user = await User.findOne({email:name})
+    let address = user.Address
+   
+    res.render('user/userprofile',{address})
+  },
+  setDefault:async(req,res)=>{
+    let user = await User.findOne({email:req.session.user.username})
+    let id = req.params.id;
+    console.log(req.body.main)
+    const addressIndex = user.Address.findIndex((a) => a._id.toString() === id);
+    user.Address[addressIndex].main = true;
+    user.Address.forEach((item,index)=>{
+      if(index!==addressIndex){
+        item.main = false;
+      }
+    })
+    await user.save()
+    res.redirect('/user/userprofile/address')
+  },
+  postAddress:async(req,res)=>{
+    let user =await User.findOne({email:req.session.user.username})
+    let id = user._id
+    console.log(id)
+    await User.findByIdAndUpdate(id,{
+      $push:{ 
+        Address:req.body
+      }
+    })
+    res.redirect('/user/userprofile/address')
+  },
+  getEditAddress:async(req,res)=>{
+    let id = req.params.id;
+    let name = req.session.user.username;
+    const user = await User.findOne({email:name})
+    const addressIndex = user.Address.findIndex((a) => a._id.toString() === id);
+    let ad = user.Address[addressIndex]
+    let address = user.Address
+    res.render('user/editaddress',{ad})
+    console.log(ad)
+  },
+  postEditAddress:async(req,res)=>{
+    const addressId = req.params.id;
+    const email = req.session.user.username;
+   
+    const user = await User.findOne({email:email})
+    const { name, street, city, pincode,state,mobile } = req.body
+
+    const addressIndex = user.Address.findIndex((a) => a._id.toString() === addressId);
+
+    // req.session.address = user.Address[addressIndex]
+
+    if (addressIndex !== -1) {
+
+        user.Address[addressIndex].name = name;
+        user.Address[addressIndex].street = street;
+        user.Address[addressIndex].city = city;
+        user.Address[addressIndex].state = state;
+        user.Address[addressIndex].pincode = pincode;
+        user.Address[addressIndex].mobile = mobile;
+       
+        await user.save();
+
+
+        console.log("Address updated successfully");
+        
+        res.redirect("/user/userprofile/address");
+
+    } else {
+        console.log("Address Not Found")
+        
+        res.redirect("/user/userprofile/address");
+    }
+
+   
+  },
+  deleteAddress:async(req,res)=>{
+    const email = req.session.user.username;
+    const addressId = req.params.id; // Assuming you receive the address ID to delete from the request parameters
+
+    console.log("address id is to delete", addressId)
+    try {
+        const user = await User.findOne({email:email});
+
+        if (!user) {
+          console.log("User not found");
+          
+          return res.redirect("/user/userprofile/address");
+        }
+
+        const addressIndex = user.Address.findIndex(
+          (a) => a._id.toString() === addressId
+        );
+
+        if (addressIndex === -1) {
+            console.log("Address not found");
+            
+            return res.redirect("/user/userprofile/address");
+        }
+
+        user.Address.splice(addressIndex, 1); // Removing the address at the found index
+
+        await user.save();
+
+        console.log("Address deleted successfully");
+        
+        return res.redirect("/user/userprofile/address");
+    } catch (error) {
+        console.error("Error deleting address:", error.message);
+        
+        return res.status(500).send("Internal Server Error");
+    }
   }
 }
 

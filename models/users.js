@@ -22,7 +22,31 @@ const userschema= new mongoose.Schema({
   status:{
     type:Boolean,
     default:true
-  }
+  },
+  Address: [{
+    name: {
+        type: String
+    },
+    street: {
+        type: String
+    },
+    city: {
+        type: String
+    },
+    pincode: {
+        type: Number
+    },
+    state: {
+        type: String
+    },
+    mobile: {
+        type: Number
+    },
+    main:{
+      type:Boolean,
+      default:false
+    }
+  }]
 })
 
 const User=mongoose.model('people',userschema)

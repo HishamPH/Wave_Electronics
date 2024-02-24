@@ -6,9 +6,9 @@ const Category = require('../controllers/category')
 
 const adminController=require('../controllers/admin')
 const userController = require('../controllers/users');
-const productController=require("../controllers/product")
+const productController=require('../controllers/product')
 
-
+const cartController = require('../controllers/cart')
 
 router.route('/signup')
 .get(userController.getaddUser)
@@ -40,5 +40,34 @@ router.route('/detail/:id')
 
 router.route('/review/:id')
 .post(userController.review)
+
+router.route('/userprofile/address')
+.get(userController.getAddress)
+.post(userController.postAddress)
+
+
+router.route('/userprofile/address/setdefault/:id')
+.post(userController.setDefault)
+
+
+router.route('/userprofile/address/edit/:id')
+.get(userController.getEditAddress)
+.post(userController.postEditAddress)
+
+router.route('/userprofile/address/delete/:id')
+.get(userController.deleteAddress)
+
+
+router.route('/addtocart/:id')
+.get(cartController.addToCart)
+
+router.route('/cart')
+.get(cartController.getCart)
+
+router.route('/cart/:id')
+.get(cartController.changeQuantity)
+
+router.route('/cart/delete/:id')
+.get(cartController.deleteFromCart)
 
 module.exports = router;

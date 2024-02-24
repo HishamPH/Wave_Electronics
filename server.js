@@ -84,6 +84,8 @@ app.get('/admin/logout',(req,res)=>{
   res.redirect('/admin');
 })
 
+
+
 app.use('/admin',adminRouter)
 app.use('/user',userRouter);
 app.listen(PORT,()=>{
