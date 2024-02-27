@@ -65,9 +65,16 @@ router.route('/cart')
 .get(cartController.getCart)
 
 router.route('/cart/:id')
-.get(cartController.changeQuantity)
+.post(cartController.changeQuantity)
 
 router.route('/cart/delete/:id')
 .get(cartController.deleteFromCart)
 
+
+router.route('/checkout')
+.get(userController.getCheckout)
+
+
+router.route('/orders')
+.get(userController.getOrder)
 module.exports = router;

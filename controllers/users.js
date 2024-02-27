@@ -3,6 +3,7 @@ const User = require("../models/users");
 const Products = require('../models/product')
 const OTP = require('../models/otp')
 const otpFunc = require('../utility/otpfunctions')
+const Cart = require('../models/cart')
 
 module.exports = {
   getLandPage:async(req,res)=>{
@@ -11,10 +12,9 @@ module.exports = {
   },
   getHomePage:async(req,res)=>{
     let pd = await Products.find({Display:true})
-    // console.log('getting home page')
+    let q = req.session.cartCount;
     if(req.session.user){
-      // console.log('got home page',req.session.user)
-      res.render('user/homepage',{message:req.session.name,pd});
+      res.render('user/homepage',{message:req.session.name,pd,q});
     }
 
       
@@ -25,6 +25,9 @@ module.exports = {
   postLogin:async(req,res)=>{
     let a=await User.findOne({email:req.body.username})
     let pd = await Products.find();
+    let cart = await Cart.findOne({userId :a._id})
+    if(cart)
+      req.session.cartCount = cart.total;
     let b;
     if(a)
       b = a.status??false;
@@ -95,15 +98,15 @@ module.exports = {
     const matchedOTPrecord = await OTP.findOne({
         Email: Email,
     })
-    // const { expiresAt } = matchedOTPrecord;
-    // if (expiresAt) {
-    //     if (expiresAt < Date.now()) {
-    //         await OTP.deleteOne({ Email: Email });
-    //         throw new Error("The OTP code has expired. Please request a new one.");
-    //     }
-    // } else {
-    //     console.log("ExpiresAt is not defined in the OTP record.");
-    // }
+    const { expiresAt } = matchedOTPrecord;
+    if (expiresAt) {
+        if (expiresAt < Date.now()) {
+            await OTP.deleteOne({ Email: Email });
+            throw new Error("The OTP code has expired. Please request a new one.");
+        }
+    } else {
+        console.log("ExpiresAt is not defined in the OTP record.");
+    }
     if (Number(otp.join('')) == matchedOTPrecord.otp) {
         req.session.OtpValid = true;
         let data = await User.create(req.session.user)
@@ -139,7 +142,7 @@ module.exports = {
   getAddress:async(req,res)=>{
     let name = req.session.user.username;
     const user = await User.findOne({email:name})
-    let address = user.Address
+    let address = user.Address?user.Address:null
    
     res.render('user/userprofile',{address})
   },
@@ -238,7 +241,8 @@ module.exports = {
         }
 
         user.Address.splice(addressIndex, 1); // Removing the address at the found index
-
+        if(user.Address.length !== 0)
+          user.Address[0].main = true;
         await user.save();
 
         console.log("Address deleted successfully");
@@ -249,6 +253,12 @@ module.exports = {
         
         return res.status(500).send("Internal Server Error");
     }
+  },
+  getCheckout:async(req,res)=>{
+    
+  },
+  getOrder:async(req,res)=>{
+
   }
 }
 

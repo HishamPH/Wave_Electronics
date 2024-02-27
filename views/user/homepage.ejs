@@ -64,7 +64,7 @@
                       <div class="nav-link nav-icon">
                       
                         <i class="bi bi-cart"></i>
-                        <span class="badge bg-danger badge-number">4</span>
+                        <span class="badge bg-danger badge-number" id="cartCount"><%= q  %></span>
                       </div>
                     </div>
                 </li>
@@ -194,7 +194,7 @@
                     <p class="card-text"><%= row.spec1 %></p>
                     <p class="card-text text-danger fw-bold">Price: ₹<%= row.Price  %></p>
                 </a>
-                <a href="/user/addtocart/<%= row._id %>">
+                <a href="/user/addtocart/<%= row._id %>" id="addtocart"> 
                   <button class="btn btn-primary rounded-pill">Add to cart</button>
                 </a>
                 
@@ -292,6 +292,7 @@
 
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
+    <script src="/js/cartCount.js"></script>
 </body>
 
 </html>

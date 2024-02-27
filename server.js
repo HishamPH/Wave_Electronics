@@ -33,6 +33,7 @@ app.use(session({
 
 app.use((req,res,next)=>{
   res.locals.message=req.session.message;
+  res.locals.name = req.session.name
   delete req.session.message;
   next();
 })
