@@ -6,35 +6,31 @@ $(document).ready(function() {
   $(".increment").click(function() {
       let divs = $(this).parent().prev('.quantity')
       let q = parseInt(divs.text());
-      console.log(divs)
-      let id = divs.data('path')
-      console.log(id);
-      updateQuantity('increment',q,id,divs);
+      updateQuantity('increment',q,divs);
   });
   $(".decrement").click(function() {
       let divs = $(this).parent().next('.quantity')
-      console.log(divs)
-      let q = parseInt(divs.text());
-      let id = divs.data('path')
-      console.log(id)
-      updateQuantity('decrement',q,id,divs);
+      let q = parseInt(divs.text());      
+      updateQuantity('decrement',q,divs);
   });
-  function updateQuantity(action,currentQuantity,id,divs) {
-    //   var currentQuantity = parseInt($(".quantity").text());
-    //   let id = $('.quantity').data('path')
-      let div = divs;
-      $.ajax({
-          url: `/user/cart/${id}`,
-          method: 'POST',
-          data: { action:action,value:currentQuantity},
-          success: function(res) {
-             //$('.quantity').text(res.quantity)
-             div.text(res.quantity)
-          },
-          error: function(xhr, status, error) {
-              console.error("Error updating quantity:", error);
-          }
-      });
+  function updateQuantity(action,currentQuantity,divs) {
+    let id = divs.data('path')
+    console.log(id)
+    $.ajax({
+        url: `/user/cart/${id}`,
+        method: 'POST',
+        data: { action:action,value:currentQuantity},
+        success: function(res) {
+            divs.text(res.quantity)
+            $(`#it${id}`).text(((res.quantity)*(res.price)).toLocaleString('hi'))
+            $('#items-price').text(`₹ ${res.totalPrice.toLocaleString('hi')}`)
+            $('#total-price').text(`₹ ${(res.totalPrice-res.discount).toLocaleString('hi')}`)
+            $('#discount').text(`– ₹${res.discount.toLocaleString('hi')}`)
+        },
+        error: function(xhr, status, error) {
+            console.error("Error updating quantity:", error);
+        }
+    });
   }
 });
 

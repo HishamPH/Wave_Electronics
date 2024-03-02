@@ -9,6 +9,8 @@ const userController = require('../controllers/users');
 const productController=require("../controllers/product")
 const upload = require('../middlewares/multer')
 
+const orderController = require('../controllers/orders')
+
 
 
 // --------------------------Userlist----------------------------------
@@ -50,6 +52,18 @@ router.route('/products/block/:id')
 router.route('/editproduct/:id')
 .get(productController.getEditProduct)
 .post(upload.fields([{ name: 'image1', maxCount: 1 }, { name: 'image2', maxCount: 1 }, { name: 'image3', maxCount: 1 }]),productController.postEditProduct)
+
+//--------------------------orders---------------------
+
+router.route('/orders')
+.get(orderController.getAdminOrders)
+
+
+router.route('/orders/changestatus/:id')
+.post(orderController.changeStatus)
+
+router.route('/orderdetails/:id')
+.get(orderController.adminOrderDetails)
 
 
 

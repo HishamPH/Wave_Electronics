@@ -1,19 +1,20 @@
-// $(document).ready(function() {
+$(document).ready(function() {
  
-//   $("#addtocart").click(function() {
-//       updateQuantity();
-//   });
-//   function updateQuantity() {
-//       var currentQuantity = parseInt($("#cartCount").text());
-//       $.ajax({
-//           url: `/user/cart/${id}`,
-//           method: 'POST',
-//           success: function(res) {
-//               $("#cartCount").text(res.count);
-//           },
-//           error: function(xhr, status, error) {
-//               console.error("Error updating quantity:", error);
-//           }
-//       });
-//   }
-// });
+  $(".addtocart").click(function(e) {
+      let id = $(this).data('path')
+      // let ev = e.target
+      updateQuantity(id);
+  });
+  function updateQuantity(id) {
+      $.ajax({
+          url: `/user/addtocart/${id}`,
+          method: 'GET',
+          success: function(res) {
+              $("#cartCount").text(res.count);
+          },
+          error: function(xhr, status, error) {
+              console.error("Error updating quantity:", error);
+          }
+      });
+  }
+});

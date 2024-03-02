@@ -67,7 +67,7 @@ app.get("/admin",checkAuthenticated,(req,res)=>{
 })
 app.post("/admin/login",(req,res)=>{
   const admin_id="admin@gmail.com";
-  const admin_password='admin123'
+  const admin_password='a'
   if(admin_id==req.body.adminname&&admin_password==req.body.password){
       req.session.admin=true
       res.redirect("/admin/panel")

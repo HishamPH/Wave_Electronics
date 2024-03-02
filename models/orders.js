@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const shippedAddressSchema = new Schema({
+const shippedAddressSchema = new mongoose.Schema({
 
   name: { type: String, required: true },
   street: { type: String, required: true },
@@ -12,7 +12,7 @@ const shippedAddressSchema = new Schema({
 
 });
 
-const ordersSchema = new Schema({
+const ordersSchema = new mongoose.Schema({
   userId:  { type: Schema.Types.ObjectId, ref: 'User' },
   status: { type: String, default: "Order Placed" },
   items: [{

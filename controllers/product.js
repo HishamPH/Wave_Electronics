@@ -3,7 +3,7 @@ const Category = require('../models/category')
 
 module.exports = {
   getProduct:async(req,res)=>{
-    let pd = await Product.find();
+    let pd = await Product.find().populate('Category');
     res.render("admin/products",{pd});
   },
   getAddProduct: async (req, res) => {
@@ -26,7 +26,7 @@ module.exports = {
         Price: req.body.Price,
         Description: req.body.Description,
         stock: req.body.stock,
-        Category: category.Name,
+        Category: category._id,
         Status: Status,
         spec1: req.body.spec1,
         discount: req.body.discount,
@@ -65,7 +65,7 @@ module.exports = {
         Price: req.body.Price,
         Description: req.body.Description,
         stock: req.body.stock,
-        Category: category.Name,
+        Category: category._id,
         Status: Status,
         spec1: req.body.spec1,
         discount: req.body.discount,

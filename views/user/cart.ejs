@@ -100,83 +100,121 @@
 
 
    
-    <% if(message){ %>
+    <% if(msg){ %>
 
       <h1 class="" style="position: relative; top: 300px; left: 500px;">nothing in the cart</h1>
     <% }else{ %>
     <section class="section dashboard position-absolute mx-5" style="top:150px;width: 1410px;"> 
         <div class="row">
+          <div class="col-8">
+              <div class="card recent-sales">
+                  <div class="card-body">
+                      
   
-          <!-- Left side columns -->
-            <div class="col-12">
-                <div class="row">
-              <!-- Recent Sales -->
-                    <div class="col-8">
-                        <div class="card recent-sales overflow-auto">
-                            <div class="card-body">
-                                
-            
-                                <table class="table table-borderless datatable">
-                                <thead class="my-3 thead-dark">
-                                    <tr>
-                                    <th scope="col">Product</th>
-                                    <th scope="col">Price</th>
-                                    <th scope="col" class="w-25">Quantity</th>
-                                    <th scope="col">Total</th>
-                                    <th scope="col">Remove</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                    <% items.forEach((row,index)=>{ %>
-                                    <td><img src="/images/<%=row.productId.images[0]%>" alt="" style="width: 50px;"><%= row.productId.ProductName  %></td>
-                                    <td><%= row.productId.Price %></td>
-                                    <td class="d-flex">
-                                      <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-primary btn-minus decrement" id="">
-                                        <i class="fa fa-minus"></i>
-                                        </button>
-                                      </div>
-                                      <div class="form-control form-control-sm bg-secondary border-0 text-center w-25 quantity" id="" data-path="<%= row._id %>"><%= row.quantity %></div>
-                                      <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-primary btn-plus increment" id="">
-                                            <i class="fa fa-plus"></i>
-                                        </button>
-                                      </div> 
-                                    </td>
-                                    <td>$11342</td>
-                                    <td>
-                                      <a href="/user/cart/delete/<%= row._id %>">
-                                        <button id="hello" class="btn btn-sm btn-danger hello"><i class="bi bi-trash"></i></button>
-                                      </a>
-                                      
-                                    </td>
-                                    </tr>
-                                    <% }) %>
-                                </tbody>
-                                </table>
-            
-                            </div>
-        
+                      <table class="table table-borderless datatable">
+                        <thead class="my-3 ">
+                            <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th class="w-25">Quantity</th>
+                            <th>Total</th>
+                            <th>Remove</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                            <% items.forEach((row,index)=>{ %>
+                            <td><img src="/images/<%=row.productId.images[0]%>" alt="" style="width: 50px;"><%= row.productId.ProductName  %></td>
+                            <td><%= row.productId.Price.toLocaleString('hi') %></td>
+                            <td class="d-flex">
+                              <div class="input-group-btn">
+                                <button class="btn btn-sm btn-primary btn-minus decrement" id="">
+                                <i class="fa fa-minus"></i>
+                                </button>
+                              </div>
+                              <div class="form-control form-control-sm bg-secondary border-0 text-center w-25 quantity" id="" data-path="<%= row._id %>"><%= row.quantity %></div>
+                              <div class="input-group-btn">
+                                <button class="btn btn-sm btn-primary btn-plus increment" id="">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                              </div> 
+                            </td>
+                            <td>
+                              <div id="it<%=row._id  %>">
+                                <%= (row.productId.Price * row.quantity).toLocaleString('hi')  %>
+                              </div>
+                            </td>
+                            <td>
+                              <a href="/user/cart/delete/<%= row._id %>">
+                                <button id="hello" class="btn btn-sm btn-danger hello"><i class="bi bi-trash"></i></button>
+                              </a>
+                              
+                            </td>
+                            </tr>
+                            <% }) %>
+                        </tbody>
+                      </table>
+  
+                  </div>
+
+              </div>
+          </div>
+          <div class="col-4">
+              <div class="card info-card sales-card mb-2">
+                  <div class="card-body">
+                      <div class="d-flex align-items-center justify-content-between mt-3">
+                          <input type="text" name="coupon" class="form-control bg-secondary">
+                          <button class="btn btn-primary ms-4">coupon</button>
+                      </div>
+                      <hr>
+                      <h4>Cart summary</h4>
+                      <div class="d-flex justify-content-between m-3 ">
+                        <div class="">
+                          price(<%= total %> items)
                         </div>
-                    </div><!-- End Recent Sales -->
-                    <div class="col-4">
-                        <div class="card info-card sales-card">
-                            <div class="card-body">
-                                <div class="d-flex align-items-center justify-content-between mt-3">
-                                    <input type="text" name="coupon" class="form-control bg-secondary">
-                                    <button class="btn btn-primary ms-4">coupon</button>
-                                </div>
-                                <hr>
-                                <h4>Cart summary</h4>
-                            </div>
-                           
+                        <div class="" id="items-price">
+                          ₹ <%= totalPrice.toLocaleString('hi') %>
                         </div>
-                    </div><!-- End Sales Card -->
-                </div>
-            </div>
-            
-         
+                      </div>
+                      <div class="d-flex justify-content-between m-3 ">
+                        <div class="">
+                          Discount
+                        </div>
+                        <div class="text-success " id="discount">
+                          – ₹<%=discount.toLocaleString('hi') %>
+                        </div>
+                      </div>
+                      <div class="d-flex justify-content-between m-3 ">
+                        <div class="">
+                          Delivery charges
+                        </div>
+                        <div class="" id="delivery-charge">
+                          <span class="text-secondary text-decoration-line-through ">₹200</span>
+                          <span class="text-success">Free</span>
+                        </div>
+                      </div>
+                      <hr>
+                      <div class="d-flex justify-content-between m-3 ">
+                        <div class="">
+                          Total amount
+                        </div>
+                        <div class="fw-bold" id="total-price">
+                          ₹ <%= (totalPrice-discount).toLocaleString('hi') %>
+                        </div>
+                      </div>
+                      
+                      
+                  </div>
+                  
+              </div>
+              <div class="col-12 my-0 d-flex justify-content-center">
+                <a href="/user/checkout">
+                  <button class="btn btn-primary px-5 py-2 fw-bolder">
+                    checkout
+                  </button>
+                </a>
+              </div>
+          </div>
         </div>
     </section>
     <% } %>

@@ -12,7 +12,7 @@ module.exports = {
   },
   getHomePage:async(req,res)=>{
     let pd = await Products.find({Display:true})
-    let q = req.session.cartCount;
+    let q = req.session.cartCount||0;
     if(req.session.user){
       res.render('user/homepage',{message:req.session.name,pd,q});
     }
@@ -143,8 +143,15 @@ module.exports = {
     let name = req.session.user.username;
     const user = await User.findOne({email:name})
     let address = user.Address?user.Address:null
-   
-    res.render('user/userprofile',{address})
+    let cart = await Cart.findOne({userId:user._id})
+    let q;
+    if(cart){
+      q = cart.total;
+    }else{
+      q = 0;
+    }
+      
+    res.render('user/userprofile',{address,q})
   },
   setDefault:async(req,res)=>{
     let user = await User.findOne({email:req.session.user.username})
@@ -254,11 +261,32 @@ module.exports = {
         return res.status(500).send("Internal Server Error");
     }
   },
-  getCheckout:async(req,res)=>{
-    
+  getProfile:async(req,res)=>{
+    let email = req.session.user.username;
+    let user = await User.findOne({email:email});
+    let q = req.session.cartCount;
+    res.render('user/userdetail',{user,q})
   },
-  getOrder:async(req,res)=>{
-
+  editProfile:async(req,res)=>{
+    let id = req.params.id;
+    let user = await User.findByIdAndUpdate(id,{
+      name:req.body.name,
+      email:req.body.email,
+      phone:req.body.phone,
+    })
+    res.redirect('/user/userprofile')
+  },
+  changePassword:async(req,res)=>{
+    let id = req.params.id;
+    let user = await User.findById(id);
+    if((req.body.pass === user.password)&&(req.body.pass1 === req.body.pass2)){
+      user.password = req.body.pass1;
+      await user.save()
+      res.redirect('/user/userprofile')
+    }else{
+      res.redirect('/user/userprofile');
+      res.json({msg:'your passwords do not match'})
+    }
   }
 }
 

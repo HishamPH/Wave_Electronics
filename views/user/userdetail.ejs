@@ -24,7 +24,7 @@
     <!-- Customized Bootstrap Stylesheet -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="/css/style.css">
-    
+    <link rel="stylesheet" href="/css/home.css">
 </head>
 
 <body>
@@ -53,9 +53,9 @@
       <ul class="d-flex align-items-center">
 
         <li class="nav-item d-block d-lg-none">
-          <!-- <a class="nav-link nav-icon search-bar-toggle " href="#">
+          <a class="nav-link nav-icon search-bar-toggle " href="#">
             <i class="bi bi-search"></i>
-          </a> -->
+          </a>
         </li><!-- End Search Icon-->
 
         <li class="nav-item dropdown mx-3">
@@ -68,7 +68,7 @@
                   <div class="nav-link nav-icon">
                   
                     <i class="bi bi-cart"></i>
-                    <span class="badge bg-danger badge-number" id="cartCount"><%= q  %></span>
+                    <span class="badge bg-danger badge-number" id="cartCount"><%= q%></span>
                   </div>
                 </div>
               </a>
@@ -130,13 +130,13 @@
     <ul class="sidebar-nav" id="sidebar-nav">
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="/user/userprofile">
+        <a class="nav-link" href="#">
           <i class="bi bi-grid"></i>
           <span>My profile</span>
         </a>
       </li><!-- End Dashboard Nav -->
       <li class="nav-item">
-        <a class="nav-link" href="">
+        <a class="nav-link collapsed" href="/user/userprofile/address">
           <i class="bi bi-person"></i>
           <span>address management</span>
         </a>
@@ -166,125 +166,106 @@
 
     <section class="section dashboard position-relative" style="top:70px">
       <div class="row">
-        
-        <!-- Left side columns -->
-        <div class="col-lg-12">
-          <div class="row">
-            <button type="button" class="btn btn-primary mb-3 " data-toggle="modal" data-target="#exampleModalCenter" style="font-weight: bold;">
-              + add new address
-            </button>
-            <% if(address){ %>
-            <% address.forEach((row,index)=>{%>
-            <!-- Sales Card -->
-            <div class="col-xxl-6 col-md-12">
+        <div class="col-12">
+         
               <div class="card ">
-                <div class="card-body">
-                  <h5 class="card-title pb-0">
-                    <div style="font-weight: bold;"><%= row.name %></div>
-                  </h5>
-                  <p class="mb-0 py-0"><%= row.street %>,<%= row.city %>,<%= row.state  %></p>
-                  <div class="d-flex justify-content-between mt-3 mb-2">
-                    <a href="/user/userprofile/address/edit/<%= row._id  %>" type="button" class="btn btn-primary">Edit</a>
-                      
-                    
-                      
-                    
-                    <a href="/user/userprofile/address/delete/<%= row._id  %>">
-                      <i class="bi bi-trash text-danger"></i>
-                    </a>
-                    
+                <div class="card-body ">
+                  
+                  <h5 class="fw-bold mt-3 ">Name:</h5>
+                  <%= user.name  %>
+                  <h5 class="fw-bold mt-3 ">Email:</h5>
+                  <%= user.email  %>
+                  <h5 class="fw-bold mt-3 ">Phone:</h5>
+                  <%= user.phone  %>
+                  <div class="d-flex mt-3 justify-content-between ">
+    
+                    <button type="button" class="btn btn-primary mb-3 " data-toggle="modal" data-target="#exampleModalCenter" style="font-weight: bold;">Edit</button>
+
+                    <button type="button" class="btn btn-danger  mb-3 " data-toggle="modal" data-target="#changePassword" style="font-weight: bold;">change password</button>
                   </div>
-                  <form action="/user/userprofile/address/setdefault/<%= row._id %>" method="post">
-                  <% if(row.main){ %>
-                    <input id="radio" type="radio" name="main" checked value="<%= row.name %>" onchange="this.form.submit()">
-                  <% }else{%>
-                    <input id="radio" type="radio" name="main" value="<%= row.name %>" onchange="this.form.submit()">
-                  <% } %>
-                  <label for="radio">Set as default</label>
-                 
-                </form>
                 </div>
                 
               </div>
-            </div>
-            <% })} %>
-            
-            
-
-            <!-- Button trigger modal -->
-          
-
-            
-            <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-              <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Create new address</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <div class="modal-body">
-                                       
-                    <form action="/user/userprofile/address" method="post">
-                      <div class="form-group">
-                        <label for="name">Name:</label>
-                        <input type="text" name="name" class="form-control bg-light" id="name"
-                            placeholder="Enter your name" required />
-                      </div>
-                      <div class="form-group">
-                        <label for="street">street:</label>
-                        <input type="text" name="street" class="form-control bg-light" id="street"
-                            placeholder="Entre street name" required />
-                      </div>
-                      <div class="form-group">
-                        <label for="city">city:</label>
-                        <input type="text" name="city" class="form-control bg-light" id="city"
-                            placeholder="Enter the city" required />
-                      </div>
-                      <div class="form-group">
-                        <label for="pincode">pincode:</label>
-                        <input type="number" name="pincode" class="form-control bg-light" id="pincode"
-                            placeholder="Enter pincode" required />
-                      </div>
-                      <div class="form-group">
-                        <label for="state">state:</label>
-                        <input type="text" name="state" class="form-control bg-light" id="state"
-                            placeholder="Enter the state" required />
-                      </div>
-                      <div class="form-group">
-                        <label for="mobile">mobile:</label>
-                        <input type="number" name="mobile" class="form-control bg-light" id="mobile"
-                            placeholder="Enter phone no." required />
-                      </div>
-                      <div class="d-flex justify-content-center mb-3">
-                        <button type="submit" class="btn btn-primary mt-3 mb-0">Add Address</button>
-                      </div>
-                    </form>
-                   
-                  </div>
-                  
-                </div>
-              </div>
-            </div>
-
-            <!-- Reports -->
-            <!-- End Reports -->
-
         
-
-          
-
-          </div>
         </div><!-- End Left side columns -->
-
-      
-
       </div>
     </section>
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Edit profile</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+                               
+            <form action="/user/userprofile/edit/<%= user._id %>" method="post">
+              <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" name="name" class="form-control bg-light" id="name"
+                    placeholder="Enter your name" value="<%= user.name %>" required />
+              </div>
+              <div class="form-group">
+                <label for="email">email:</label>
+                <input type="text" name="email" class="form-control bg-light" id="email"
+                    placeholder="Entre email" value="<%= user.email%>" required />
+              </div>
+              <div class="form-group">
+                <label for="phone">phone:</label>
+                <input type="number" name="phone" class="form-control bg-light" id="phone"
+                    placeholder="Enter phone" value="<%= user.phone%>" required />
+              </div>
+            
+              <div class="d-flex justify-content-center mb-3">
+                <button type="submit" class="btn btn-primary mt-3 mb-0">edit</button>
+              </div>
+            </form>
+           
+          </div>
+          
+        </div>
+      </div>
+    </div>
 
+    <div class="modal fade" id="changePassword" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Edit profile</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+                               
+            <form action="/user/userprofile/changepassword/<%= user._id %>" method="post">
+              <div class="form-group">
+                <label for="pass">Old Password:</label>
+                <input type="password" name="pass" class="form-control bg-light" id="pass" required />
+              </div>
+              <div class="form-group">
+                <label for="pass1">New Password:</label>
+                <input type="password" name="pass1" class="form-control bg-light" id="pass1" required />
+              </div>
+              <div class="form-group">
+                <label for="pass2">confirm password:</label>
+                <input type="password" name="pass2" class="form-control bg-light" id="pass2" required />
+              </div>
+            
+              <div class="d-flex justify-content-center mb-3">
+                <button type="submit" class="btn btn-primary mt-3 mb-0">Change Password</button>
+              </div>
+            </form>
+           
+          </div>
+          
+        </div>
+      </div>
+    </div>
   </main><!-- End #main -->
-
+  
 
  
  
@@ -309,7 +290,7 @@
 
   <!-- Template Javascript -->
   <script src="/js/main.js"></script>
-  
+  <script src="/js/cartCount.js"></script>
 </body>
 
 </html>

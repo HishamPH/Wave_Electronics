@@ -9,6 +9,9 @@ const userController = require('../controllers/users');
 const productController=require('../controllers/product')
 
 const cartController = require('../controllers/cart')
+const orderController = require('../controllers/orders')
+
+//const checkoutAuth = require('../middlewares/userAuth')
 
 router.route('/signup')
 .get(userController.getaddUser)
@@ -70,11 +73,36 @@ router.route('/cart/:id')
 router.route('/cart/delete/:id')
 .get(cartController.deleteFromCart)
 
+//===================== CHECKOUT ======================
+
+
+
 
 router.route('/checkout')
-.get(userController.getCheckout)
+.get(cartController.getCheckout)
+
+router.route('/checkout/changeAddress')
+
+//====================== orders ============================
+
+router.route('/userprofile/orders')
+.get(orderController.getUserOrders)
 
 
-router.route('/orders')
-.get(userController.getOrder)
+router.route('/placeorder/:id')
+.post(orderController.placeOrder)
+
+router.route('/orders/cancelorders/:id')
+.get(orderController.cancelOrders)
+
+
+router.route('/userprofile')
+.get(userController.getProfile)
+
+router.route('/userprofile/edit/:id')
+.post(userController.editProfile)
+
+router.route('/userprofile/changepassword/:id')
+.post(userController.changePassword)
+
 module.exports = router;
