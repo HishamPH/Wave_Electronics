@@ -3,29 +3,31 @@ const mongoose = require('mongoose');
 const { Schema, ObjectId } = mongoose;
 
 const couponSchema = new mongoose.Schema({
-  couponName: String,
+  couponName:{
+    type:String
+  } ,
   code: {
     type: String,
     unique: true,
     required: true
   },
-  discount_amount: {
+  discount: {
     type: Number,
     required: true
   },
-  minimum_purchase: {
+  minPurchase: {
     type: Number,
     required: true
   },
-  startDate:{
+  start:{
     type: Date,
     required: true
   },
-  expiration_date: {
+  expire: {
     type: Date,
     required: true
   },
-  Status:{
+  status:{
     type: String,
     default : "Active"
   },

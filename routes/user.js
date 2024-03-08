@@ -13,6 +13,25 @@ const orderController = require('../controllers/orders')
 
 //const checkoutAuth = require('../middlewares/userAuth')
 
+
+router.route('/landpage')
+.get(userController.getLandPage);
+
+
+//======================= LOGIN ===========================
+
+router.route('/login')
+.get(userController.getLogin)
+.post(userController.postLogin);
+
+router.route('/homepage')
+.get(userController.getHomePage);
+
+
+
+
+//====================== SIGN UP =========================
+
 router.route('/signup')
 .get(userController.getaddUser)
 .post(userController.postAddUser);
@@ -26,16 +45,7 @@ router.route('/resendotp')
 .get(userController.resendOTP)
 
 
-router.route('/landpage')
-.get(userController.getLandPage);
-
-router.route('/homepage')
-.get(userController.getHomePage);
-
-
-router.route('/login')
-.get(userController.getLogin)
-.post(userController.postLogin);
+//================== PRODUCT DETAILS =====================
 
 
 router.route('/detail/:id')
@@ -43,6 +53,14 @@ router.route('/detail/:id')
 
 router.route('/review/:id')
 .post(userController.review)
+
+
+
+
+
+
+
+//==================== USER PROFILE ====================
 
 router.route('/userprofile/address')
 .get(userController.getAddress)
@@ -61,6 +79,9 @@ router.route('/userprofile/address/delete/:id')
 .get(userController.deleteAddress)
 
 
+//================================ CART =========================================
+
+
 router.route('/addtocart/:id')
 .get(cartController.addToCart)
 
@@ -75,13 +96,11 @@ router.route('/cart/delete/:id')
 
 //===================== CHECKOUT ======================
 
-
-
-
 router.route('/checkout')
 .get(cartController.getCheckout)
 
 router.route('/checkout/changeAddress')
+
 
 //====================== orders ============================
 
@@ -104,5 +123,9 @@ router.route('/userprofile/edit/:id')
 
 router.route('/userprofile/changepassword/:id')
 .post(userController.changePassword)
+
+
+
+//=============================================================
 
 module.exports = router;

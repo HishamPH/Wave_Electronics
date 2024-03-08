@@ -10,10 +10,10 @@ $(document).ready(function() {
           url: `/user/addtocart/${id}`,
           method: 'GET',
           success: function(res) {
-              $("#cartCount").text(res.count);
+            $("#cartCount").text(res.count);
           },
           error: function(xhr, status, error) {
-              console.error("Error updating quantity:", error);
+            console.error("Error updating quantity:", error);
           }
       });
   }

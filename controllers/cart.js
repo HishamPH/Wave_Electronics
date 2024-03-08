@@ -6,34 +6,39 @@ const Cart = require('../models/cart')
 
 module.exports = {
   addToCart:async(req,res)=>{
-    let cart;
-    let id = req.params.id
-    let email = req.session.user.username;
-    let user = await User.findOne({email:email});
-    let pd = await Products.findById(id)
-    cart = await Cart.findOne({userId:user._id})
-    if(cart===null){
-      cart = await Cart.create({
-        userId:user._id,
-        items:[{productId:id,quantity:1}],
-        total:1
-      })
-    }else{
-      const exist = cart.items.find(a=>a.productId.toString() === id)
-    
-      if(exist){
-        exist.quantity +=1;
-      }else{
-        cart.items.push({productId:id,quantity:1})
-        cart.total++;
+    try{
+      let cart;
+      let id = req.params.id
+      let email = req.session.user.username;
+      let user = await User.findOne({email:email});
+      let pd = await Products.findById(id)
+      cart = await Cart.findOne({userId:user._id})
+      let x = pd.stock;
+      if(cart===null&&pd.stock>0){
+        cart = await Cart.create({
+          userId:user._id,
+          items:[{productId:id,quantity:1,price:pd.Price}],
+          total:1
+        })
+      }else if(pd.stock>0){
+        const exist = cart.items.find(a=>a.productId.toString() === id)
+      
+        if(exist){
+          if(exist.quantity<2&&((pd.stock - (exist.quantity+1))>=0))
+            exist.quantity ++;
+        }else{
+          cart.items.push({productId:id,quantity:1,price:pd.Price})
+          cart.total++;
+        }
+        await cart.save()
       }
-      await cart.save()
+      req.session.cartCount = cart.total 
+      res.json({count:cart.total})
+    }catch{
+      res.json({msg:'There are no more stock left'})
     }
-    req.session.cartCount = cart.total 
-    res.json({count:cart.total})
-    
-    
   },
+
   getCart:async(req,res)=>{
     let email = req.session.user.username
     let user = await User.findOne({email:email})
@@ -56,7 +61,6 @@ module.exports = {
     }
   },
   deleteFromCart:async(req,res)=>{
-    
     let id = req.params.id;
     let cart =await Cart.findOne({
       items:{$elemMatch:{_id:id}}
@@ -71,37 +75,44 @@ module.exports = {
     res.redirect('/user/cart')
   },
   changeQuantity:async(req,res)=>{
-    let id = req.params.id
-    const { action,value } = req.body;
-    let cart = await Cart.findOne({
-        items:{$elemMatch:{_id:id}}
-    }).populate('items.productId')
-    let pdIndex = cart.items.findIndex(a => a._id.toString()=== id)
-    let cartQuantity = value;
-    if (action === 'increment') {
-      cart.items[pdIndex].quantity++;
-      await cart.save();
-        cartQuantity++;
-    } else if (action === 'decrement' && cartQuantity > 1) {
-      cart.items[pdIndex].quantity--;
-      await cart.save();
-        cartQuantity--;
+    try{
+      let id = req.params.id
+      const { action,value } = req.body;
+      let cart = await Cart.findOne({
+          items:{$elemMatch:{_id:id}}
+      }).populate('items.productId')
+      let pdIndex = cart.items.findIndex(a => a._id.toString()=== id)
+      let msg = false;
+      cartQuantity = value;
+      if (action === 'increment'&&cart.items[pdIndex].quantity<2) {
+        if((cart.items[pdIndex].productId.stock - (cart.items[pdIndex].quantity+1))>=0)
+          cart.items[pdIndex].quantity++;
+        else
+          msg = true;
+        await cart.save();
+      } else if (action === 'decrement' && cartQuantity > 1) {
+        cart.items[pdIndex].quantity--;
+        await cart.save();
+      }
+      let price = cart.items[pdIndex].productId.Price;
+      let totalPrice =0,discount=0;
+      cart.items.forEach((item,index)=>{
+        totalPrice += Number(item.productId.Price)*Number(item.quantity)
+        discount += Number(item.productId.discount)*Number(item.quantity)
+      });
+      res.json({ quantity:cart.items[pdIndex].quantity,count:cart.total,price,totalPrice,discount,msg});
+    }catch(e){
+      console.error(e)
+      console.log('this is the catch block in changeQuantity in cart.js')
     }
-    let price = cart.items[pdIndex].productId.Price;
-    console.log(price)
-    let totalPrice =0,discount=0;
-    cart.items.forEach((item,index)=>{
-      totalPrice += Number(item.productId.Price)*Number(item.quantity)
-      discount += Number(item.productId.discount)*Number(item.quantity)
-    });
-    res.json({ quantity:cart.items[pdIndex].quantity,count:cart.total,price,totalPrice,discount});
+    
   },
   getCheckout:async(req,res)=>{
     let email = req.session.user.username;
     let user = await User.findOne({email:email});
     let cart = await Cart.findOne({userId:user._id}).populate('items.productId');
     let adIndex = user.Address.findIndex(item => item.main === true);
-    let address = user.Address[adIndex];
+    let address = user.Address[adIndex]??null;
     let items = cart.items;
     cart.total = cart.items.length;
     req.session.cartQuantity = cart.total;
@@ -112,11 +123,12 @@ module.exports = {
       discount += Number(item.productId.discount)*Number(item.quantity)
     });
     req.session.checkout = true;
-    console.log(req.session.checkout)
+    console.log(req.session)
     console.log(cart._id)
   
     res.render('user/checkout',{cart,items,totalPrice,total:cart.total,discount,address})
   },
+
   changeAddress:async (req,res)=>{
     let user = await User.findOne({email:req.session.user.username})
     let id = req.params.id;

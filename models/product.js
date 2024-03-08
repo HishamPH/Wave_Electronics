@@ -28,7 +28,7 @@ const ProductsSchema = new mongoose.Schema({
     type: Number,
     validate: {
       validator: function(value) {
-        return value >= 0; // Validates that Quantity is greater than 0
+        return value >= 0; 
       },
       message: "Quantity Can't be less than 0"
     }
@@ -42,7 +42,7 @@ const ProductsSchema = new mongoose.Schema({
     type: Number,
     validate: {
       validator: function (value) {
-        return value >= 0 && value <= this.Price; // Ensuring DiscountAmount is positive and less than or equal to Price
+        return value >= 0 && value <= this.Price;
       },
       message: 'Discount amount must be a positive number and less than the Price.'
     }

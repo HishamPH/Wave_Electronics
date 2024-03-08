@@ -148,6 +148,12 @@
           <span>Orders</span>
         </a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="/admin/coupons">
+          <i class="bi bi-person"></i>
+          <span>Coupons</span>
+        </a>
+      </li>
       <li class="nav-heading">Pages</li>
 
       <li class="nav-item">
@@ -171,13 +177,13 @@
         </ol>
       </nav>
       <div class="d-flex align-items-center justify-content-end">
-        <a href="/admin/addproduct" class="btn btn-secondary">add product</a>
+        <a href="/admin/addproduct" class="btn btn-primary ">add product</a>
       </div>
       
     </div><!-- End Page Title -->
     
-    <table class="table table-bordered table-hover mt-3">
-      <thead class="table-dark">
+    <table class="table table-striped table-bordered  table-hover mt-3">
+      <thead class="table-dark  ">
           <tr>
               <th>Serial No</th>
               <th>Product Name</th>
@@ -185,12 +191,12 @@
               <th>Price</th>
               <th>Available Quantity</th>
               <th>Status</th>
-              <th>Action</th>
+              <th style="width: 160px;">Action</th>
           </tr>
       </thead>
       <tbody>
         <% pd.forEach((row,index) => { %>
-            <tr>
+            <tr class="align-middle text-center ">
                 <td><%= index+1 %></td>
                 <td><%= row.ProductName %></td>
                 <td><%= row.Category.Name %></td>
@@ -198,13 +204,17 @@
                 <td><%= row.stock %></td>
                 <td><%= row.Status %></td>
                 <td>
-                  <a href="/admin/editproduct/<%= row._id%>">edit</a>                                    
+                  <a href="/admin/editproduct/<%= row._id%>">
+                    <button class="btn btn-secondary rounded-pill ">
+                      edit
+                    </button>
+                  </a>                                    
                   <a href="/admin/products/block/<%= row._id%>">
                     <% if(row.Display){ %>
-                    <button class="btn btn-success">active
+                    <button class="btn btn-success rounded-pill ">active
                     </button>
                     <% }else{ %>
-                    <button class="btn btn-danger">blocked
+                    <button class="btn btn-danger rounded-pill ">blocked
                     </button>
                     <% } %>
                   </a>                                      
@@ -214,7 +224,7 @@
     </tbody>
     </table> 
     
-
+  
 
     <!-- ======= Footer ======= -->
   

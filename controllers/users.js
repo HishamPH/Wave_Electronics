@@ -129,6 +129,9 @@ module.exports = {
   getDetailPage:async(req,res)=>{
     let id = req.params.id;
     let pd = await Products.findById(id);
+    if(pd.stock === 0)
+      pd.Status = 'Out of Stock';
+    await pd.save()
     res.render('user/productdetail',{pd})
   },
   review:async(req,res)=>{
@@ -140,18 +143,23 @@ module.exports = {
     res.redirect(`/user/detail/${id}`)
   },
   getAddress:async(req,res)=>{
-    let name = req.session.user.username;
-    const user = await User.findOne({email:name})
-    let address = user.Address?user.Address:null
-    let cart = await Cart.findOne({userId:user._id})
-    let q;
-    if(cart){
-      q = cart.total;
-    }else{
-      q = 0;
+    try{
+      let name = req.session.user.username??req.session.user.email;
+      const user = await User.findOne({email:name})
+      let address = user?user.Address:null
+      let cart = await Cart.findOne({userId:user._id})
+      let q = cart?cart.total:0;
+      if(address&&(address.length===1)){
+        user.Address[0].main = true;
+        await user.save()
+      }
+      res.render('user/userprofile',{address,q})
+    }catch(e){
+      console.error(e)
+      console.log('this is catch')
+      let q = 0;
+      res.render('user/userprofile',{q,address:false})
     }
-      
-    res.render('user/userprofile',{address,q})
   },
   setDefault:async(req,res)=>{
     let user = await User.findOne({email:req.session.user.username})
@@ -196,68 +204,46 @@ module.exports = {
     const { name, street, city, pincode,state,mobile } = req.body
 
     const addressIndex = user.Address.findIndex((a) => a._id.toString() === addressId);
-
-    // req.session.address = user.Address[addressIndex]
-
     if (addressIndex !== -1) {
-
         user.Address[addressIndex].name = name;
         user.Address[addressIndex].street = street;
         user.Address[addressIndex].city = city;
         user.Address[addressIndex].state = state;
         user.Address[addressIndex].pincode = pincode;
         user.Address[addressIndex].mobile = mobile;
-       
         await user.save();
-
-
         console.log("Address updated successfully");
-        
         res.redirect("/user/userprofile/address");
-
     } else {
         console.log("Address Not Found")
-        
         res.redirect("/user/userprofile/address");
     }
-
-   
   },
   deleteAddress:async(req,res)=>{
     const email = req.session.user.username;
-    const addressId = req.params.id; // Assuming you receive the address ID to delete from the request parameters
-
+    const addressId = req.params.id; 
     console.log("address id is to delete", addressId)
     try {
         const user = await User.findOne({email:email});
-
         if (!user) {
           console.log("User not found");
-          
           return res.redirect("/user/userprofile/address");
         }
-
         const addressIndex = user.Address.findIndex(
           (a) => a._id.toString() === addressId
         );
-
         if (addressIndex === -1) {
             console.log("Address not found");
-            
             return res.redirect("/user/userprofile/address");
         }
-
-        user.Address.splice(addressIndex, 1); // Removing the address at the found index
-        if(user.Address.length !== 0)
+        user.Address.splice(addressIndex, 1);
+        if(user.Address.length === 1)
           user.Address[0].main = true;
         await user.save();
-
         console.log("Address deleted successfully");
-        
         return res.redirect("/user/userprofile/address");
     } catch (error) {
         console.error("Error deleting address:", error.message);
-        
         return res.status(500).send("Internal Server Error");
     }
   },

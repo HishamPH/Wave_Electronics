@@ -7,10 +7,10 @@ const Category = require('../controllers/category')
 const adminController=require('../controllers/admin')
 const userController = require('../controllers/users');
 const productController=require("../controllers/product")
-const upload = require('../middlewares/multer')
+const {uploadImage,resizeImage} = require('../middlewares/multer')
 
 const orderController = require('../controllers/orders')
-
+const couponController = require('../controllers/coupon')
 
 
 // --------------------------Userlist----------------------------------
@@ -41,7 +41,7 @@ router.route("/products")
 
 router.route("/addproduct")
 .get(productController.getAddProduct)
-.post(upload.fields([{ name: 'image1', maxCount: 1 }, { name: 'image2', maxCount: 1 }, { name: 'image3', maxCount: 1 }]),productController.postAddProduct)
+.post(uploadImage,productController.postAddProduct)
 
 router.route('/products/block/:id')
 .get(productController.blockProduct)
@@ -51,7 +51,7 @@ router.route('/products/block/:id')
 
 router.route('/editproduct/:id')
 .get(productController.getEditProduct)
-.post(upload.fields([{ name: 'image1', maxCount: 1 }, { name: 'image2', maxCount: 1 }, { name: 'image3', maxCount: 1 }]),productController.postEditProduct)
+.post(uploadImage,productController.postEditProduct)
 
 //--------------------------orders---------------------
 
@@ -64,6 +64,11 @@ router.route('/orders/changestatus/:id')
 
 router.route('/orderdetails/:id')
 .get(orderController.adminOrderDetails)
+
+//==================== ORDERS =======================
+
+router.route('/coupons')
+.get(couponController.getCoupon)
 
 
 

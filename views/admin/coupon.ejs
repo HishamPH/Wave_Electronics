@@ -116,7 +116,7 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#pd-nav" data-bs-toggle="collapse" href="/admin/products">
+        <a class="nav-link collapsed" href="/admin/products">
           <i class="bi bi-person"></i>
           <span>Products</span>
           
@@ -135,9 +135,15 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/admin/orders">
+        <a class="nav-link collapsed" href="/admin/orders">
           <i class="bi bi-person"></i>
           <span>Orders</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/admin/coupons">
+          <i class="bi bi-person"></i>
+          <span>Coupons</span>
         </a>
       </li>
 
@@ -160,8 +166,7 @@
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="/admin/panel">Home</a></li>
-          <li class="breadcrumb-item"><a href="/admin/orders">Orders</a> </li>
-          <li class="breadcrumb-item active">order details</li>
+          <li class="breadcrumb-item active">Orders</li>
         </ol>
       </nav>
       
@@ -170,31 +175,19 @@
     
     <table class="table table-bordered table-hover mt-3">
       <thead class="table-dark">
-          <tr>
-              <th style="width: 400px;">Product</th>
-              <th>Price</th>
+          <tr class="text-center ">
+              <th>Order Id</th>
+              <th>User Name</th>
               <th>Quantity</th>
-              <th>Total</th>
+              <th>Price</th>
+              <th>Order Date</th>
+              <th style="width: 150px;">Status</th>
+              <th style="width: 160px;">Action</th>
+              <th>Details</th>
           </tr>
       </thead>
       <tbody>
-        <% items.forEach((row,index)=>{ %>
-        <tr class="align-middle ">
-          <td>
-            <div class="d-flex align-items-center ">
-              <img src="/images/<%= row.productId.images[0]  %>" alt="" style="width: 80px;">
-              <div>
-                <%=  row.productId.ProductName%>
-              </div>
-            </div>
-            
-          </td>
-          <td><%= row.productId.Price%></td>
-          <td><%= row.quantity %></td>
-          <td><%= row.productId.Price * row.quantity %></td>
-          
-        </tr>
-        <% }) %>
+        
       </tbody>
     </table> 
     

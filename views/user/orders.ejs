@@ -214,7 +214,7 @@
                     
                   </div>
                  
-                  <table class="table table-bordered table-hover mt-3">
+                  <table class="table table-group-divider  table-hover table-striped  mt-3">
                     <thead>
                       <tr>
                         <th>Product</th>
@@ -222,22 +222,24 @@
                         <th>quantity</th>
                       </tr>
                     </thead>
+                    <tbody class="table-group-divider">
                     <% order.items.forEach((item)=>{ %>
-                    <tbody>
-                      <tr>
+                    
+                      <tr class="align-middle">
                         <td>
                           <img src="/images/<%= item.productId.images[0] %>" alt="" style="width: 70px;">
                           <%= item.productId.ProductName  %>
                         </td>
                         <td>
-                          <%= item.productId.Price %>
+                          <%= item.price %>
                         </td>
                         <td>
                           <%= item.quantity %>
                         </td>
                       </tr>
-                    </tbody>
+                    
                     <% }) %>
+                    </tbody>
                   </table>
                 </div>
                 

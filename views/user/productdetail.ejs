@@ -136,7 +136,11 @@
                     <p class="mb-4">
                       <%= pd.Description %>
                     </p>
-                    <p class="mb-4 text-success"><%= pd.Status  %></p>
+                    <% if(pd.stock === 0){ %>
+                    <p class="mb-4 text-danger">Out of stock</p>
+                    <% }else{ %>
+                    <p class="mb-4 text-success">In Stock</p>
+                    <%  }%>
                     <div class="d-flex mb-4">
                         <strong class="text-dark mr-3">Colors:</strong>
                         <form>

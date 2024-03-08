@@ -4,6 +4,13 @@ const Category = require('../models/category')
 module.exports = {
   getProduct:async(req,res)=>{
     let pd = await Product.find().populate('Category');
+    pd.forEach(async(item)=>{
+      if(item.stock===0)
+        item.Status = 'Out of Stock'
+      else
+        item.Status = 'In Stock'
+    })
+    
     res.render("admin/products",{pd});
   },
   getAddProduct: async (req, res) => {
@@ -15,22 +22,22 @@ module.exports = {
     const images = [];
     const category = await Category.findOne({ Name: req.body.Category});
     for (let i = 1; i <= 3; i++) {
-        const fieldName = `image${i}`;
-        if (req.files[fieldName] && req.files[fieldName][0]) {
-            images.push(req.files[fieldName][0].filename);
-        }
+      const fieldName = `image${i}`;
+      if (req.files[fieldName] && req.files[fieldName][0]) {
+        images.push(req.files[fieldName][0].filename);
+      }
     }
     const Status = req.body.stock <= 0 ? "Out of Stock" : "In Stock";       
     const newProduct = new Product({
-        ProductName: req.body.ProductName,
-        Price: req.body.Price,
-        Description: req.body.Description,
-        stock: req.body.stock,
-        Category: category._id,
-        Status: Status,
-        spec1: req.body.spec1,
-        discount: req.body.discount,
-        images: images
+      ProductName: req.body.ProductName,
+      Price: req.body.Price,
+      Description: req.body.Description,
+      stock: req.body.stock,
+      Category: category._id,
+      Status: Status,
+      spec1: req.body.spec1,
+      discount: req.body.discount,
+      images: images
     });
     await newProduct.save();
     res.redirect("/admin/products");
@@ -47,29 +54,30 @@ module.exports = {
     let pd =await Product.findById(id);
     let cat = await Category.find()
     res.render('admin/editproduct',{pd,cat})
+    console.log(pd.Category)
   },
   postEditProduct:async(req,res)=>{
     let id = req.params.id
     const images = [];
     const category = await Category.findOne({ Name: req.body.Category});
     for (let i = 1; i <= 3; i++) {
-        const fieldName = `image${i}`;
-        if (req.files[fieldName] && req.files[fieldName][0]) {
+      const fieldName = `image${i}`;
+      if (req.files[fieldName] && req.files[fieldName][0]) {
             images.push(req.files[fieldName][0].filename);
-        }
+      }
     }
     const Status = req.body.stock <= 0 ? "Out of Stock" : "In Stock";       
     await Product.findByIdAndUpdate(id,[{
      $set: {
-        ProductName: req.body.ProductName,
-        Price: req.body.Price,
-        Description: req.body.Description,
-        stock: req.body.stock,
-        Category: category._id,
-        Status: Status,
-        spec1: req.body.spec1,
-        discount: req.body.discount,
-        images: images
+      ProductName: req.body.ProductName,
+      Price: req.body.Price,
+      Description: req.body.Description,
+      stock: req.body.stock,
+      //Category: category._id,
+      Status: Status,
+      spec1: req.body.spec1,
+      discount: req.body.discount,
+      // images: images
     }}]);
     res.redirect("/admin/products");
   }

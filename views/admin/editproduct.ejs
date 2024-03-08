@@ -175,11 +175,14 @@
       <form action="/admin/editproduct/<%= pd._id  %>" method="post" enctype="multipart/form-data"
           class="card p-3 bg-light mb-3 text-dark">
           <div class="d-flex justify-content-center align-items-center">
-            <select class="" id="category" name="Category" required
-                style="width:38%;height: 35px;border-radius: 5px;margin-right: 4%;">
-                <option value="<%= pd.Category%>" selected disabled>category:</option>
+            <select class="" id="category" name="Category" required style="width:38%;height: 35px;border-radius: 5px;margin-right: 4%;">
+                <option value="<%= pd.Category%>" selected>category:</option>
                 <%cat.forEach((x) => {%>
+                  <% if(pd.Category===x._id) {%>
+                    <option selected><%=x.Name%></option>
+                  <% }else{ %>
                     <option><%=x.Name%></option>
+                  <% } %>
                 <%})%>
             </select>
           </div>
@@ -211,21 +214,21 @@
               <div class="form-group my-2">
                   <label for="image1">Image 1:</label>
                   <input type="file" name="image1" class="form-control imageInput" id="image1"
-                      accept="image/*" required/>
+                      accept="image/*" />
                   <img src="/images/<%= pd.images[0]  %>" alt="Image 1" class="img-fluid imagePreview"
                       style="max-height: 50px;width: auto;" id="imagePreview1">
               </div>
               <div class="form-group my-2">
                   <label for="image2">Image 2:</label>
                   <input type="file" name="image2" class="form-control imageInput" id="image2"
-                      accept="image/*" required/>
+                      accept="image/*" />
                   <img src="/images/<%= pd.images[1]  %>" alt="Image 2" class="img-fluid imagePreview"
                       style="max-height: 50px;width: auto; " id="imagePreview2">
               </div>
               <div class="form-group my-2">
                   <label for="image3">Image 3:</label>
                   <input type="file" name="image3" class="form-control imageInput" id="image3"
-                      accept="image/*" required/>
+                      accept="image/*" />
                   <img src="/images/<%= pd.images[2]  %>" alt="Image 3" class="img-fluid imagePreview"
                       style="max-height: 50px;width: auto; " id="imagePreview3">
               </div>

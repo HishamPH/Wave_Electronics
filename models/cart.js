@@ -12,7 +12,9 @@ const CartSchema = new mongoose.Schema({
       },
       quantity: {
         type: Number,
+        //max:2
       },
+      price:{type:Number}
     },
   ],
   total: {
