@@ -240,22 +240,27 @@
           </div>
           <div class="modal-body">
                                
-            <form action="/user/userprofile/changepassword/<%= user._id %>" method="post">
+            <form action="" onsubmit="return validateForm()" id="passwordForm" data-path="<%= user._id %>">
               <div class="form-group">
                 <label for="pass">Old Password:</label>
-                <input type="password" name="pass" class="form-control bg-light" id="pass" required />
+                <input type="password" name="pass" class="form-control bg-light password" id="pass" required/>
               </div>
               <div class="form-group">
                 <label for="pass1">New Password:</label>
-                <input type="password" name="pass1" class="form-control bg-light" id="pass1" required />
+                <input type="password" name="pass1" class="form-control bg-light password" id="pass1" required oninput="validatePassword(this)" minlength="8"/>
+                <small class="text-danger " id="passwordError"></small>
               </div>
               <div class="form-group">
                 <label for="pass2">confirm password:</label>
-                <input type="password" name="pass2" class="form-control bg-light" id="pass2" required />
+                <input type="password" name="pass2" class="form-control bg-light password" id="pass2" required/>
+              </div>
+
+              <div class="d-flex  text-danger " id="message">
+
               </div>
             
               <div class="d-flex justify-content-center mb-3">
-                <button type="submit" class="btn btn-primary mt-3 mb-0">Change Password</button>
+                <button type="submit" class="btn btn-primary mt-3 mb-0" >Change Password</button>
               </div>
             </form>
            
@@ -290,7 +295,8 @@
 
   <!-- Template Javascript -->
   <script src="/js/main.js"></script>
-  <script src="/js/cartCount.js"></script>
+  <script src="/js/changePassword.js"></script>
+
 </body>
 
 </html>

@@ -167,8 +167,20 @@
           <div class="card info-card sales-card mb-2">
             <div class="card-body">
               <div class="d-flex align-items-center justify-content-between mt-3">
-                <input type="text" name="coupon" class="form-control bg-secondary">
-                <button class="btn btn-primary ms-4">coupon</button>
+                <form class="" id="coupon">
+                  <div class="form-group">
+                    <input type="text" name="code" class="form-control bg-secondary "
+                  id="couponCode">
+                  </div>
+                  
+                  <button type="submit" class="btn btn-primary ms-4">
+                    coupon
+                  </button>
+
+                </form>
+                <div class="text text-success " id="applied">
+
+                </div>
               </div>
               <hr>
               <h4>Cart summary</h4>
@@ -178,6 +190,14 @@
                 </div>
                 <div class="" id="items-price">
                   ₹ <%= totalPrice.toLocaleString('hi') %>
+                </div>
+              </div>
+              <div class="d-flex justify-content-between m-3 ">
+                <div class="" id="couponname">
+                  
+                </div>
+                <div class="" id="percent">
+                  
                 </div>
               </div>
               <div class="d-flex justify-content-between m-3 ">

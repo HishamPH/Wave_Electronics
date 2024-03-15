@@ -4,6 +4,8 @@ const Products = require('../models/product')
 // const Coupon = require('../models/coupon')
 const Cart = require('../models/cart')
 
+const Coupon = require('../models/coupon')
+
 module.exports = {
   addToCart:async(req,res)=>{
     try{
@@ -111,8 +113,8 @@ module.exports = {
     let email = req.session.user.username;
     let user = await User.findOne({email:email});
     let cart = await Cart.findOne({userId:user._id}).populate('items.productId');
-    let adIndex = user.Address.findIndex(item => item.main === true);
-    let address = user.Address[adIndex]??null;
+    //let adIndex = user.Address.findIndex(item => item.main === true);
+    let address = user.Address??null;
     let items = cart.items;
     cart.total = cart.items.length;
     req.session.cartQuantity = cart.total;
@@ -129,18 +131,146 @@ module.exports = {
     res.render('user/checkout',{cart,items,totalPrice,total:cart.total,discount,address})
   },
 
-  changeAddress:async (req,res)=>{
-    let user = await User.findOne({email:req.session.user.username})
-    let id = req.params.id;
-    console.log(req.body.main)
-    const addressIndex = user.Address.findIndex((a) => a._id.toString() === id);
-    user.Address[addressIndex].main = true;
-    user.Address.forEach((item,index)=>{
-      if(index!==addressIndex){
-        item.main = false;
-      }
+  addressDefault:async (req,res)=>{
+    try{
+      let user = await User.findOne({email:req.session.user.username})
+      let id = req.params.id;
+      console.log(req.body.main)
+      const addressIndex = user.Address.findIndex((a) => a._id.toString() === id);
+      user.Address[addressIndex].main = true;
+      user.Address.forEach((item,index)=>{
+        if(index!==addressIndex){
+          item.main = false;
+        }
+      })
+      await user.save()
+      res.redirect('/user/checkout')
+    }catch(e){
+      console.error(e)
+    }
+
+  },
+  addressEdit:async(req,res)=>{
+    const addressId = req.params.id;
+    const email = req.session.user.username;
+    const user = await User.findOne({email:email})
+    const { name, street, city, pincode,state,mobile } = req.body
+    const addressIndex = user.Address.findIndex((a) => a._id.toString() === addressId);
+    if (addressIndex !== -1) {
+        user.Address[addressIndex].name = name;
+        user.Address[addressIndex].street = street;
+        user.Address[addressIndex].city = city;
+        user.Address[addressIndex].state = state;
+        user.Address[addressIndex].pincode = pincode;
+        user.Address[addressIndex].mobile = mobile;
+        await user.save();
+        console.log("Address updated successfully");
+        res.redirect("/user/checkout");
+    } else {
+        console.log("Address Not Found")
+        res.redirect("/user/checkout");
+    }
+  },
+  addressDelete:async(req,res)=>{
+    const email = req.session.user.username;
+    const addressId = req.params.id; 
+    console.log("address id is to delete", addressId)
+    try {
+        const user = await User.findOne({email:email});
+        if (!user) {
+          console.log("User not found");
+          return res.redirect("/user/checkout");
+        }
+        const addressIndex = user.Address.findIndex(
+          (a) => a._id.toString() === addressId
+        );
+        if (addressIndex === -1) {
+            console.log("Address not found");
+            return res.redirect("/user/checkout");
+        }
+        user.Address.splice(addressIndex, 1);
+        if(user.Address.length === 1)
+          user.Address[0].main = true;
+        await user.save();
+        console.log("Address deleted successfully");
+        return res.redirect("/user/checkout");
+    } catch (error) {
+        console.error("Error deleting address:", error.message);
+        return res.status(500).send("Internal Server Error");
+    }
+  },
+  applyCoupon:async(req,res)=>{
+
+    let email = req.session.user.username;
+    let user = await User.findOne({email:email});
+    let cart = await Cart.findOne({userId:user._id}).populate('items.productId')
+    let code = req.body.code;
+    console.log(req.body)
+    let price = 0;
+    cart.items.forEach((item)=>{
+      price += item.quantity*item.price
     })
-    await user.save()
-    res.redirect('/user/checkout')
+    let coupon = await Coupon.findOne({code:code})
+    console.log(coupon)
+    let applied = false;
+    
+    
+    if(coupon){
+      let discount = coupon.discount
+      let dis = price * (discount/100)
+      let fullPrice = price -dis;
+      coupon.couponCount--;
+      await coupon.save()
+      console.log(discount)
+      res.json({applied:true,fullPrice,discount})
+    }else{
+      applied = false;
+      res.json({applied})
+    }
+  },
+  wishlist:async(req,res)=>{
+    try{
+      let id = req.params.id;
+      let email = req.session.user.username;
+      let user = await User.findOne({email:email}).populate('Wishlist.product');   
+      let index = user.Wishlist.findIndex((a)=>a.product._id.toString() === id);
+      let status = true;
+      if(index == -1){
+        const uuser =await User.updateOne({_id:user._id},{
+          $addToSet:{Wishlist:{product:id}}
+        });
+        console.log(uuser)
+      }
+      else{
+        user.Wishlist.splice(index, 1);
+        console.log('this is the else printing')
+        status = false;
+        await user.save()
+      }
+      res.json({status})
+    }catch(e){
+      console.error(e)
+    }
+  },
+  getWishlist:async(req,res)=>{
+    try{
+      let email = req.session.user.username;
+      let user = await User.findOne({email:email}).populate('Wishlist.product');
+      let wish = user.Wishlist;
+      let q = req.session.cartCount
+      if(wish)
+        res.render('user/wishlist',{wish,q})
+      else 
+        res.render('user/wishlist',{wish:false,q})
+    }catch(e){
+      console.error(e);
+    }
+  },
+  deleteWishlist:async(req,res)=>{
+    try{
+
+    }catch(e){
+
+    }
   }
 }

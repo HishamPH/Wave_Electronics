@@ -167,36 +167,61 @@
       
       
     </div><!-- End Page Title -->
-    
-    <table class="table table-bordered table-hover mt-3">
-      <thead class="table-dark">
-          <tr>
-              <th style="width: 400px;">Product</th>
-              <th>Price</th>
-              <th>Quantity</th>
-              <th>Total</th>
-          </tr>
-      </thead>
-      <tbody>
-        <% items.forEach((row,index)=>{ %>
-        <tr class="align-middle ">
-          <td>
-            <div class="d-flex align-items-center ">
-              <img src="/images/<%= row.productId.images[0]  %>" alt="" style="width: 80px;">
-              <div>
-                <%=  row.productId.ProductName%>
+    <section class="section dashboard">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="row">
+            <div class="col-xxl-12 col-md-12 mb-0 ">
+              <div class="card info-card sales-card">
+                <div class="card-body">
+                  <h5 class="card-title mb-0 ">Delivery Address</h5>
+                  <div class="d-flex flex-column ">
+                    <span>Name  :  <%= address.name  %></span>
+                    <span>street  :  <%= address.street  %></span>
+                    <span>pincode  :  <%= address.pincode  %></span>
+                    <span>city  :  <%= address.city  %></span>
+                    <span>state  :  <%= address.street  %></span>
+                    <span>mobile  :  <%= address.street  %></span>
+                  </div>
+                  
+                  
+                </div>
+                <table class="table table-bordered table-hover mt-1">
+                  <thead class="table-dark">
+                      <tr>
+                          <th style="width: 400px;">Product</th>
+                          <th>Price</th>
+                          <th>Quantity</th>
+                          <th>Total</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                    <% items.forEach((row,index)=>{ %>
+                    <tr class="align-middle ">
+                      <td>
+                        <div class="d-flex align-items-center ">
+                          <img src="/images/<%= row.productId.images[0]  %>" alt="" style="width: 80px;">
+                          <div>
+                            <%=  row.productId.ProductName%>
+                          </div>
+                        </div>
+                        
+                      </td>
+                      <td><%= row.price%></td>
+                      <td><%= row.quantity %></td>
+                      <td><%= row.price * row.quantity %></td>
+                      
+                    </tr>
+                    <% }) %>
+                  </tbody>
+                </table>
               </div>
-            </div>
-            
-          </td>
-          <td><%= row.productId.Price%></td>
-          <td><%= row.quantity %></td>
-          <td><%= row.productId.Price * row.quantity %></td>
-          
-        </tr>
-        <% }) %>
-      </tbody>
-    </table> 
+            </div><!-- End Sales Card -->
+          </div>
+        </div><!-- End Left side columns -->
+      </div>
+    </section>
+    
     
 
 

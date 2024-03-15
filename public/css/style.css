@@ -6,7 +6,8 @@
 }
 
 body {
-  font-family: "Open Sans", sans-serif;
+  
+ /*font-family: "Open Sans", sans-serif;*/
   background: #f6f9ff;
   color: #444444;
 }
@@ -855,4 +856,42 @@ h6 {
   text-align: center;
   font-size: 13px;
   color: #012970;
+}
+
+
+/*--------------------------------------------------------------
+================== CAROUSEL ==============================
+--------------------------------------------------------------*/
+
+.carousel-control-prev,
+.carousel-control-next{
+  height:40px;
+  width: 40px;
+  border-radius: 20px;
+  margin-top: 220px;
+}
+
+.wishlist{
+  right: 10px;
+  top: 10px;
+  width: 47px;
+  height :47px;
+  background-color: #dadada;
+  transition:150ms;
+  border:0px;
+}
+
+.wishlist:hover{
+  background-color: #bcbcbc;
+
+}
+
+.wishlist:active{
+  background-color: #a40000;
+
+}
+
+.scrollit {
+  overflow:scroll;
+  height:100px;
 }

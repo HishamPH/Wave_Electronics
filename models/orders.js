@@ -18,7 +18,8 @@ const ordersSchema = new mongoose.Schema({
   items: [{
     productId: { type: Schema.Types.ObjectId, ref: "Products" },
     quantity: { type: Number },
-    price:{type:Number}
+    price:{type:Number},
+    status:{type:String,default:"waiting confirmation"}
   }],
   paymentMethod: { type: String },
   orderDate: { type: Date },

@@ -12,7 +12,7 @@
   <link href="/img/apple-touch-icon.png" rel="apple-touch-icon">
   <!-- Google Fonts -->
 
-  
+  <link rel="stylesheet" href="https://cdn.datatables.net/2.0.2/css/dataTables.dataTables.css" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
   <!-- Template Main CSS File -->
   <link href="/css/style.css" rel="stylesheet">
@@ -146,6 +146,12 @@
           <span>Coupons</span>
         </a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="/admin/offers">
+          <i class="bi bi-person"></i>
+          <span>Offers</span>
+        </a>
+      </li>
 
       <li class="nav-heading">Pages</li>
 
@@ -174,7 +180,7 @@
     </div><!-- End Page Title -->
     
     <table class="table table-bordered table-hover mt-3">
-      <thead class="table-dark">
+      <thead class="table-secondary ">
           <tr class="text-center ">
               <th>Order Id</th>
               <th>User Name</th>
@@ -186,52 +192,21 @@
               <th>Details</th>
           </tr>
       </thead>
+      
       <tbody>
+        <div class="scrollit">
         <% orders.forEach((row,index)=>{ %>
-        <tr class="align-middle text-center ">
-          <td><%= index+1 %></td>
-          <td><%=  row.userId.name%></td>
-          <td><%= row.items.reduce((acc,item)=>acc+=item.quantity,0) %></td>
-          <td><%= row.totalPrice %></td>
-          <td><%= row.orderDate.toJSON().slice(0,10) %>,<%= row.orderDate.toJSON().slice(11,16) %>
-          </td>
-          <% if(row.status === 'Order Placed'){%>
-          <td>
-            <div class="badge bg-primary rounded-pill">
-              <%= row.status  %>
-            </div>
-          </td>
-          <td>
-            <form id="myForm" action="/admin/orders/changestatus/<%= row._id %>" method="post">
-              <select class="form-select " name="status" id="status" onchange="this.form.submit()" >
-                <option value="action">action</option>
-                <option value="confirmed">confirmed</option>
-                <option value="shipped">shipped</option>
-                <option value="delivered">delivered</option>
-              </select>
-            </form>
-          </td>
-          <% }else if(row.status === 'confirmed'){ %>
-            <td>
-              <div class=" badge bg-warning rounded-pill">
-                <%= row.status  %>
-              </div>
+        
+          <tr class="align-middle text-center ">
+            <td><%= index+1 %></td>
+            <td><%=  row.userId.name%></td>
+            <td><%= row.items.reduce((acc,item)=>acc+=item.quantity,0) %></td>
+            <td><%= row.totalPrice %></td>
+            <td><%= row.orderDate.toJSON().slice(0,10) %>,<%= row.orderDate.toJSON().slice(11,16) %>
             </td>
+            <% if(row.status === 'Order Placed'){%>
             <td>
-              <form id="myForm" action="/admin/orders/changestatus/<%= row._id %>" method="post">
-                
-                    <select class="form-select " name="status" id="status" onchange="this.form.submit()" >
-                      <option value="action">action</option>
-                      <option value="shipped">shipped</option>
-                      <option value="delivered">delivered</option>
-                    </select>
-             
-              
-              </form>
-            </td>
-          <% }else if(row.status === 'shipped'){ %>
-            <td>
-              <div class="badge bg-info rounded-pill">
+              <div class="badge bg-primary rounded-pill">
                 <%= row.status  %>
               </div>
             </td>
@@ -239,39 +214,76 @@
               <form id="myForm" action="/admin/orders/changestatus/<%= row._id %>" method="post">
                 <select class="form-select " name="status" id="status" onchange="this.form.submit()" >
                   <option value="action">action</option>
+                  <option value="confirmed">confirmed</option>
+                  <option value="shipped">shipped</option>
                   <option value="delivered">delivered</option>
                 </select>
               </form>
             </td>
-          <% }else if(row.status === 'delivered'){ %>
+            <% }else if(row.status === 'confirmed'){ %>
+              <td>
+                <div class=" badge bg-warning rounded-pill">
+                  <%= row.status  %>
+                </div>
+              </td>
+              <td>
+                <form id="myForm" action="/admin/orders/changestatus/<%= row._id %>" method="post">
+                  
+                      <select class="form-select " name="status" id="status" onchange="this.form.submit()" >
+                        <option value="action">action</option>
+                        <option value="shipped">shipped</option>
+                        <option value="delivered">delivered</option>
+                      </select>
+               
+                
+                </form>
+              </td>
+            <% }else if(row.status === 'shipped'){ %>
+              <td>
+                <div class="badge bg-info rounded-pill">
+                  <%= row.status  %>
+                </div>
+              </td>
+              <td>
+                <form id="myForm" action="/admin/orders/changestatus/<%= row._id %>" method="post">
+                  <select class="form-select " name="status" id="status" onchange="this.form.submit()" >
+                    <option value="action">action</option>
+                    <option value="delivered">delivered</option>
+                  </select>
+                </form>
+              </td>
+            <% }else if(row.status === 'delivered'){ %>
+              <td>
+                <div class="badge bg-success rounded-pill ">
+                  <%= row.status  %>
+                </div>
+              </td>
+              <td>
+                no action
+              </td>
+            <% }else if(row.status === 'cancelled'){ %>
             <td>
-              <div class="badge bg-success rounded-pill ">
+              <div class="badge bg-danger rounded-pill">
                 <%= row.status  %>
               </div>
             </td>
             <td>
               no action
             </td>
-          <% }else if(row.status === 'cancelled'){ %>
-          <td>
-            <div class="badge bg-danger rounded-pill">
-              <%= row.status  %>
-            </div>
-          </td>
-          <td>
-            no action
-          </td>
-          <% } %>  
-          <td>
-            <a href="/admin/orderdetails/<%= row._id %>">
-              <button class="btn btn-secondary ">
-                order details
-              </button>
-            </a>
-            
-          </td>
-        </tr>
+            <% } %>  
+            <td>
+              <a href="/admin/orderdetails/<%= row._id %>">
+                <button class="btn btn-secondary ">
+                  order details
+                </button>
+              </a>
+              
+            </td>
+          </tr>
+       
+        
         <% }) %>
+        </div>
       </tbody>
     </table> 
     
@@ -282,11 +294,25 @@
 
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
- 
+  <script src="https://code.jquery.com/jquery-3.7.1.js"
+  integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
   <!-- Template Main JS File -->
  
-  <script src="/js/main.js"></script>
+  
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+  <script src="https://cdn.datatables.net/2.0.2/js/dataTables.js"></script>
+  <script src="/js/main.js"></script>
+  <script>
+    $(document).ready(()=>{
+        $("table").DataTable({
+            order:[0,'asc'],
+            columnDefs: [{ 
+              targets: [0,2,3], 
+              className: "text-center" 
+            }]
+        })
+    })
+  </script>
 </body>
 
 </html>

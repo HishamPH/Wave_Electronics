@@ -96,36 +96,60 @@
       </nav><!-- End Icons Navigation -->
   
   </header>
-  <% if(locals.news){ %>
-    <% alert(locals.news) %>
-  <% } %>
+  <%// if(locals.news){ %>
+    <%// alert(locals.news) %>
+  <% //} %>
 
     <!-- Topbar End -->
-
+    
 
   <section class="section dashboard position-absolute mx-5" style="top:150px;width: 1410px;"> 
+   
       <div class="row">
         <div class="col-8">
-          <div class="d-flex justify-content-end mb-3">
-            <a href="/user/userprofile/address">
-              <button class="btn btn-primary">
-                change address
-              </button>
-            </a>
-            
-          </div>
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title pb-0">
-                <div style="font-weight: bold;">
-                  <%= address.name %>
+          <div class="row">
+            <% if(address){ %>
+              <% address.forEach((row,index)=>{%>
+              <!-- Sales Card -->
+              <div class="col-xxl-6 col-md-12">
+                <div class="card ">
+                  <div class="card-body">
+                    <h5 class="card-title pb-0">
+                      <div style="font-weight: bold;"><%= row.name %></div>
+                    </h5>
+                    <p class="mb-0 py-0"><%= row.street %>,<%= row.city %>,<%= row.state  %></p>
+              <div class="d-flex justify-content-between mt-3 mb-2">
+                <button type="button" class="btn btn-primary mb-3 " data-bs-toggle="modal" data-bs-target="#edit_<%= row._id %>" style="font-weight: bold;">
+                  Edit address
+                </button>
+                
+                  
+                
+                <a href="/user/checkout/address/delete/<%= row._id  %>">
+                  <i class="bi bi-trash text-danger"></i>
+                </a>
+                
+              </div>
+              <form action="/user/checkout/address/change/<%= row._id %>" method="post">
+              <% if(row.main){ %>
+                <input id="radio" type="radio" name="main" checked value="<%= row.name %>" onchange="this.form.submit()">
+              <% }else{%>
+                <input id="radio" type="radio" name="main" value="<%= row.name %>" onchange="this.form.submit()">
+              <% } %>
+              <label for="radio">Set as default</label>
+              
+              </form>
+              </div>
+                  
                 </div>
-              </h5>
-              <p class="mb-0 py-0">
-                <%= address.street %>,<%= address.city %>,<%= address.state  %>
-              </p>
-            </div>
+              </div>
+            <% }) %>
+           
+            <% } %>
+            
+
           </div>
+          
         </div><!-- End Recent Sales -->
         <div class="col-4">
             <div class="card info-card sales-card">
@@ -169,7 +193,6 @@
                       </div>
                     </div>
                 </div>
-                
             </div>
             <div class="card">
               <div class="card-body ">
@@ -191,54 +214,72 @@
         </div>
       </div>
   </section>
+  <% address.forEach((row)=>{ %>
+    <div class="modal fade" id="edit_<%= row._id %>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Edit the address</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+                               
+            <form action="/user/userprofile/address/edit/<%= row._id  %>" method="post">
+              <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" name="name" class="form-control bg-light" id="name"
+                    value="<%= row.name %> " required />
+              </div>
+              <div class="form-group">
+                <label for="street">street:</label>
+                <input type="text" name="street" class="form-control bg-light" id="street"
+                    value="<%= row.street %>" required />
+              </div>
+              <div class="form-group">
+                <label for="city">city:</label>
+                <input type="text" name="city" class="form-control bg-light" id="city"
+                    value="<%= row.city %>" required />
+              </div>
+              <div class="form-group">
+                <label for="pincode">pincode:</label>
+                <input type="number" name="pincode" class="form-control bg-light" id="pincode"
+                    value="<%= row.pincode %>" required />
+              </div>
+              <div class="form-group">
+                <label for="state">state:</label>
+                <input type="text" name="state" class="form-control bg-light" id="state"
+                    value="<%= row.state %>" required />
+              </div>
+              <div class="form-group">
+                <label for="mobile">mobile:</label>
+                <input type="number" name="mobile" class="form-control bg-light" id="mobile"
+                    value="<%= row.mobile %>" required />
+              </div>
+              <div class="d-flex justify-content-center mb-3">
+                <button type="submit" class="btn btn-primary mt-3 mb-0">Edit Address</button>
+              </div>
+            </form>
+           
+          </div>
+          
+        </div>
+      </div>
+    </div>
 
-    <!-- <table class="table table-borderless datatable">
-      <thead class="my-3 thead-dark">
-          <tr>
-          <th scope="col">Product</th>
-          <th scope="col">Price</th>
-          <th scope="col" class="w-25">Quantity</th>
-          <th scope="col">Total</th>
-          <th scope="col">Remove</th>
-          </tr>
-      </thead>
-      <tbody>
-          <tr>
-          <% //items.forEach((row,index)=>{ %>
-          <td><img src="/images/<%=//row.productId.images[0]%>" alt="" style="width: 50px;"><%= //row.productId.ProductName  %></td>
-          <td><%=// row.productId.Price %></td>
-          <td class="d-flex">
-            <div class="input-group-btn">
-              <button class="btn btn-sm btn-primary btn-minus decrement" id="">
-              <i class="fa fa-minus"></i>
-              </button>
-            </div>
-            <div class="form-control form-control-sm bg-secondary border-0 text-center w-25 quantity" id="" data-path="<%=// row._id %>"><%= //row.quantity %></div>
-            <div class="input-group-btn">
-              <button class="btn btn-sm btn-primary btn-plus increment" id="">
-                  <i class="fa fa-plus"></i>
-              </button>
-            </div> 
-          </td>
-          <td>
-            <div id="it<%=//row._id  %>">
-              <%=// row.productId.Price * row.quantity  %>
-            </div>
-          </td>
-          <td>
-            <a href="/user/cart/delete/<%= //row._id %>">
-              <button id="hello" class="btn btn-sm btn-danger hello"><i class="bi bi-trash"></i></button>
-            </a>
-            
-          </td>
-          </tr>
-          <%// }) %>
-      </tbody>
-    </table> -->
-    
-    <!-- Footer Start -->
-   
-    <!-- Footer End -->
+
+  <% }) %>
+  
+
+
+
+
+
+
+
+
+  
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
   
 
@@ -250,6 +291,7 @@
   
   <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
   <!-- Template Javascript -->
   <script src="/js/main.js"></script>
   <script src=""></script>

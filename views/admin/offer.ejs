@@ -141,17 +141,18 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/admin/coupons">
+        <a class="nav-link collapsed" href="/admin/coupons">
           <i class="bi bi-person"></i>
           <span>Coupons</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link collapsed" href="/admin/offers">
+        <a class="nav-link" href="/admin/offers">
           <i class="bi bi-person"></i>
           <span>Offers</span>
         </a>
       </li>
+
       <li class="nav-heading">Pages</li>
 
       <li class="nav-item">
@@ -182,7 +183,7 @@
         Add coupon
       </button>
     </div>
-    <% if(coupon){%>
+    <% //if(coupon){%>
     <table class="table table-bordered table-hover mt-3">
       <thead class="table-dark">
           <tr class="text-center ">
@@ -196,20 +197,20 @@
           </tr>
       </thead>
       <tbody class="align-middle text-center ">
-        <% coupon.forEach((row,index)=>{ %>
+        <% //coupon.forEach((row,index)=>{ %>
         <tr>
           <td>
-            <%=  index+1 %>
+            <%= // index+1 %>
           </td>
           <td>
-            <%= row.code %>
+            <%=// row.code %>
           </td>
           <td>
-            <%= row.discount  %>
+            <%= //row.discount  %>
           </td>
-          <td><%= row.start.toJSON().slice(0,10) %></td>
-          <td><%= row.expire.toJSON().slice(0,10) %></td>
-          <td><%= row.status %></td>
+          <td><%= //row.start.toJSON().slice(0,10) %></td>
+          <td><%=// row.expire.toJSON().slice(0,10) %></td>
+          <td><%= //row.status %></td>
           <td>
             
               <button type="button" class="btn btn-secondary  mb-3 rounded-pill" data-bs-toggle="modal" data-bs-target="#couponEditModal" style="font-weight: bold;">
@@ -218,12 +219,12 @@
            
           </td>
         </tr>
-        <% }) %>
+        <% //}) %>
       </tbody>
     </table> 
-    <% }  %>
+    <%// }  %>
 
-    <% coupon.forEach((row)=>{%>
+    <% //coupon.forEach((row)=>{%>
     <div class="modal fade" id="couponEditModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -235,26 +236,26 @@
           </div>
           <div class="modal-body">
                                
-            <form action="/admin/coupons/edit/<%= row._id %>" method="post">
+            <form action="/admin/offers/edit/<%= //row._id %>" method="post">
               <div class="form-group">
                 <label for="code">code:</label>
                 <input type="text" name="code" class="form-control bg-light" id="code"
-                    value="<%= row.code %>" required />
+                    value="<%= //row.code %>" required />
               </div>
               <div class="form-group">
                 <label for="count">count:</label>
                 <input type="text" name="count" class="form-control bg-light" id="count"
-                value="<%= row.couponCount %>" required />
+                value="<%= //row.couponCount %>" required />
               </div>
               <div class="form-group">
                 <label for="discount">discount:</label>
                 <input type="number" name="discount" class="form-control bg-light" id="discount"
-                value="<%= row.discount %>" required />
+                value="<%=// row.discount %>" required />
               </div>
               <div class="form-group">
                 <label for="minPurchase">minPurchase:</label>
                 <input type="number" name="minPurchase" class="form-control bg-light" id="minPurchase"
-                value="<%= row.minPurchase %>" required />
+                value="<%=// row.minPurchase %>" required />
               </div>
             
               <div class="d-flex justify-content-center mb-3">
@@ -267,7 +268,7 @@
         </div>
       </div>
     </div>
-    <% }) %>
+    <% //}) %>
     <div class="modal fade" id="couponModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">

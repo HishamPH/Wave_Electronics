@@ -27,6 +27,9 @@ router.route('/login')
 router.route('/homepage')
 .get(userController.getHomePage);
 
+router.route('/homepage/:id')
+.get(userController.categorySort);
+
 
 
 
@@ -88,18 +91,45 @@ router.route('/addtocart/:id')
 router.route('/cart')
 .get(cartController.getCart)
 
+router.route('/cart/coupon')
+.post(cartController.applyCoupon)
+
 router.route('/cart/:id')
 .post(cartController.changeQuantity)
 
 router.route('/cart/delete/:id')
 .get(cartController.deleteFromCart)
 
+
+//====================== Wish List ======================
+
+router.route('/wishlist')
+.get(cartController.getWishlist);
+
+router.route('/wishlist/delete/:id')
+.get(cartController.deleteWishlist)
+
+router.route('/addwishlist/:id')
+.get(cartController.wishlist)
+
+
+
 //===================== CHECKOUT ======================
 
 router.route('/checkout')
 .get(cartController.getCheckout)
 
-router.route('/checkout/changeAddress')
+router.route('/checkout/address/change/:id')
+.post(cartController.addressDefault)
+
+router.route('/checkout/address/edit/:id')
+.post(cartController.addressEdit)
+
+
+router.route('/checkout/address/delete/:id')
+.get(cartController.addressDelete)
+
+
 
 
 //====================== orders ============================

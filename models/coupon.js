@@ -3,8 +3,9 @@ const mongoose = require('mongoose');
 const { Schema, ObjectId } = mongoose;
 
 const couponSchema = new mongoose.Schema({
-  couponName:{
-    type:String
+  couponCount:{
+    type:Number,
+    required:true
   } ,
   code: {
     type: String,

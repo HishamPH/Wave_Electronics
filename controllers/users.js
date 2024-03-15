@@ -4,6 +4,7 @@ const Products = require('../models/product')
 const OTP = require('../models/otp')
 const otpFunc = require('../utility/otpfunctions')
 const Cart = require('../models/cart')
+const Category = require('../models/category')
 
 module.exports = {
   getLandPage:async(req,res)=>{
@@ -12,12 +13,20 @@ module.exports = {
   },
   getHomePage:async(req,res)=>{
     let pd = await Products.find({Display:true})
+    let cat = await Category.find()
     let q = req.session.cartCount||0;
     if(req.session.user){
-      res.render('user/homepage',{message:req.session.name,pd,q});
-    }
+      res.render('user/homepage',{message:req.session.name,pd,q,cat});
+    } 
+  },
+  categorySort:async(req,res)=>{
+    let id = req.params.id
+    let pd = await Products.find({Category:id});
+    let cat = await Category.find();
+    let q = req.session.cartCount||0;
+    let message = req.session.name;
 
-      
+    res.render('user/homepage',{message,pd,cat,q})
   },
   getLogin:(req,res)=>{
     res.render('user/user_login');
@@ -263,16 +272,26 @@ module.exports = {
     res.redirect('/user/userprofile')
   },
   changePassword:async(req,res)=>{
-    let id = req.params.id;
-    let user = await User.findById(id);
-    if((req.body.pass === user.password)&&(req.body.pass1 === req.body.pass2)){
-      user.password = req.body.pass1;
-      await user.save()
-      res.redirect('/user/userprofile')
-    }else{
-      res.redirect('/user/userprofile');
-      res.json({msg:'your passwords do not match'})
+    try{
+      let id = req.params.id;
+      let user = await User.findById(id);
+      if(req.body.pass === user.password){
+        if((req.body.pass1 === req.body.pass2)){
+          user.password = req.body.pass1;
+          await user.save()
+          res.redirect('/user/userprofile')
+        }else{
+          res.json({message:'your passwords do not match'})
+        }  
+      }else{
+        res.json({message:'your typed the wrong password'})
+      }
+    }catch(e){
+      console.error(e);
+      console.log('this is a password issue')
+      res.json({message:'password do not match'})
     }
+    
   }
 }
 

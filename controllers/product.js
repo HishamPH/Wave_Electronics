@@ -51,9 +51,8 @@ module.exports = {
   },
   getEditProduct:async(req,res)=>{
     let id = req.params.id
-    let pd =await Product.findById(id);
-    let cat = await Category.find()
-    res.render('admin/editproduct',{pd,cat})
+    let pd =await Product.findById(id).populate('Category');
+    res.render('admin/editproduct',{pd})
     console.log(pd.Category)
   },
   postEditProduct:async(req,res)=>{

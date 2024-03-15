@@ -1,15 +1,17 @@
 $(document).ready(function() {
-  $(".increment").click(function() {
-      let divs = $(this).parent().prev('.quantity')
-      let q = parseInt(divs.text());
-      if(q===2)
-        alert('maximun quantity reached')
-      updateQuantity('increment',q,divs);
+  $(".increment").click(function(e) {
+    e.preventDefault()
+    let divs = $(this).parent().prev('.quantity')
+    let q = parseInt(divs.text());
+    if(q===2)
+      alert('maximun quantity reached')
+    updateQuantity('increment',q,divs);
   });
-  $(".decrement").click(function() {
-      let divs = $(this).parent().next('.quantity')
-      let q = parseInt(divs.text());      
-      updateQuantity('decrement',q,divs);
+  $(".decrement").click(function(e) {
+    e.preventDefault()
+    let divs = $(this).parent().next('.quantity')
+    let q = parseInt(divs.text());      
+    updateQuantity('decrement',q,divs);
   });
   function updateQuantity(action,currentQuantity,divs) {
     let id = divs.data('path')
@@ -34,5 +36,33 @@ $(document).ready(function() {
     });
   }
 
+  
+
 });
 
+$(document).ready(function() {
+  $('#coupon').submit(function(e){
+    e.preventDefault()
+    let code = $(this).serialize();
+    applyCoupon(code);
+  })
+
+  function applyCoupon(code){
+    $.ajax({
+      url:`/user/cart/coupon`,
+      method:'POST',
+      data:code,
+      success:function(res){
+        if(res.applied){
+          $('#couponname').text('Coupon')
+          $('#percent').text(`-${res.discount}%`)
+          $('#total-price').text(`₹ ${res.fullPrice}`)
+          alert('coupon applied')
+        }else{
+          alert('wrong coupon code')
+        }
+          
+      }
+    });
+  }
+});

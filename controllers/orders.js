@@ -55,7 +55,7 @@ module.exports = {
     try{
       let user = await User.findOne({email:req.session.user.username})
       let cart = await Cart.findOne({userId:user._id})
-      let orders = await Order.find({userId:user._id}).populate('items.productId userId')
+      let orders = await Order.find({userId:user._id}).populate('items.productId userId').sort({orderDate:-1})
       let q = cart.total??0;
       res.render('user/orders',{orders,q})
     }catch{
@@ -80,7 +80,7 @@ module.exports = {
   },
 
   getAdminOrders:async(req,res)=>{
-    let orders = await Order.find().populate('items.productId userId')
+    let orders = await Order.find().populate('items.productId userId').sort({orderDate:-1})
     if(orders)
       res.render('admin/orders',{orders})
     else
@@ -99,7 +99,8 @@ module.exports = {
   adminOrderDetails:async(req,res)=>{
     let id = req.params.id;
     let order = await Order.findById(id).populate('items.productId');
+    let address = order.Address;
     let items = order.items;
-    res.render('admin/orderdetail',{items})
+    res.render('admin/orderdetail',{items,address})
   }
 }

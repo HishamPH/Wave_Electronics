@@ -174,23 +174,14 @@
 
       <form action="/admin/editproduct/<%= pd._id  %>" method="post" enctype="multipart/form-data"
           class="card p-3 bg-light mb-3 text-dark">
-          <div class="d-flex justify-content-center align-items-center">
-            <select class="" id="category" name="Category" required style="width:38%;height: 35px;border-radius: 5px;margin-right: 4%;">
-                <option value="<%= pd.Category%>" selected>category:</option>
-                <%cat.forEach((x) => {%>
-                  <% if(pd.Category===x._id) {%>
-                    <option selected><%=x.Name%></option>
-                  <% }else{ %>
-                    <option><%=x.Name%></option>
-                  <% } %>
-                <%})%>
-            </select>
+        
+          <div class="form-group">
+            <label for="category">Category:</label>
+            <input type="text" name="Category" class="form-control bg-light" id="category" value="<%= pd.Category.Name %>" disabled/>
           </div>
-    
           <div class="form-group">
               <label for="productName">Product Name:</label>
-              <input type="text" name="ProductName" class="form-control bg-light" id="productName"
-                  placeholder="Enter product name" value="<%= pd.ProductName  %>" required />
+              <input type="text" name="ProductName" class="form-control bg-light" id="productName"  value="<%= pd.ProductName  %>" required />
           </div>
           
           <br>

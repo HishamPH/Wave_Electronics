@@ -1,8 +1,7 @@
 $(document).ready(function() {
  
-  $(".addtocart").click(function(e) {
+  $(".addtocart").click(function() {
       let id = $(this).data('path')
-      // let ev = e.target
       updateQuantity(id);
   });
   function updateQuantity(id) {
@@ -17,4 +16,27 @@ $(document).ready(function() {
           }
       });
   }
+
+
+  $(".wishlist").click(function() {
+    console.log('this is wishlist')
+      let id = $(this).data('path')
+      updateWishlist(id);
+  });
+  function updateWishlist(id) {
+      $.ajax({
+          url: `/user/addwishlist/${id}`,
+          method: 'GET',
+          success: function(res) {
+            if(res.status)
+              $("#wishlist").addClass("bg-danger");
+            else
+              $('#wishlist').removeClass('bg-danger')
+          },
+          error: function(xhr, status, error) {
+            console.error("Error updating quantity:", error);
+          }
+      });
+  }
 });
+

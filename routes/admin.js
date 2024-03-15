@@ -65,11 +65,21 @@ router.route('/orders/changestatus/:id')
 router.route('/orderdetails/:id')
 .get(orderController.adminOrderDetails)
 
-//==================== ORDERS =======================
+//==================== Coupons =======================
 
 router.route('/coupons')
 .get(couponController.getCoupon)
 
 
+router.route('/coupons/addcoupon')
+.post(couponController.addCoupon)
+
+router.route('/coupons/edit/:id')
+.post(couponController.editCoupon)
+
+//===================== Offers ==========================
+
+router.route('/offers')
+.get(couponController.getOffers)
 
 module.exports = router;
