@@ -24,6 +24,7 @@
     <!-- Customized Bootstrap Stylesheet -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/orderdetail.css">
     
 </head>
 
@@ -43,7 +44,7 @@
     </div><!-- End Logo -->
 
     <div class="search-bar">
-      <form class="search-form d-flex align-items-center" action="#">
+      <form class="search-form d-flex align-items-center" method="POST" action="#">
         <input type="text" name="query" placeholder="Search" title="Enter search keyword">
         <button type="submit" title="Search"><i class="bi bi-search"></i></button>
       </form>
@@ -149,16 +150,9 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link collapsed" href="/user/wishlist">
+        <a class="nav-link" href="/user/wishlist">
           <i class="bi bi-person"></i>
           <span>Wishlist</span>
-          
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="/user/wallet">
-          <i class="bi bi-person"></i>
-          <span>Wallet</span>
           
         </a>
       </li>
@@ -177,73 +171,118 @@
         </ol>
       </nav>
     </div> -->
-  
+
     <section class="section dashboard position-relative" style="top:70px">
       <div class="row">
         <div class="col-12">
-          <%if(orders){%>
-            <%orders.forEach((order)=>{ %>
-              <% order.items.forEach((item)=>{ %>
-                <a href="/user/orderdetails/<%= item._id %>">
-                  <div class="card ">
-                    <div class="card-body ">
-                      <div class="col-12 d-flex justify-content-between mt-3 ">
-                        <div class="d-flex ">
-                          <img src="/images/<%= item.productId.images[0] %>" alt="" style="width: 120px;">
-                          <p class="mt-3 ms-3 "><%= item.productId.ProductName  %></p>
+          <div class="card ">
+            <div class="card-body ">
+              <div class="col-12 d-flex justify-content-center  mt-3 ">
+                <div class="container">
+                  <div class="row">
+                    <div class="col-12 col-md-10 hh-grayBox pt45 pb20">
+                      <div class="row d-flex  justify-content-between">
+                        <div class="order-tracking completed">
+                          <span class="is-complete"></span>
+                          <p>Ordered<br><span><%= //orderDate  %></span></p>
                         </div>
-                        <h6 class="mt-3 ">₹<%= item.price.toLocaleString('hi') %></h6>
-                        <div class="mt-3 ">
-                          <% if(item.status == 'cancelled') {%>
-                            <span class="badge bg-danger ">
-                              <%= item.status %>
-                            </span>
-                          <%}else if(item.status=='confirmed'){%>
-                            <span class="badge bg-warning ">
-                              <%= item.status %>
-                            </span>
-                          <%}else if(item.status=='shipped'){%>
-                            <span class="badge bg-info ">
-                              <%= item.status %>
-                            </span>
-                          <%}else if(item.status=='delivered'){%>
-                            <span class="badge bg-success ">
-                              <%= item.status %>
-                            </span>
-                          <%}else if(item.status == 'Order Placed') {%>
-                            <span class="badge bg-success ">
-                              <%= item.status %>
-                            </span>
-                          <% }else if(item.status == 'returned'){%>
-                            <span class="badge bg-warning  ">
-                              <%= item.status %>
-                            </span>
-                          <% } %>
-                          <br>
-                          <br>
-                          <p><%= order.orderDate.toLocaleString('en-US',{dateStyle:'long'})%></p>
+                        <div class="order-tracking completed">
+                          <span class="is-complete"></span>
+                          <p>Shipped<br><span>Tue, June 25</span></p>
                         </div>
-                        
+                        <div class="order-tracking">
+                          <span class="is-complete"></span>
+                          <p>Delivered<br><span>Fri, June 28</span></p>
+                        </div>
+                        <div class="order-tracking">
+                          <span class="is-complete"></span>
+                          <p>Delivered<br><span>Fri, June 28</span></p>
+                        </div>
+                       
                       </div>
-                      
                     </div>
                   </div>
-                </a>
-              
-              <% }) %>
-            <%})%>
-          <%}else{%>
-            <div class="d-flex justify-content-center align-items-center">
-              <h1>
-                Your orders is empty
-              </h1>
-              
+                </div>
+                
+              </div>
+          
             </div>
-          <%}  %>
+            
+          </div>
+          <div class="card ">
+            <div class="card-body ">
+              <div class="col-12 d-flex justify-content-start  mt-3 ">
+                <div class="d-flex " style="width: 400px;">
+                  <img src="/images/<%= pd.productId.images[0] %>" style="width: 120px;" alt="">
+                  <div class="mt-3 ms-2">
+                    <h6 ><%= pd.productId.ProductName  %></h6>
+                    <p>₹<%= pd.price.toLocaleString('hi') %></p>
+                  </div>
+                  
+                  
+                </div>
+                
+                <div class="" style="width: 180px;">
+                  <div class="fw-bold mb-3 ">
+                    status
+                  </div>
+                  <% if(pd.status == 'cancelled') {%>
+                    <span class="badge bg-danger ">
+                      <%= pd.status %>
+                    </span>
+                  <%}else if(pd.status=='confirmed'){%>
+                    <span class="badge bg-warning ">
+                      <%= pd.status %>
+                    </span>
+                  <%}else if(pd.status=='shipped'){%>
+                    <span class="badge bg-info ">
+                      <%= pd.status %>
+                    </span>
+                  <%}else if(pd.status=='delivered'){%>
+                    <span class="badge bg-success ">
+                      <%= pd.status %>
+                      </span>
+                      <a href="/user/orders/returnorder/<%= pd._id  %>">
+                        <button class="btn btn-warning  ">
+                          return
+                        </button>
+                      </a>
+                    
+                    <%}else if(pd.status == 'Order Placed') {%>
+                      <span class="badge bg-success ">
+                        <%= pd.status %>
+                      </span>
+                      <a href="/user/orders/cancelorders/<%= pd._id  %>">
+                        <button class="btn btn-danger ">
+                          cancel
+                        </button>
+                      </a>
+                    <% }else if(pd.status == 'returned') {%>
+                      <span class="badge bg-warning  ">
+                        <%= pd.status %>
+                      </span>
+                    <% } %>
+                </div>
+                <div class="border-start  border-dark">
+                </div>
+                <div class="ms-3 ">
+                  <h5 class="fw-bold ">Delivery Address</h5>
+                  <%= address.name  %>,
+                  <%= address.street  %>,
+                  <%= address.pincode  %>,
+
+                </div>
+              </div>
+          
+            </div>
+            
+          </div>
+              
+        
         </div><!-- End Left side columns -->
       </div>
     </section>
- 
+
   </main><!-- End #main -->
 
 

@@ -188,16 +188,18 @@
                 </div>
                 <table class="table table-bordered table-hover mt-1">
                   <thead class="table-dark">
-                      <tr>
+                      <tr class="text-center ">
                           <th style="width: 400px;">Product</th>
                           <th>Price</th>
                           <th>Quantity</th>
                           <th>Total</th>
+                          <th>status</th>
+                          <th>action</th>
                       </tr>
                   </thead>
                   <tbody>
                     <% items.forEach((row,index)=>{ %>
-                    <tr class="align-middle ">
+                    <tr class="align-middle text-center ">
                       <td>
                         <div class="d-flex align-items-center ">
                           <img src="/images/<%= row.productId.images[0]  %>" alt="" style="width: 80px;">
@@ -207,10 +209,83 @@
                         </div>
                         
                       </td>
-                      <td><%= row.price%></td>
+                      <td><%= row.price %></td>
                       <td><%= row.quantity %></td>
-                      <td><%= row.price * row.quantity %></td>
-                      
+                      <td><%= (row.productId.Price-row.productId.discount)*row.quantity %></td>
+                      <% if(row.status === 'Order Placed'){%>
+                        <td>
+                          <div class="badge bg-primary rounded-pill">
+                            <%= row.status  %>
+                          </div>
+                        </td>
+                        <td>
+                          <form id="myForm" action="/admin/orders/changestatus/<%= row._id %>" method="post">
+                            <select class="form-select " name="status" id="status" onchange="this.form.submit()" >
+                              <option value="action">action</option>
+                              <option value="confirmed">confirmed</option>
+                              <option value="shipped">shipped</option>
+                              <option value="delivered">delivered</option>
+                            </select>
+                          </form>
+                        </td>
+                      <% }else if(row.status === 'confirmed'){ %>
+                        <td>
+                          <div class=" badge bg-warning rounded-pill">
+                            <%= row.status  %>
+                          </div>
+                        </td>
+                        <td>
+                          <form id="myForm" action="/admin/orders/changestatus/<%= row._id %>" method="post">
+                            
+                                <select class="form-select " name="status" id="status" onchange="this.form.submit()" >
+                                  <option value="action">action</option>
+                                  <option value="shipped">shipped</option>
+                                  <option value="delivered">delivered</option>
+                                </select>
+                          </form>
+                        </td>
+                      <%}else if(row.status === 'shipped'){ %>
+                        <td>
+                          <div class="badge bg-info rounded-pill">
+                            <%= row.status  %>
+                          </div>
+                        </td>
+                        <td>
+                          <form id="myForm" action="/admin/orders/changestatus/<%= row._id %>" method="post">
+                            <select class="form-select " name="status" id="status" onchange="this.form.submit()" >
+                              <option value="action">action</option>
+                              <option value="delivered">delivered</option>
+                            </select>
+                          </form>
+                        </td>
+                      <% }else if(row.status === 'delivered'){ %>
+                        <td>
+                          <div class="badge bg-success rounded-pill ">
+                            <%= row.status  %>
+                          </div>
+                        </td>
+                        <td>
+                          no action
+                        </td>
+                      <% }else if(row.status === 'cancelled'){ %>
+                        <td>
+                          <div class="badge bg-danger rounded-pill">
+                            <%= row.status  %>
+                          </div>
+                        </td>
+                        <td>
+                          no action
+                        </td>
+                      <% }else if(row.status === 'returned'){ %>
+                        <td>
+                          <div class="badge bg-danger rounded-pill">
+                            <%= row.status  %>
+                          </div>
+                        </td>
+                        <td>
+                          no action
+                        </td>
+                      <% } %>
                     </tr>
                     <% }) %>
                   </tbody>

@@ -3,8 +3,15 @@ $(document).ready(function() {
     e.preventDefault()
     let divs = $(this).parent().prev('.quantity')
     let q = parseInt(divs.text());
-    if(q===2)
-      alert('maximun quantity reached')
+    if(q===2){
+      Swal.fire({
+        position: "bottom",
+        text: 'maximum quantity for a person reached',
+        showConfirmButton: false,
+        backdrop:false,
+        timer:1500
+      });
+    }
     updateQuantity('increment',q,divs);
   });
   $(".decrement").click(function(e) {
@@ -56,7 +63,7 @@ $(document).ready(function() {
         if(res.applied){
           $('#couponname').text('Coupon')
           $('#percent').text(`-${res.discount}%`)
-          $('#total-price').text(`₹ ${res.fullPrice}`)
+          $('#total-price').text(`₹ ${res.fullPrice.toLocaleString('hi')}`)
           alert('coupon applied')
         }else{
           alert('wrong coupon code')

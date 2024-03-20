@@ -19,7 +19,9 @@ const ordersSchema = new mongoose.Schema({
     productId: { type: Schema.Types.ObjectId, ref: "Products" },
     quantity: { type: Number },
     price:{type:Number},
-    status:{type:String,default:"waiting confirmation"}
+    status:{type:String,default:"Order Placed"},
+    returnDate:{type:Date},
+    
   }],
   paymentMethod: { type: String },
   orderDate: { type: Date },

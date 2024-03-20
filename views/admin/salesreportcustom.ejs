@@ -147,13 +147,13 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/admin/offers">
+        <a class="nav-link collapsed" href="/admin/offers">
           <i class="bi bi-person"></i>
           <span>Offers</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link collapsed" href="/admin/sales">
+        <a class="nav-link " href="/admin/sales">
           <i class="bi bi-person"></i>
           <span>sales</span>
         </a>
@@ -174,107 +174,189 @@
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1>Orders</h1>
+      <h1>Sales Report This <%= range  %></h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="/admin/panel">Home</a></li>
-          <li class="breadcrumb-item active">Orders</li>
+          <li class="breadcrumb-item">sales</li>
+          
         </ol>
       </nav>
       
       
     </div><!-- End Page Title -->
-    <div class="d-flex justify-content-end ">
-      <button type="button" class="btn btn-primary mb-3 " data-bs-toggle="modal" data-bs-target="#couponModal" style="font-weight: bold;">
-        Add coupon
-      </button>
+
+
+    <section class="section dashboard">
+      <div class="row">
+
+        <!-- Left side columns -->
+        <div class="col-lg-12">
+          <div class="row">
+
+            <!-- Sales Card -->
+            <div class="col-xxl-4 col-md-6">
+              <div class="card info-card sales-card">
+
+
+
+                <div class="card-body">
+                  <h5 class="card-title">Sales <span>| This <%= range %></span></h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-cart"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6><%= q  %></h6>
+                      <span class="text-success small pt-1 fw-bold">12%</span> <span class="text-muted small pt-2 ps-1">increase</span>
+
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div><!-- End Sales Card -->
+
+            <!-- Revenue Card -->
+            <div class="col-xxl-4 col-md-6">
+              <div class="card info-card revenue-card">
+
+     
+
+                <div class="card-body">
+                  <h5 class="card-title">Revenue <span>| This <%= range %></span></h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-currency-dollar"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>₹<%= tp.toLocaleString('hi') %></h6>
+                      <span class="text-success small pt-1 fw-bold">8%</span> <span class="text-muted small pt-2 ps-1">increase</span>
+
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div><!-- End Revenue Card -->
+
+            <!-- Customers Card -->
+            <div class="col-xxl-4 col-xl-12">
+
+              <div class="card info-card customers-card">
+
+
+                <div class="card-body">
+                  <h5 class="card-title">Customers <span>| This <%= range %></span></h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-people"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>3</h6>
+                      <!-- <span class="text-danger small pt-1 fw-bold">12%</span> <span class="text-muted small pt-2 ps-1">decrease</span> -->
+
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+            </div><!-- End Customers Card -->
+
+         
+
+         
+
+            <!-- Top Selling -->
+            
+
+          </div>
+        </div><!-- End Left side columns -->
+
+      
+
+      </div>
+    </section>
+
+
+
+
+
+
+
+
+
+
+
+    <div class="d-flex justify-content-between ">
+      <a href="/admin/sales/month">
+        <button href="" type="button" class="btn btn-secondary rounded-pill">
+          last month
+        </button>
+      </a>
+      <a href="/admin/sales/week">
+        <button href="" type="button" class="btn btn-secondary rounded-pill">
+          last week
+        </button>
+      </a>
+      
+      <a href="/admin/sales/day">
+        <button href="" type="button" class="btn btn-secondary rounded-pill">
+          last day
+        </button>
+      </a>
+      
+      <form action="/admin/sales/custom" method="get">
+        <input type="date" name="startDate">
+        <input type="date" name="endDate">
+        <button type="submit" class="btn btn-secondary rounded-pill">
+          custom range
+        </button>
+      </form>
+      
     </div>
-    <% //if(coupon){%>
+    <% if(orders){%>
     <table class="table table-bordered table-hover mt-3">
       <thead class="table-dark">
           <tr class="text-center ">
               <th style="width: 70px;">Sl no.</th>
-              <th>code</th>
-              <th>discount</th>
-              <th>start date</th>
-              <th>Expiry date</th>
-              <th style="width: 150px;">Status</th>
-              <th style="width: 160px;">Action</th>
+              <th>Name</th>
+              <th>date</th>
+              <th>Total</th>
+              <!-- <th>discount</th> -->
+              <th style="width: 150px;">Received</th>
+              <th style="width: 160px;">Payment method</th>
           </tr>
       </thead>
       <tbody class="align-middle text-center ">
-        <% //coupon.forEach((row,index)=>{ %>
+        <% orders.forEach((row,index)=>{ %>
         <tr>
           <td>
-            <%= // index+1 %>
+            <%= index+1 %>
           </td>
           <td>
-            <%=// row.code %>
+            <%= row.userId.name %>
           </td>
           <td>
-            <%= //row.discount  %>
+            <%= row.orderDate.toJSON().slice(0,10)  %>
           </td>
-          <td><%= //row.start.toJSON().slice(0,10) %></td>
-          <td><%=// row.expire.toJSON().slice(0,10) %></td>
-          <td><%= //row.status %></td>
-          <td>
-            
-              <button type="button" class="btn btn-secondary  mb-3 rounded-pill" data-bs-toggle="modal" data-bs-target="#couponEditModal" style="font-weight: bold;">
-                Edit
-              </button>
-           
+          <td><%= (row.items.reduce((acc,item)=>{
+                  return acc + item.price*item.quantity
+              },0)) %>
           </td>
+          <td><%= row.totalPrice %></td>
+          <td><%= row.paymentMethod  %></td>
         </tr>
-        <% //}) %>
+        <% }) %>
       </tbody>
     </table> 
-    <%// }  %>
+    <% }  %>
 
-    <% //coupon.forEach((row)=>{%>
-    <div class="modal fade" id="couponEditModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLongTitle">Edit coupon</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-                               
-            <form action="/admin/offers/edit/<%= //row._id %>" method="post">
-              <div class="form-group">
-                <label for="code">code:</label>
-                <input type="text" name="code" class="form-control bg-light" id="code"
-                    value="<%= //row.code %>" required />
-              </div>
-              <div class="form-group">
-                <label for="count">count:</label>
-                <input type="text" name="count" class="form-control bg-light" id="count"
-                value="<%= //row.couponCount %>" required />
-              </div>
-              <div class="form-group">
-                <label for="discount">discount:</label>
-                <input type="number" name="discount" class="form-control bg-light" id="discount"
-                value="<%=// row.discount %>" required />
-              </div>
-              <div class="form-group">
-                <label for="minPurchase">minPurchase:</label>
-                <input type="number" name="minPurchase" class="form-control bg-light" id="minPurchase"
-                value="<%=// row.minPurchase %>" required />
-              </div>
-            
-              <div class="d-flex justify-content-center mb-3">
-                <button type="submit" class="btn btn-primary mt-3 mb-0">Edit Coupon</button>
-              </div>
-            </form>
-           
-          </div>
-          
-        </div>
-      </div>
-    </div>
-    <% //}) %>
+    
     <div class="modal fade" id="couponModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">

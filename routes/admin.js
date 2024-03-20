@@ -7,7 +7,7 @@ const Category = require('../controllers/category')
 const adminController=require('../controllers/admin')
 const userController = require('../controllers/users');
 const productController=require("../controllers/product")
-const {uploadImage,resizeImage} = require('../middlewares/multer')
+const {uploadImage} = require('../middlewares/multer')
 
 const orderController = require('../controllers/orders')
 const couponController = require('../controllers/coupon')
@@ -16,12 +16,14 @@ const couponController = require('../controllers/coupon')
 // --------------------------Userlist----------------------------------
 
 router.route('/users')
-    .get(adminController.getUser)
+.get(adminController.getUser)
 
 router.route('/users/:id')
-    .get(adminController.blockUser)
+.get(adminController.blockUser)
 
 //---------------------Category---------------------
+
+
 router.get('/category',Category.category);
 
 router.get('/addcategory',Category.addCategory);
@@ -81,5 +83,16 @@ router.route('/coupons/edit/:id')
 
 router.route('/offers')
 .get(couponController.getOffers)
+
+
+//====================== Sales =========================
+
+router.route('/sales/:id')
+.get(adminController.customSalesReport)
+
+router.route('/sales')
+.get(adminController.salesReport)
+
+
 
 module.exports = router;

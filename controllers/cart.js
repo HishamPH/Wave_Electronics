@@ -42,7 +42,7 @@ module.exports = {
   },
 
   getCart:async(req,res)=>{
-    let email = req.session.user.username
+    let email = req.session.user.username??req.session.user.email
     let user = await User.findOne({email:email})
     let cart = await Cart.findOne({userId:user._id}).populate('items.productId')
 
@@ -125,10 +125,8 @@ module.exports = {
       discount += Number(item.productId.discount)*Number(item.quantity)
     });
     req.session.checkout = true;
-    console.log(req.session)
-    console.log(cart._id)
-  
-    res.render('user/checkout',{cart,items,totalPrice,total:cart.total,discount,address})
+    let fullPrice = req.session.totalPrice??(totalPrice - discount);
+    res.render('user/checkout',{cart,items,totalPrice,total:cart.total,discount,address,fullPrice})
   },
 
   addressDefault:async (req,res)=>{
@@ -208,7 +206,7 @@ module.exports = {
     console.log(req.body)
     let price = 0;
     cart.items.forEach((item)=>{
-      price += item.quantity*item.price
+      price += item.quantity*(item.productId.Price - item.productId.discount)
     })
     let coupon = await Coupon.findOne({code:code})
     console.log(coupon)
@@ -218,59 +216,17 @@ module.exports = {
     if(coupon){
       let discount = coupon.discount
       let dis = price * (discount/100)
-      let fullPrice = price -dis;
+      let fulliPrice = price -dis;
+      let fullPrice = Math.floor(fulliPrice)
       coupon.couponCount--;
+      req.session.totalPrice = fullPrice;
+      
       await coupon.save()
-      console.log(discount)
+      console.log(dis)
       res.json({applied:true,fullPrice,discount})
     }else{
       applied = false;
       res.json({applied})
-    }
-  },
-  wishlist:async(req,res)=>{
-    try{
-      let id = req.params.id;
-      let email = req.session.user.username;
-      let user = await User.findOne({email:email}).populate('Wishlist.product');   
-      let index = user.Wishlist.findIndex((a)=>a.product._id.toString() === id);
-      let status = true;
-      if(index == -1){
-        const uuser =await User.updateOne({_id:user._id},{
-          $addToSet:{Wishlist:{product:id}}
-        });
-        console.log(uuser)
-      }
-      else{
-        user.Wishlist.splice(index, 1);
-        console.log('this is the else printing')
-        status = false;
-        await user.save()
-      }
-      res.json({status})
-    }catch(e){
-      console.error(e)
-    }
-  },
-  getWishlist:async(req,res)=>{
-    try{
-      let email = req.session.user.username;
-      let user = await User.findOne({email:email}).populate('Wishlist.product');
-      let wish = user.Wishlist;
-      let q = req.session.cartCount
-      if(wish)
-        res.render('user/wishlist',{wish,q})
-      else 
-        res.render('user/wishlist',{wish:false,q})
-    }catch(e){
-      console.error(e);
-    }
-  },
-  deleteWishlist:async(req,res)=>{
-    try{
-
-    }catch(e){
-
     }
   }
 }

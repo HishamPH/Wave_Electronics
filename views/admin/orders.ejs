@@ -152,6 +152,12 @@
           <span>Offers</span>
         </a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="/admin/sales">
+          <i class="bi bi-person"></i>
+          <span>sales</span>
+        </a>
+      </li>
 
       <li class="nav-heading">Pages</li>
 
@@ -179,7 +185,7 @@
       
     </div><!-- End Page Title -->
     
-    <table class="table table-bordered table-hover mt-3">
+    <table class="table table-bordered table-hover mt-3" style="">
       <thead class="table-secondary ">
           <tr class="text-center ">
               <th>Order Id</th>
@@ -187,90 +193,23 @@
               <th>Quantity</th>
               <th>Price</th>
               <th>Order Date</th>
-              <th style="width: 150px;">Status</th>
-              <th style="width: 160px;">Action</th>
+              
               <th>Details</th>
           </tr>
       </thead>
       
       <tbody>
-        <div class="scrollit">
+        
         <% orders.forEach((row,index)=>{ %>
         
           <tr class="align-middle text-center ">
             <td><%= index+1 %></td>
             <td><%=  row.userId.name%></td>
             <td><%= row.items.reduce((acc,item)=>acc+=item.quantity,0) %></td>
-            <td><%= row.totalPrice %></td>
+            <td><%= row.totalPrice.toLocaleString('hi') %></td>
             <td><%= row.orderDate.toJSON().slice(0,10) %>,<%= row.orderDate.toJSON().slice(11,16) %>
             </td>
-            <% if(row.status === 'Order Placed'){%>
-            <td>
-              <div class="badge bg-primary rounded-pill">
-                <%= row.status  %>
-              </div>
-            </td>
-            <td>
-              <form id="myForm" action="/admin/orders/changestatus/<%= row._id %>" method="post">
-                <select class="form-select " name="status" id="status" onchange="this.form.submit()" >
-                  <option value="action">action</option>
-                  <option value="confirmed">confirmed</option>
-                  <option value="shipped">shipped</option>
-                  <option value="delivered">delivered</option>
-                </select>
-              </form>
-            </td>
-            <% }else if(row.status === 'confirmed'){ %>
-              <td>
-                <div class=" badge bg-warning rounded-pill">
-                  <%= row.status  %>
-                </div>
-              </td>
-              <td>
-                <form id="myForm" action="/admin/orders/changestatus/<%= row._id %>" method="post">
-                  
-                      <select class="form-select " name="status" id="status" onchange="this.form.submit()" >
-                        <option value="action">action</option>
-                        <option value="shipped">shipped</option>
-                        <option value="delivered">delivered</option>
-                      </select>
-               
-                
-                </form>
-              </td>
-            <% }else if(row.status === 'shipped'){ %>
-              <td>
-                <div class="badge bg-info rounded-pill">
-                  <%= row.status  %>
-                </div>
-              </td>
-              <td>
-                <form id="myForm" action="/admin/orders/changestatus/<%= row._id %>" method="post">
-                  <select class="form-select " name="status" id="status" onchange="this.form.submit()" >
-                    <option value="action">action</option>
-                    <option value="delivered">delivered</option>
-                  </select>
-                </form>
-              </td>
-            <% }else if(row.status === 'delivered'){ %>
-              <td>
-                <div class="badge bg-success rounded-pill ">
-                  <%= row.status  %>
-                </div>
-              </td>
-              <td>
-                no action
-              </td>
-            <% }else if(row.status === 'cancelled'){ %>
-            <td>
-              <div class="badge bg-danger rounded-pill">
-                <%= row.status  %>
-              </div>
-            </td>
-            <td>
-              no action
-            </td>
-            <% } %>  
+            
             <td>
               <a href="/admin/orderdetails/<%= row._id %>">
                 <button class="btn btn-secondary ">
@@ -283,7 +222,7 @@
        
         
         <% }) %>
-        </div>
+        
       </tbody>
     </table> 
     

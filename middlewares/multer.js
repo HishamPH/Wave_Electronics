@@ -8,17 +8,6 @@ const sharp = require('sharp');
 const fs = require('fs');
 
 
-const size = SharpMulter({
-  imageOptions: {
-    resize: { width: 300, height: 600 }
-  }
-});
-
-// Use SharpMulter middleware directly
-const resizeImage = multer({ size });
-
-
-
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'public/images/'); 
@@ -28,6 +17,14 @@ const storage = multer.diskStorage({
     cb(null, uniqueSuffix + path.extname(file.originalname)); 
   },
 });
+
+
+// const size = SharpMulter({
+//   imageOptions: {
+//     resize: { width: 300, height: 600 } // Resize options
+//   },
+//   storage: storage // Storage configuration
+// });
 const upload = multer({ storage });
 let uploadImage = upload.fields([
   { name: 'image1', maxCount: 1 },
@@ -36,30 +33,11 @@ let uploadImage = upload.fields([
 ])
 
 
-// const resize = (req, res, next) => {
-//   if (!req.files) {
-//     return next();
-//   }
-//   console.log('hello')
-//   // Process each uploaded image and resize it
-//   const resizePromises = req.files.map((file) => {
-//     return sharp(file.path)
-//       .resize({ width: 300, height: 600 })
-//       .toBuffer()
-//       .then((buffer) => {
-//         fs.writeFileSync(file.path, buffer); // Overwrite original file with resized image
-//       });
-//   });
 
-//   // Wait for all resize operations to complete
-//   Promise.all(resizePromises)
-//     .then(() => {
-//       next();
-//     })
-//     .catch((err) => {
-//       next(err);
-//     });
-// };
+// const uploadImage = multer({ storage: size }).array('images', 3);
 
 
-module.exports = {uploadImage,resizeImage}
+
+
+
+module.exports = {uploadImage}

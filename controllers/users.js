@@ -5,7 +5,7 @@ const OTP = require('../models/otp')
 const otpFunc = require('../utility/otpfunctions')
 const Cart = require('../models/cart')
 const Category = require('../models/category')
-
+const Wallet = require('../models/wallet')
 module.exports = {
   getLandPage:async(req,res)=>{
     let pd = await Products.find({Display:true})
@@ -32,11 +32,10 @@ module.exports = {
     res.render('user/user_login');
   },
   postLogin:async(req,res)=>{
+  
     let a=await User.findOne({email:req.body.username})
     let pd = await Products.find();
-    let cart = await Cart.findOne({userId :a._id})
-    if(cart)
-      req.session.cartCount = cart.total;
+    
     let b;
     if(a)
       b = a.status??false;
@@ -49,6 +48,9 @@ module.exports = {
     }else if(a.email==req.body.username&&a.password==req.body.password){
       req.session.user=req.body
       req.session.name=a.name
+      let cart = await Cart.findOne({userId :a._id})
+        if(cart)
+      req.session.cartCount = cart.total;
       res.redirect('/user/homepage') 
     }else{
       req.session.message={
@@ -119,8 +121,10 @@ module.exports = {
     if (Number(otp.join('')) == matchedOTPrecord.otp) {
         req.session.OtpValid = true;
         let data = await User.create(req.session.user)
-        req.session.name = data.name
+        req.session.name = data.name;
+        let wallet = await Wallet.create({userId:data._id})
         res.redirect('/user/homepage')
+
     } else {
         console.log("Entered OTP does not match stored OTP.");
         res.redirect("/user/emailverification");
@@ -292,6 +296,15 @@ module.exports = {
       res.json({message:'password do not match'})
     }
     
+  },
+  searchProduct:async(req,res)=>{
+    let {q} = req.query;
+    console.log(q)
+    
+    //let product = await Products.find({$text: {$search:q}})
+    //console.log(product)
+    //res.json({product})
+    //res.render('user/searchresult',{product,name})
   }
 }
 

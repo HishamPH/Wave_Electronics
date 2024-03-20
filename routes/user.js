@@ -11,6 +11,10 @@ const productController=require('../controllers/product')
 const cartController = require('../controllers/cart')
 const orderController = require('../controllers/orders')
 
+const walletController = require('../controllers/wallet')
+
+const wishlistController = require('../controllers/wishlist')
+
 //const checkoutAuth = require('../middlewares/userAuth')
 
 
@@ -82,7 +86,7 @@ router.route('/userprofile/address/delete/:id')
 .get(userController.deleteAddress)
 
 
-//================================ CART =========================================
+//====================== CART ===========================
 
 
 router.route('/addtocart/:id')
@@ -104,13 +108,13 @@ router.route('/cart/delete/:id')
 //====================== Wish List ======================
 
 router.route('/wishlist')
-.get(cartController.getWishlist);
+.get(wishlistController.getWishlist);
 
 router.route('/wishlist/delete/:id')
-.get(cartController.deleteWishlist)
+.get(wishlistController.deleteWishlist)
 
 router.route('/addwishlist/:id')
-.get(cartController.wishlist)
+.get(wishlistController.wishlist)
 
 
 
@@ -141,8 +145,23 @@ router.route('/userprofile/orders')
 router.route('/placeorder/:id')
 .post(orderController.placeOrder)
 
+router.route('/paymentfailed/:id')
+.get(orderController.paymentFailed)
+
+router.route('/paymentsuccess')
+.post(orderController.paymentSuccess)
+
 router.route('/orders/cancelorders/:id')
 .get(orderController.cancelOrders)
+
+router.route('/orders/returnorder/:id')
+.get(orderController.returnOrder)
+
+
+router.route('/orderdetails/:id')
+.get(orderController.userOrderDetails)
+
+//===================== Profile ============================
 
 
 router.route('/userprofile')
@@ -155,7 +174,18 @@ router.route('/userprofile/changepassword/:id')
 .post(userController.changePassword)
 
 
+//======================== Wallet ======================
 
-//=============================================================
+router.route('/wallet')
+.get(walletController.getWallet)
+
+
+//======================= Search ========================
+
+
+router.route('/search')
+.get(userController.searchProduct)
+
+//========================================================
 
 module.exports = router;
