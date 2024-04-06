@@ -1,7 +1,7 @@
 const mongoose=require('mongoose')
 require('dotenv').config()
 
-
+const MONGO_ATLAS_URL = process.env.MONGO_ATLAS_URL
 
 const MONGODB_URL=process.env.MONGO_URL
 
@@ -18,5 +18,5 @@ mongoose.connection.on('connected',()=>{
 })
 
 mongoose.connection.on('disconnected',()=>{
-    console.log('Failed to Connecte the  Database!!!')
+    console.log('Failed to Connect the  Database!!!')
 })

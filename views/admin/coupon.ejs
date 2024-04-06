@@ -221,6 +221,11 @@
               <button type="button" class="btn btn-secondary  mb-3 rounded-pill" data-bs-toggle="modal" data-bs-target="#couponEditModal" style="font-weight: bold;">
                 Edit
               </button>
+              <a href="/admin/coupons/delete/<%= row._id%>">
+                <button type="button" class="btn btn-danger  mb-3 rounded-pill" data-bs-toggle="modal" data-bs-target="#couponEditModal" style="font-weight: bold;">
+                  Delete
+                </button>
+              </a>
            
           </td>
         </tr>
@@ -245,22 +250,32 @@
               <div class="form-group">
                 <label for="code">code:</label>
                 <input type="text" name="code" class="form-control bg-light" id="code"
-                    value="<%= row.code %>" required />
+                    value="<%= row.code %>"/>
               </div>
               <div class="form-group">
                 <label for="count">count:</label>
                 <input type="text" name="count" class="form-control bg-light" id="count"
-                value="<%= row.couponCount %>" required />
+                value="<%= row.couponCount %>"/>
               </div>
               <div class="form-group">
                 <label for="discount">discount:</label>
                 <input type="number" name="discount" class="form-control bg-light" id="discount"
-                value="<%= row.discount %>" required />
+                value="<%= row.discount %>"/>
               </div>
               <div class="form-group">
                 <label for="minPurchase">minPurchase:</label>
                 <input type="number" name="minPurchase" class="form-control bg-light" id="minPurchase"
-                value="<%= row.minPurchase %>" required />
+                value="<%= row.minPurchase %>"/>
+              </div>
+              <div class="form-group">
+                <label for="start">start date:</label>
+                <input type="date" name="start" class="form-control bg-light" id="start"
+                value="<%= row.start %>" required/>
+              </div>
+              <div class="form-group">
+                <label for="expire">expire date:</label>
+                <input type="date" name="expire" class="form-control bg-light" id="expire"
+                value="<%= row.expire %>" required/>
               </div>
             
               <div class="d-flex justify-content-center mb-3">

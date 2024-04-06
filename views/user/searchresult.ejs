@@ -29,7 +29,7 @@
 
 <body>
     
-    <header id="header" class="header fixed-top d-flex align-items-center bg-light" style="height: 125px;">
+    <header id="header" class="header fixed-top d-flex align-items-center bg-black " style="height: 125px;">
 
         <div class="d-flex align-items-center justify-content-between">
           <div class="col-lg-4  d-flex align-items-center">
@@ -43,8 +43,8 @@
         </div><!-- End Logo -->
     
         <div class="search-bar">
-          <form class="search-form d-flex align-items-center" action="/user/search" method="get">
-            <input type="search" name="name" placeholder="Search" title="Enter search keyword" onkeyup="this.form.submit()" value="<%= name  %>">
+          <form class="search-form d-flex align-items-center">
+            <input type="search" name="name" placeholder="Search" title="Enter search keyword" id="searchInput" >
             <button type="submit" title="Search"><i class="bi bi-search"></i></button>
           </form>
         </div><!-- End Search Bar -->
@@ -61,14 +61,14 @@
             <li class="nav-item dropdown mx-3">
                 <div class="d-flex align-items-center gap-2 text-dark">
                   <!-- <h6 class="text text-dark">cart</h6> -->
-                  <a href="/user/cart"></a>
+                  <a href="/user/cart">
                   <div class="nav-link nav-icon">
                   
-                    <i class="bi bi-cart fs-3"></i>
+                    <i class="bi bi-cart fs-3 text-white "></i>
                     
                       <span class="badge bg-danger badge-number fs-7 rounded-circle" id="cartCount">
                       
-                        <%= //q  %>
+                        <%= q  %>
                         
                       </span>
                     
@@ -76,7 +76,12 @@
                   </a>
                   <a href="/user/wishlist">
                     <div class="nav-link nav-icon">
-                      <i class="bi bi-heart fs-3"></i>  
+                      <i class="bi bi-heart fs-3 text-white "></i>
+                      <span class="badge bg-danger badge-number fs-7 rounded-circle" id="wishCount">
+                      
+                        <%= wishlist.length  %>
+                        
+                      </span>
                     </div>
                   </a>
                 </div>
@@ -86,7 +91,7 @@
     
               <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                 <img src="/img/user.png" alt="Profile" class="rounded-circle">
-                <span class="d-none d-md-block dropdown-toggle ps-2"><%= locals.name %></span>
+                <span class="d-none d-md-block dropdown-toggle ps-2"></span>
               </a><!-- End Profile Iamge Icon -->
     
               <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
@@ -118,68 +123,120 @@
       </header>
 
     <!-- Navbar Start -->
-    <div class="container-fluid bg-dark mb-30 position-relative " style="top: 125px;">
-      <div class="row px-xl-5 d-flex align-items-center">
-          <div class="col-lg-3  ">
-              <a class="btn d-flex align-items-center justify-content-between bg-warning w-100" data-bs-toggle="collapse" href="#navbar-vertical" style="height: 65px; padding: 0 30px;">
-                  <h6 class="text-dark m-0"><i class="fa fa-bars mr-2"></i>Categories</h6>
-                  <i class="fa fa-angle-down text-dark"></i>
-              </a>
-              <nav class="collapse position-absolute navbar navbar-vertical navbar-light align-items-start p-0 bg-light  " id="navbar-vertical" style="width: 300px; z-index: 999;">
-                  <div class="navbar-nav w-100 text-dark fw-bold ">
-                    
-                      
-                      
-                      
-                  </div>
-              </nav>
-          </div>
-        
-          
-      </div>
-  </div>
+   
     <!-- Navbar End -->
 
 
 
 
     <!-- Featured Start -->
+    <div class="container mt-5 position-relative " style="top: 120px;">
+      <div class="row">
+        <div class="col-xl-3 col-lg-4 col-md-6 ">
+          
+        </div>
+
+      </div>
+    </div>
     
     <!-- Featured End -->
-    <div class="container mt-5 position-relative " style="top: 120px;">
-        <div class="row">
-        <% if(product){ %>
-        <% product.forEach((row,index)=>{%>
-          <div class="col-xl-3 col-lg-4 col-md-6 ">
-            <div class="card">
-              <img src="/images/<%= row.images[0]  %>" class="card-img-top card-img-auto" alt="Product Image" style="object-fit: cover;">
-              <div class="card-body bg-light">
-                <a href="/user/detail/<%= row._id %>">
-                    <h5 class="card-title"><%= row.ProductName  %></h5>
-                    <p class="card-text text-danger fw-bold">Price: ₹<%= row.Price.toLocaleString('hi')  %></p>
-                    <p class="card-text"><%= row.spec1 %></p>
-                    
-                </a>
-                <div class="d-flex justify-content-between mt-3">
-                  <button data-path="<%= row._id %>" class="btn btn-primary rounded-pill shadow-sm addtocart">Add to cart</button>
-                  <button data-path="<%= row._id %>" class="btn rounded-circle  shadow-sm text-danger wishlist"><i class="bi bi-heart" id="wishlist"></i></button>
-                </div>
-                
-                
-                
-              </div>
-            </div>
+    <div class=" mx-2   mt-5 position-relative row" style="top: 50px;">
+      
+      <div class="col-2  ">
+        <div class="card rounded-0 h-100 ">
+          <div class="ms-3 mt-2  fs-5 fw-bolder"> 
+            Filters
           </div>
-          <%});%>
-          <% }else{ %>
-            <div class="d-flex justify-content-center align-items-center ">
-              <div>
-                No items found
+          <hr>
+          <div >
+            <div class="fw-bold ms-3 mb-2 ">Categories</div>
+            
+            <form id="filter" class="filter">
+              <% cat.forEach((item,index)=>{ %>
+              <div class="mb-1 ms-4 form-group">
+                <input id="c1" type="checkbox" name="<%= item._id %>" value="<%= index+1 %>">
+                <label for="c1"><%= item.Name%></label>
               </div>
+              <% }); %>
+            </form>
+            <hr>
+            <form id="sort" class="filter">
+              <div class="fw-bold ms-3 ">Price</div>
+              <div class="d-flex flex-column ms-4 gap-2 mt-2 ">
+                <label>
+                  <input type="radio" name="order" value="lth" checked="checked"> Low to High
+                </label>
+                <label>
+                  <input type="radio" name="order" value="htl"> High to Low
+                </label>
+              </div>
+        
+              <div class="fw-bold ms-3 ">Order</div>
+              <div class="d-flex flex-column ms-4 gap-2 mt-2 ">
+                <label>
+                  <input type="radio" name="order" value="az"> A to Z
+                </label>
+                <label>
+                  <input type="radio" name="order" value="za"> Z to A
+                </label>
+              </div>
+            </form>
               
-            </div>
-          <% } %>
+            
+          </div>
         </div>
+      </div>
+      <div class="col-10 ">
+        <% if(product){ %>
+          <div class="row" id="searchResult">
+          <% product.forEach((row,index)=>{%>
+            <div class="col-xl-3 col-lg-4 col-md-6 ">
+              <div class="card rounded ">
+                <img src="/images/<%= row.images[0]  %>" class="card-img-top card-img-auto" alt="Product Image" style="object-fit: cover;">
+                <div class="card-body bg-light ">
+                  <a href="/user/detail/<%= row._id %>">
+                      <h5 class="card-title"><%= row.ProductName  %></h5>
+                      <p class="card-text text-danger fw-bold">Price: ₹<%= row.Price.toLocaleString('hi')  %></p>
+                      <p class="card-text"><%= row.spec1 %></p>
+                      
+                  </a>
+                  <div class="d-flex justify-content-between mt-3">
+                    <button data-path="<%= row._id %>" class="btn btn-primary rounded-pill shadow-sm addtocart">Add to cart</button>
+                    <% if(wishlist.includes(row._id.toString())){ %>
+                      <button data-path="<%= row._id %>" class="btn rounded-circle  shadow-sm text-danger wishlist"><img src="/img/heart.png" class="img-fluid heart-image" alt=""></button>
+                    <% }else{ %>
+                      <button data-path="<%= row._id %>" class="btn rounded-circle  shadow-sm text-danger wishlist"><img src="/img/heart-white.png" class="img-fluid heart-image" alt=""></button>
+                    <% } %>
+                  </div>
+                  
+                  
+                  
+                </div>
+              </div>
+            </div>
+          <%});%>
+          </div>
+          <div class="w-100 d-flex justify-content-center gap-2 "> 
+            <form class="pagination" id="pagination">
+              <button class="btn btn-primary rounded-pill">prev</button>
+              <button class="btn btn-light rounded-circle">1</button>
+              <button class="btn btn-light rounded-circle active">2</button>
+              <button class="btn btn-light rounded-circle" onclick="">3</button>
+              <button class="btn btn-primary rounded-pill">next</button>
+            </form>
+            
+      
+          </div>
+          <% }else{ %>
+          <div class="d-flex justify-content-center align-items-center ">
+            <div>
+              No items found
+            </div>
+            
+          </div>
+          <% } %>  
+      </div>
+      
     </div>
  
 
@@ -266,9 +323,15 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
     
 
+    <script
+    src="https://code.jquery.com/jquery-3.7.1.js"
+    integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+    crossorigin="anonymous"></script>
+
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
     <script src="/js/cartCount.js"></script>
+    <script src="/js/pagination.js"></script>
 
 </body>
 

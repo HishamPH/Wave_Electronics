@@ -36,11 +36,19 @@ const ProductsSchema = new mongoose.Schema({
   spec2: {type: String},
   rating:{type:Number},
   reviews:{type:Array},
+  offer: {
+    type: Schema.Types.ObjectId,
+    ref: 'Offer',
+  },
+  offerPrice: {
+    type: Number,
+  },
   // reviews:[{
   //   userId:{type:Schema.Types.ObjectId,ref:'User'},
   //   review:[{type:String}]
   // }],
-  color:{type:Array}
+  // color:{type:String,default:'black'},
+  // storage:{type:Number,default:128}
 });
 
 ProductsSchema.index({ProductName:'text'});

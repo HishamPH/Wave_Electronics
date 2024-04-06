@@ -29,71 +29,106 @@
 
 <body>
     <!-- Topbar Start -->
-    <div class="container-fluid">
-        
-        <div class="row align-items-center bg-light py-3 px-xl-5 d-none d-lg-flex justify-content-between">
-            <div class="col-lg-4">
-                <a href="/user/homepage" class="text-decoration-none">
-                    <span class="h1 text-uppercase text-warning bg-dark px-2">WAVE</span>
-                    <span class="h1 text-uppercase text-dark bg-warning px-2 ml-n1">ELECTRONICS</span>
-                </a>
-            </div>
-            <div class="col-lg-4 col-6 text-left">
-              <div class="input-group d-flex align-items-center h-100">
-                <input type="text" class="form-control" placeholder="Search for products">
-                <div class="input-group-append h-50 ">
-                  <span class="input-group-text bg-transparent text-primary ">
-                      <i class="fa fa-search "></i>
-                  </span>
-                </div>
-              </div>
-            </div>
+    <header id="header" class="header fixed-top d-flex align-items-center bg-black " style="height: 90px;">
+
+        <div class="d-flex align-items-center justify-content-between">
+          <div class="col-lg-4  d-flex align-items-center">
+            <a href="/user/homepage" class="text-decoration-none">
+              <span class="h2 text-uppercase text-warning bg-dark px-2">WAVE</span>
+              <span class="h2 text-uppercase text-dark bg-warning px-2 ml-n1">ELECTRONICS</span>
+            </a>
+            
+          </div>
           
-        </div>
-    </div>
+        </div><!-- End Logo -->
+    
+        <div class="search-bar">
+          <form class="search-form d-flex align-items-center" action="/user/getsearch" method="get">
+            <input type="search" name="name" placeholder="Search" title="Enter search keyword" id="" onclick="this.form.submit()">
+            <button type="submit" title="Search"><i class="bi bi-search"></i></button>
+          </form>
+        </div><!-- End Search Bar -->
+    
+        <nav class="header-nav ms-auto">
+          <ul class="d-flex align-items-center">
+    
+            <li class="nav-item d-block d-lg-none">
+              <a class="nav-link nav-icon search-bar-toggle " href="/user/search">
+                <i class="bi bi-search"></i>
+              </a>
+            </li><!-- End Search Icon-->
+            
+            <li class="nav-item dropdown mx-3">
+                <div class="d-flex align-items-center gap-2 text-dark">
+                  <!-- <h6 class="text text-dark">cart</h6> -->
+                  <a href="/user/cart">
+                  <div class="nav-link nav-icon">
+                    <i class="bi bi-cart fs-3 text-white "></i>
+                      <span class="badge bg-danger badge-number fs-7 rounded-circle fw-bold " id="cartCount">
+                        <%= //q  %>
+                      </span>
+                  </div>
+                  </a>
+                  <a href="/user/wishlist">
+                    <div class="nav-link nav-icon">
+                      <i class="bi bi-heart fs-3 text-white"></i> 
+                      <span class="badge bg-danger badge-number fs-7 rounded-circle" id="wishCount">
+                      
+                        <%= //wishlist.length  %>
+                        
+                      </span>
+                    </div>
+                  </a>
+                </div>
+            </li>
+            <!-- End Notification Nav -->
+            <li class="nav-item dropdown pe-3">
+    
+              <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                <img src="/img/user.png" alt="Profile" class="rounded-circle">
+                <span class="d-none d-md-block dropdown-toggle ps-2 text-white "></span>
+                
+              </a><!-- End Profile Iamge Icon -->
+    
+              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                <li class="dropdown-header">
+                  <h6><%= locals.name %></h6>
+                  <span>Web Designer</span>
+                </li>
+            
+    
+                <li>
+                  <a class="dropdown-item d-flex align-items-center" href="/user/userprofile/address">
+                    <i class="bi bi-person"></i>
+                    <span>My Profile</span>
+                  </a>
+                </li>
+                <li >
+                  <a class="dropdown-item d-flex align-items-center" href="/user/logout">
+                    <i class="bi bi-box-arrow-right text-danger"></i>
+                    <span class="text-danger">Sign Out</span>
+                  </a>
+                </li>
+    
+              </ul><!-- End Profile Dropdown Items -->
+            </li><!-- End Profile Nav -->
+    
+          </ul>
+        </nav><!-- End Icons Navigation -->
+    
+    </header>
     <!-- Topbar End -->
 
 
     <!-- Navbar Start -->
-    <div class="container-fluid bg-dark mb-30">
-        <div class="row px-xl-5">
-            <div class="col-lg-3 d-none d-lg-block">
-                <a class="btn d-flex align-items-center justify-content-between bg-warning w-100" data-bs-toggle="collapse" href="#navbar-vertical" style="height: 65px; padding: 0 30px;">
-                    <h6 class="text-dark m-0"><i class="fa fa-bars mr-2"></i>Categories</h6>
-                    <i class="fa fa-angle-down text-dark"></i>
-                </a>
-                <nav class="collapse position-absolute navbar navbar-vertical navbar-light align-items-start p-0 bg-light" id="navbar-vertical" style="width: calc(100% - 30px); z-index: 999;">
-                    <div class="navbar-nav w-100">
-                        <div class="nav-item dropdown dropright">
-                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Dresses <i class="fa fa-angle-right float-right mt-1"></i></a>
-                            <div class="dropdown-menu position-absolute rounded-0 border-0 m-0">
-                                <a href="" class="dropdown-item">Men's Dresses</a>
-                                <a href="" class="dropdown-item">Women's Dresses</a>
-                                <a href="" class="dropdown-item">Baby's Dresses</a>
-                            </div>
-                        </div>
-                        <a href="" class="nav-item nav-link">Shirts</a>
-                        <a href="" class="nav-item nav-link">Jeans</a>
-                        <a href="" class="nav-item nav-link">Swimwear</a>
-                        <a href="" class="nav-item nav-link">Sleepwear</a>
-                        <a href="" class="nav-item nav-link">Sportswear</a>
-                        <a href="" class="nav-item nav-link">Jumpsuits</a>
-                        <a href="" class="nav-item nav-link">Blazers</a>
-                        <a href="" class="nav-item nav-link">Jackets</a>
-                        <a href="" class="nav-item nav-link">Shoes</a>
-                    </div>
-                </nav>
-            </div>
-            
-        </div>
-    </div>
+  
     <!-- Navbar End -->
       <!-- Shop Detail Start -->
-      <div class="container-fluid p-5">
+      <div class="container-fluid p-5 position-relative bg-light " style="top:70px;">
         <div class="row px-xl-5 d-flex justify-content-start ">
-            <div class="col-lg-5 mb-30">
+            <div class="col-lg-5 mb-30 ">
                 <div id="product-carousel" class="carousel slide" data-ride="carousel">
-                    <div class="carousel-inner bg-light">
+                    <div class="carousel-inner bg-light shadow-sm ">
                         <div id="img-container zoom1" class="carousel-item">
                             <img class="w-100 h-100" src="/images/<%= pd.images[0]  %>" alt="Image">
                         </div>
@@ -116,8 +151,8 @@
                 </div>
             </div>
 
-            <div class="col-lg-7 h-auto mb-30">
-                <div class="h-100 bg-light p-30">
+            <div class="col-lg-7 h-auto mb-30 shadow-sm bg-white ">
+                <div class="h-100 bg-white  p-3">
                     <h3><%= pd.ProductName %></h3>
                     <div class="d-flex mb-3">
                         <div class="text-primary mr-2">
@@ -130,7 +165,7 @@
                         <small class="pt-1">(99 Reviews)</small>
                     </div>
                     <div class="d-flex align-items-center ">
-                        <h3 class="font-weight-semi-bold me-3 ">₹<%= (pd.Price-pd.discount).toLocaleString('hi') %></h3>
+                        <h3 class="font-weight-semi-bold me-3 ">₹<%= pd.offerPrice.toLocaleString('hi') %></h3>
                         <h4 class="fs-5 text-decoration-line-through">
                             <span class="text-danger ">
                                 ₹<%= pd.Price.toLocaleString('hi')  %>
@@ -380,8 +415,8 @@
     <script src="/js/main.js"></script>
  
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-    <!-- <script src="https://unpkg.com/js-image-zoom@0.4.1/js-image-zoom.js" type="application/javascript"></script>
-    <script src="/js/cartCount.js"></script> -->
+    <!-- <script src="https://unpkg.com/js-image-zoom@0.4.1/js-image-zoom.js" type="application/javascript"></script> -->
+    <script src="/js/cartCount.js"></script>
 
     <script>
         var options1 = {

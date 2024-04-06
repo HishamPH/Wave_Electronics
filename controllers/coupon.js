@@ -33,18 +33,25 @@ module.exports = {
   },
   editCoupon:async(req,res)=>{
     let id = req.params.id;
-    let {code,count,discount,minPurchase} = req.body
+    let {code,count,discount,minPurchase,start,expire} = req.body
     let coupon = await Coupon.findByIdAndUpdate(id,{
       code:code,
       couponCount:count,
       discount:discount,
-      minPurchase:minPurchase
+      minPurchase:minPurchase,
+      start:start,
+      expire:expire
     });
 
     res.redirect('/admin/coupons')
 
   },
-  getOffers:async(req,res)=>{
-    res.render('admin/offer')
+  deleteCoupon:async(req,res)=>{
+    console.log('hello')
+    let id = req.params.id;
+    let coupon = await Coupon.findByIdAndDelete(id);
+    console.log(coupon)
+    res.redirect('/admin/coupons')
+
   }
 }

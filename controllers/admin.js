@@ -1,8 +1,75 @@
 const User = require('../models/users')
 
-const Order = require('../models/orders')
+const Order = require('../models/orders');
+const Products = require('../models/product');
 
 module.exports = {
+  getAdminLogin:async(req,res)=>{
+    res.render('admin/admin_login')
+  },
+  postAdminLogin:async(req,res)=>{
+    const admin_id="admin@gmail.com";
+    const admin_password='a'
+    if(admin_id==req.body.adminname&&admin_password==req.body.password){
+        req.session.admin=req.body;
+        res.redirect("/admin/panel")
+    }
+    
+  },
+  getDashboard:async(req,res)=>{
+    let date = new Date();
+
+    let lastMonth = new Date(date);
+    lastMonth.setDate(lastMonth.getDate() - 10);
+    let limit =10;
+    let order = await Order.find({
+      orderDate:{$gte:lastMonth,$lte:date},
+      'items.status':{$in:['delivered','return rejected']}
+    })
+    let pdCount = [];
+    let dates = [];
+    for(let i= 1;i<=limit;i++){
+      let q = 0;
+      order.forEach((item)=>{
+        const day1 = lastMonth.getDate();
+        const day2 = item.orderDate.getDate();
+        const datesMatch = day1 === day2;
+        if(datesMatch){
+          item.items.forEach((row)=>{
+            q += row.quantity;
+          })
+        }
+      })
+      pdCount.push(q);
+      dates.push(lastMonth.toLocaleDateString('en-US', { month: 'long', day: 'numeric' }));
+      lastMonth.setDate(lastMonth.getDate()+1);
+    }
+    console.log(pdCount)
+    console.log(dates)
+    res.render('admin/index',{pdCount,dates});
+
+    // let pd = await Products.find();
+    // let od = await Order.find({
+    //   'items.status':{$in:['delivered','return rejected']}
+    // });
+    // let bestpd = [];
+    // let bestCount = [];
+    // let a =await od.aggregate([
+    //   { $unwind: "$items" },
+    //   { 
+    //     $group: {
+    //       _id: "$items.productId",
+    //       totalQuantity: { $sum: "$items.quantity" }
+    //     }
+    //   },
+  
+    //   { $sort: { totalQuantity: -1 } },
+
+    //   { $limit: 3 }
+    // ]);
+    // console.log(a)
+
+  },
   getUser:async(req,res)=>{
     const user = await User.find()
     res.render('admin/users',{user});
@@ -26,14 +93,15 @@ module.exports = {
       'items.status':'delivered'
     }).populate('userId items.productId').sort({orderDate:-1});
     let q = 0,tp= 0;
-    
+    let full_discount = 0;
     orders.forEach((item)=>{
       item.items.forEach((order)=>{
         q += order.quantity;
+        full_discount += order.productId.discount;
       })
       tp += item.totalPrice;
     })
-    res.render('admin/salesreport',{orders,q,tp})
+    res.render('admin/salesreport',{orders,q,tp,full_discount})
   },
   customSalesReport:async(req,res)=>{
     console.log(req.query)
@@ -56,7 +124,7 @@ module.exports = {
     }
     let orders = await Order.find({
       orderDate:{$gte:lastMonth,$lte:date},
-      'items.status':'delivered'
+      'items.status':{$in:['delivered','return rejected']}
     }).populate('userId items.productId').sort({orderDate:-1});
     let q = 0,tp= 0;
     
@@ -68,5 +136,80 @@ module.exports = {
     })
     res.render('admin/salesreportcustom',{orders,q,tp,range})
    
+  },
+  getChart:async(req,res)=>{
+    let id = req.params.id;
+    console.log(id);
+    let date = new Date();
+    let lastMonth = new Date();
+    let limit;
+    if(id === 'week'){
+      limit = 7;
+      lastMonth = new Date(date);
+      lastMonth.setDate(lastMonth.getDate() - limit);
+      
+    }else if(id === 'month'){
+      limit = 28;
+      lastMonth = new Date(date);
+      lastMonth.setDate(lastMonth.getDate() - limit);
+    }else if(id === 'year'){
+      limit = 12;
+      let prev = date.getFullYear()-1;
+      lastMonth = new Date(prev,date.getMonth()+1, date.getDate());
+      console.log(lastMonth)
+    }
+    let order = await Order.find({
+      orderDate:{$gte:lastMonth,$lte:date},
+      'items.status':{$in:['delivered','return rejected']}
+    })
+    let pdCount = [];
+    let dates = [];
+    if(limit === 12){
+      for(let i= 1;i<=limit;i++){
+        let q = 0;
+        order.forEach((item)=>{
+          const month1 = lastMonth.getMonth();
+          const month2 = item.orderDate.getMonth();
+          const year1 = lastMonth.getFullYear();
+          const year2 = item.orderDate.getFullYear();
+          const datesMatch = month1 === month2&&year1===year2;
+          if(datesMatch){
+            item.items.forEach((row)=>{
+              q += row.quantity;
+            })
+          }
+        })
+        pdCount.push(q);
+        
+        dates.push(lastMonth.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }));
+        lastMonth.setMonth(lastMonth.getMonth()+1);
+      } 
+      
+    }else{
+      for(let i= 1;i<=limit;i++){
+        let q = 0;
+        order.forEach((item)=>{
+          const day1 = lastMonth.getDate();
+          const day2 = item.orderDate.getDate();
+          const datesMatch = day1 === day2;
+          if(datesMatch){
+            item.items.forEach((row)=>{
+              q += row.quantity;
+            })
+          }
+        })
+        pdCount.push(q);
+        
+        dates.push(lastMonth.toLocaleDateString('en-US', { month: 'long', day: 'numeric' }));
+        lastMonth.setDate(lastMonth.getDate()+1);
+      }   
+    }
+    
+    let value = true;
+    res.json({value,pdCount,dates});
   }
 }
+
+
+
+

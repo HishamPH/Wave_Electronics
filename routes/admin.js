@@ -12,7 +12,38 @@ const {uploadImage} = require('../middlewares/multer')
 const orderController = require('../controllers/orders')
 const couponController = require('../controllers/coupon')
 
+const offerController = require('../controllers/offers')
 
+
+const isAuthenticatedAdmin = (req, res, next) => {
+  if(req.session && req.session.admin){
+    next();
+  }else {
+    res.redirect('/admin');
+  }
+};
+
+function checkAuthenticated(req,res,next){
+  if(req.session.admin){
+    res.redirect('/admin/panel');
+  }
+  next();
+}
+
+
+//========================Dashboard======================
+
+
+router.route('/')
+.get(checkAuthenticated,adminController.getAdminLogin);
+
+
+router.route('/login')
+.post(adminController.postAdminLogin);
+
+
+router.route('/panel')
+.get(isAuthenticatedAdmin,adminController.getDashboard)
 // --------------------------Userlist----------------------------------
 
 router.route('/users')
@@ -67,6 +98,9 @@ router.route('/orders/changestatus/:id')
 router.route('/orderdetails/:id')
 .get(orderController.adminOrderDetails)
 
+router.route('/orders/returnorder/:id')
+.post(orderController.returnApprove)
+
 //==================== Coupons =======================
 
 router.route('/coupons')
@@ -79,10 +113,19 @@ router.route('/coupons/addcoupon')
 router.route('/coupons/edit/:id')
 .post(couponController.editCoupon)
 
+router.route('/coupons/delete/:id')
+.get(couponController.deleteCoupon);
+
 //===================== Offers ==========================
 
 router.route('/offers')
-.get(couponController.getOffers)
+.get(offerController.getOffer);
+
+router.route('/offers/addoffer')
+.post(offerController.addOffer)
+
+router.route('/offers/edit/:id')
+.post(offerController.editOffer)
 
 
 //====================== Sales =========================
@@ -92,6 +135,11 @@ router.route('/sales/:id')
 
 router.route('/sales')
 .get(adminController.salesReport)
+
+//============================ Chart.js ==================
+
+router.route('/chart/:id')
+.get(adminController.getChart)
 
 
 

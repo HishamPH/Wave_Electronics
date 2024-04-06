@@ -1,10 +1,19 @@
-
 $(document).ready(function() {
   $('#downloadPDF').click(function(e){
     e.preventDefault();
+    
+    let count = $('#salesCount').text();
+    let money = $('#salesMoney').text();
+    
     alert('download pdf')
-    const doc = new jsPDF();
-    autoTable(doc,{ html: '#myTable' });
+    const doc = new window.jspdf.jsPDF();
+    
+    doc.text(`Total sales count:${count}`,10,10);
+    doc.text(`Total revenue :${money}`,10,20);
+    doc.autoTable({
+      startY:40,
+      html: '#myTable' 
+    });
     doc.save('table.pdf');
   });
   $('#downloadCSV').click(function(e){

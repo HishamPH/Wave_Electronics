@@ -9,6 +9,7 @@ const Coupon = require('../models/coupon')
 module.exports = {
   addToCart:async(req,res)=>{
     try{
+      console.log('hello')
       let cart;
       let id = req.params.id
       let email = req.session.user.username;
@@ -16,10 +17,12 @@ module.exports = {
       let pd = await Products.findById(id)
       cart = await Cart.findOne({userId:user._id})
       let x = pd.stock;
+      let price = pd.Price - pd.discount;
+      console.log(price)
       if(cart===null&&pd.stock>0){
         cart = await Cart.create({
           userId:user._id,
-          items:[{productId:id,quantity:1,price:pd.Price}],
+          items:[{productId:id,quantity:1,price:price}],
           total:1
         })
       }else if(pd.stock>0){
@@ -29,22 +32,23 @@ module.exports = {
           if(exist.quantity<2&&((pd.stock - (exist.quantity+1))>=0))
             exist.quantity ++;
         }else{
-          cart.items.push({productId:id,quantity:1,price:pd.Price})
+          cart.items.push({productId:id,quantity:1,price:price})
           cart.total++;
         }
         await cart.save()
       }
       req.session.cartCount = cart.total 
       res.json({count:cart.total})
-    }catch{
-      res.json({msg:'There are no more stock left'})
+    }catch(e){
+      res.json({msg:'There are no more stock left'});
+      console.error(e);
     }
   },
 
   getCart:async(req,res)=>{
     let email = req.session.user.username??req.session.user.email
     let user = await User.findOne({email:email})
-    let cart = await Cart.findOne({userId:user._id}).populate('items.productId')
+    let cart = await Cart.findOne({userId:user._id}).populate('items.productId coupon')
 
     if(cart&&cart.items.length){
       let items = cart.items
@@ -57,7 +61,10 @@ module.exports = {
         totalPrice += Number(item.productId.Price)*Number(item.quantity)
         discount += Number(item.productId.discount)*Number(item.quantity)
       });
-      res.render('user/cart',{items,msg:false,totalPrice,total:cart.total,discount})
+      let couponApplied = false;
+      if(cart.coupon !== null)
+        couponApplied = cart.coupon;
+      res.render('user/cart',{items,msg:false,totalPrice,total:cart.total,discount,couponApplied})
     }else{
       res.render('user/cart',{msg:'your cart is empty'}) 
     }
@@ -96,7 +103,7 @@ module.exports = {
         cart.items[pdIndex].quantity--;
         await cart.save();
       }
-      let price = cart.items[pdIndex].productId.Price;
+      let price = cart.items[pdIndex].price;
       let totalPrice =0,discount=0;
       cart.items.forEach((item,index)=>{
         totalPrice += Number(item.productId.Price)*Number(item.quantity)
@@ -201,28 +208,27 @@ module.exports = {
 
     let email = req.session.user.username;
     let user = await User.findOne({email:email});
-    let cart = await Cart.findOne({userId:user._id}).populate('items.productId')
+    let cart = await Cart.findOne({userId:user._id}).populate('items.productId coupon')
     let code = req.body.code;
-    console.log(req.body)
     let price = 0;
-    cart.items.forEach((item)=>{
-      price += item.quantity*(item.productId.Price - item.productId.discount)
-    })
+    
     let coupon = await Coupon.findOne({code:code})
-    console.log(coupon)
     let applied = false;
-    
-    
-    if(coupon){
-      let discount = coupon.discount
-      let dis = price * (discount/100)
-      let fulliPrice = price -dis;
-      let fullPrice = Math.floor(fulliPrice)
+    if(coupon&&!applied){
+      let discount = coupon.discount;
+      cart.items.forEach((item)=>{
+        price += item.quantity*(item.productId.Price - item.productId.discount);
+        // item.price = Math.floor(item.price - (item.price * (discount/100)));
+      });
+      
+      let dis = price * (discount/100);
+      let fullPrice = Math.floor(price -dis)
       coupon.couponCount--;
       req.session.totalPrice = fullPrice;
-      
-      await coupon.save()
-      console.log(dis)
+      console.log(fullPrice)
+      cart.coupon = coupon._id;
+      await cart.save();
+      await coupon.save();
       res.json({applied:true,fullPrice,discount})
     }else{
       applied = false;

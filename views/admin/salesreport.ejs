@@ -17,8 +17,17 @@
   <!-- Template Main CSS File -->
   <link href="/css/style.css" rel="stylesheet">
   <!-- <link rel="stylesheet" href="new.css"> -->
+  
 
- 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRhy5X5AAOnx5S09ydFYWWNSfcEqDTTHgtNA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script> -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.17/jspdf.plugin.autotable.min.js"></script>
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </head>
 
@@ -172,19 +181,23 @@
     </ul>
 
   </aside><!-- End Sidebar-->
-  <main id="main" class="main">
 
+ 
+
+  <main id="main" class="main">
     <div class="pagetitle">
-      <h1>Orders</h1>
+      <h1>Sales</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="/admin/panel">Home</a></li>
-          <li class="breadcrumb-item active">Orders</li>
+          <li class="breadcrumb-item active">Sales</li>
         </ol>
       </nav>
       
       
     </div><!-- End Page Title -->
+    
+ 
 
 
     <section class="section dashboard">
@@ -208,7 +221,7 @@
                       <i class="bi bi-cart"></i>
                     </div>
                     <div class="ps-3">
-                      <h6><%= q  %></h6>
+                      <h6 id="salesCount"><%= q  %></h6>
                       <span class="text-success small pt-1 fw-bold">12%</span> <span class="text-muted small pt-2 ps-1">increase</span>
 
                     </div>
@@ -229,10 +242,10 @@
 
                   <div class="d-flex align-items-center">
                     <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                      <i class="bi bi-currency-dollar"></i>
+                      <i class="bi bi-currency-rupee"></i>
                     </div>
                     <div class="ps-3">
-                      <h6>₹<%= tp.toLocaleString('hi') %></h6>
+                      <h6 >₹<span id="salesMoney"><%= tp.toLocaleString('hi') %></span></h6>
                       <span class="text-success small pt-1 fw-bold">8%</span> <span class="text-muted small pt-2 ps-1">increase</span>
 
                     </div>
@@ -243,7 +256,29 @@
             </div><!-- End Revenue Card -->
 
             <!-- Customers Card -->
-            <div class="col-xxl-4 col-xl-12">
+            <div class="col-xxl-4 col-md-6">
+              <div class="card info-card revenue-card">
+
+     
+
+                <div class="card-body">
+                  <h5 class="card-title">Discount <span>| This Month</span></h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-currency-rupee"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6 >-₹<span id=""><%= full_discount.toLocaleString('hi') %></span></h6>
+                      <span class="text-success small pt-1 fw-bold">8%</span> <span class="text-muted small pt-2 ps-1">increase</span>
+
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+            <!-- <div class="col-xxl-4 col-xl-12">
 
               <div class="card info-card customers-card">
 
@@ -257,7 +292,7 @@
                     </div>
                     <div class="ps-3">
                       <h6>3</h6>
-                      <!-- <span class="text-danger small pt-1 fw-bold">12%</span> <span class="text-muted small pt-2 ps-1">decrease</span> -->
+                      <span class="text-danger small pt-1 fw-bold">12%</span> <span class="text-muted small pt-2 ps-1">decrease</span>
 
                     </div>
                   </div>
@@ -265,7 +300,7 @@
                 </div>
               </div>
 
-            </div><!-- End Customers Card -->
+            </div>-->
 
          
 
@@ -283,13 +318,7 @@
     </section>
 
 
-
-
-
-
-
-
-
+    
 
 
     <div class="d-flex justify-content-between ">
@@ -327,8 +356,8 @@
               <th>Name</th>
               <th>date</th>
               <th>Total</th>
-              <!-- <th>discount</th> -->
-              <th style="width: 150px;">Received</th>
+              <th style="width: 150px;">discount</th>
+              <th>coupon</th>
               <th style="width: 160px;">Payment method</th>
           </tr>
       </thead>
@@ -344,11 +373,18 @@
           <td>
             <%= row.orderDate.toJSON().slice(0,10)  %>
           </td>
-          <td><%= (row.items.reduce((acc,item)=>{
-                  return acc + item.price*item.quantity
-              },0)) %>
+          <td><%= row.totalPrice %>
           </td>
-          <td><%= row.totalPrice %></td>
+          <td><%= (row.items.reduce((acc,item)=>{
+            return acc + item.productId.Price*item.quantity
+        },0))-row.totalPrice %></td>
+          <td>
+            <% if(row.coupon){ %>
+              applied
+            <% }else{ %>
+              nil
+            <% } %>
+          </td>
           <td><%= row.paymentMethod  %></td>
         </tr>
         <% }) %>
@@ -360,81 +396,26 @@
       <button class="btn btn-primary ms-2 " id="downloadCSV">Download CSV</button>
     </div>
     
-    <div class="modal fade" id="couponModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLongTitle">Create new coupon</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-                               
-            <form action="/admin/coupons/addcoupon" method="post">
-              <div class="form-group">
-                <label for="code">code:</label>
-                <input type="text" name="code" class="form-control bg-light" id="code"
-                    placeholder="Enter the code" required />
-              </div>
-              <div class="form-group">
-                <label for="count">count:</label>
-                <input type="text" name="count" class="form-control bg-light" id="count"
-                    placeholder="Enter the count" required />
-              </div>
-              <div class="form-group">
-                <label for="discount">discount:</label>
-                <input type="number" name="discount" class="form-control bg-light" id="discount"
-                    placeholder="Entre discount" required />
-              </div>
-              <div class="form-group">
-                <label for="minPurchase">minPurchase:</label>
-                <input type="number" name="minPurchase" class="form-control bg-light" id="minPurchase"
-                    placeholder="Enter the minPurchase" required />
-              </div>
-              <div class="form-group">
-                <label for="start">start date:</label>
-                <input type="date" name="start" class="form-control bg-light" id="start"
-                    placeholder="Enter start" required />
-              </div>
-              <div class="form-group">
-                <label for="expire">expire date:</label>
-                <input type="date" name="expire" class="form-control bg-light" id="expire"
-                    placeholder="Enter the expire" required />
-              </div>
-              <div class="d-flex justify-content-center mb-3">
-                <button type="submit" class="btn btn-primary mt-3 mb-0">Add Coupon</button>
-              </div>
-            </form>
-           
-          </div>
-          
-        </div>
-      </div>
-    </div>
+   
     <!-- ======= Footer ======= -->
   
 
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRhy5X5AAOnx5S09ydFYWWNSfcEqDTTHgtNA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js" integrity="sha512-2/YdOMV+YNpanLCF5MdQwaoFRVbTmrJ4u4EpqS/USXAQNUDgI5uwYi6J98WVtJKcfe1AbgerygzDFToxAlOGEQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <!-- Template Main JS File -->
  
-  <script src="/js/main.js"></script>
+
+ 
+  <!-- Template Main JS File -->
+  <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+  
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 
 
 
-
+  
   <script src="/js/salesreport.js"></script>
-    
-
+  <script src="/js/main.js"></script>
+  
 </body>
 
 </html>

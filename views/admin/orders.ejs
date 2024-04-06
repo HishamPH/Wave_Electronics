@@ -185,16 +185,17 @@
       
     </div><!-- End Page Title -->
     
-    <table class="table table-bordered table-hover mt-3" style="">
+    <table class="table table-bordered table-hover mt-3" >
       <thead class="table-secondary ">
-          <tr class="text-center ">
+          <tr class="text-center">
               <th>Order Id</th>
               <th>User Name</th>
               <th>Quantity</th>
-              <th>Price</th>
+              <th>FullAmount</th>
               <th>Order Date</th>
               
               <th>Details</th>
+              <th >Payment Status</th>
           </tr>
       </thead>
       
@@ -218,6 +219,18 @@
               </a>
               
             </td>
+            <td>
+            <% if(row.paymentStatus === 'success'){%>
+              <span class="badge bg-success p-2 bg-opacity-25 text-success rounded-pill  ">
+                <%= row.paymentStatus %>
+              </span>
+              <% }else if(row.paymentStatus === 'Pending'){%>
+                <span class="badge bg-warning p-2 bg-opacity-25 text-black  rounded-pill ">
+                  <%= row.paymentStatus %>
+                </span>
+              <% } %>
+            </td>
+            
           </tr>
        
         

@@ -327,8 +327,8 @@
               <th>Name</th>
               <th>date</th>
               <th>Total</th>
-              <!-- <th>discount</th> -->
-              <th style="width: 150px;">Received</th>
+              <th style="width: 150px;">discount</th>
+              <th>coupon</th>
               <th style="width: 160px;">Payment method</th>
           </tr>
       </thead>
@@ -344,11 +344,18 @@
           <td>
             <%= row.orderDate.toJSON().slice(0,10)  %>
           </td>
-          <td><%= (row.items.reduce((acc,item)=>{
-                  return acc + item.price*item.quantity
-              },0)) %>
-          </td>
           <td><%= row.totalPrice %></td>
+          <td><%= (row.items.reduce((acc,item)=>{
+                  return acc + item.productId.Price*item.quantity
+              },0))-row.totalPrice %>
+          </td>
+          <td>
+            <% if(row.coupon){ %>
+              applied
+            <% }else{ %>
+              nil
+            <% } %>
+          </td>
           <td><%= row.paymentMethod  %></td>
         </tr>
         <% }) %>

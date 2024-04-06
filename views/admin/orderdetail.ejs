@@ -175,17 +175,36 @@
               <div class="card info-card sales-card">
                 <div class="card-body">
                   <h5 class="card-title mb-0 ">Delivery Address</h5>
-                  <div class="d-flex flex-column ">
-                    <span>Name  :  <%= address.name  %></span>
-                    <span>street  :  <%= address.street  %></span>
-                    <span>pincode  :  <%= address.pincode  %></span>
-                    <span>city  :  <%= address.city  %></span>
-                    <span>state  :  <%= address.street  %></span>
-                    <span>mobile  :  <%= address.street  %></span>
+                  <div class="d-flex justify-content-start ">
+                    <div class="fw-bold ">
+                      <div>Name</div>
+                      <div>Street </div>
+                      <div>Pincode  </div>
+                      <div>City</div>
+                      <div>State </div>
+                      <div>Mobile</div>
+                    </div>
+                    <div class="px-3 ">
+                      <div>:</div>
+                      <div>:</div>
+                      <div>:</div>
+                      <div>:</div>
+                      <div>:</div>
+                      <div>:</div>
+                    </div>
+                    <div>
+                      <div><%= address.name  %></div>
+                      <div><%= address.street  %></div>
+                      <div><%= address.pincode  %></div>
+                      <div><%= address.city  %></div>
+                      <div><%= address.state  %></div>
+                      <div><%= address.mobile  %></div>
+                    </div>
                   </div>
                   
                   
                 </div>
+                
                 <table class="table table-bordered table-hover mt-1">
                   <thead class="table-dark">
                       <tr class="text-center ">
@@ -209,7 +228,7 @@
                         </div>
                         
                       </td>
-                      <td><%= row.price %></td>
+                      <td><%= row.productId.Price %></td>
                       <td><%= row.quantity %></td>
                       <td><%= (row.productId.Price-row.productId.discount)*row.quantity %></td>
                       <% if(row.status === 'Order Placed'){%>
@@ -260,7 +279,7 @@
                         </td>
                       <% }else if(row.status === 'delivered'){ %>
                         <td>
-                          <div class="badge bg-success rounded-pill ">
+                          <div class="badge bg-success rounded-pill p-2 bg-opacity-25 text-success ">
                             <%= row.status  %>
                           </div>
                         </td>
@@ -285,8 +304,29 @@
                         <td>
                           no action
                         </td>
-                      <% } %>
+                      <% }else if(row.status === 'return request'){ %>
+                        <td>
+                          <div class="badge bg-danger rounded-pill">
+                            <%= row.status  %>
+                          </div>
+                        </td>
+                        <td>
+                          <button type="button" class="btn btn-warning"   data-bs-toggle="modal" data-bs-target="#returnReason<%= row._id %>">
+                            return
+                          </button>
+                        </td>
+                      <% }else{%>
+                        <td>
+                          <div class="badge bg-danger rounded-pill">
+                            <%= row.status  %>
+                          </div>
+                          <td>
+                            no action
+                          </td>
+                        </td>
+                      <% }  %>
                     </tr>
+                   
                     <% }) %>
                   </tbody>
                 </table>
@@ -296,15 +336,41 @@
         </div><!-- End Left side columns -->
       </div>
     </section>
-    
-    
+    <% items.forEach((row,index)=>{ %>
+      <div class="modal fade" id="returnReason<%= row._id %>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">New message</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form action="/admin/orders/returnorder/<%= row._id %>" method="post">
+                <div class="mb-3">
+                  <label for="recipient-name" class="col-form-label">Return Reason</label>
+                  <input type="text" class="form-control" name="return" id="recipient-name" value="<%= row.returnReason %>" disabled >
+                </div>
+                <button type="submit" class="btn btn-primary" value="approve" name="approve">approve</button>
 
+                <button type="submit" class="btn btn-danger " value="reject" name="reject">Reject</button>
+           
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    <% })  %>
 
     <!-- ======= Footer ======= -->
   
 
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
-
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
  
   <!-- Template Main JS File -->
  

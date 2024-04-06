@@ -155,7 +155,7 @@ router.route('/orders/cancelorders/:id')
 .get(orderController.cancelOrders)
 
 router.route('/orders/returnorder/:id')
-.get(orderController.returnOrder)
+.post(orderController.returnOrder)
 
 
 router.route('/orderdetails/:id')
@@ -183,8 +183,15 @@ router.route('/wallet')
 //======================= Search ========================
 
 
+router.route('/getsearch')
+.get(userController.getSearch)
+
+
 router.route('/search')
 .get(userController.searchProduct)
+
+router.route('/filters')
+.post(userController.filterProducts)
 
 //========================================================
 

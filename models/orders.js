@@ -21,13 +21,15 @@ const ordersSchema = new mongoose.Schema({
     price:{type:Number},
     status:{type:String,default:"Order Placed"},
     returnDate:{type:Date},
-    
+    deliveryDate:{type:Date},
+    returnReason:{type:String}
   }],
   paymentMethod: { type: String },
   orderDate: { type: Date },
   totalPrice: { type: Number },
   paymentStatus: { type: String, default: "Pending" },
-  Address: { type: shippedAddressSchema }
+  Address: { type: shippedAddressSchema },
+  coupon:{type: Schema.Types.ObjectId,ref: "Coupon",}
 });
 
 const Orders = mongoose.model('Orders', ordersSchema);

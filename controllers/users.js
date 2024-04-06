@@ -1,56 +1,79 @@
 const User = require("../models/users");
-
+const bcrypt = require('bcrypt')
 const Products = require('../models/product')
 const OTP = require('../models/otp')
 const otpFunc = require('../utility/otpfunctions')
 const Cart = require('../models/cart')
 const Category = require('../models/category')
 const Wallet = require('../models/wallet')
+
+
 module.exports = {
+
+
   getLandPage:async(req,res)=>{
     let pd = await Products.find({Display:true})
     res.render('user/landpage',{pd});
   },
+
   getHomePage:async(req,res)=>{
-    let pd = await Products.find({Display:true})
+    let name = req.session.user.username??req.session.user.email;
+    const user = await User.findOne({email:name})
+    let pd = await Products.find({Display:true}).populate('offer')
     let cat = await Category.find()
+    let wish = user.Wishlist;
+    let wishlist = []
+    wish.forEach((item)=>{
+      wishlist.push(item.product.toString());
+    })
     let q = req.session.cartCount||0;
     if(req.session.user){
-      res.render('user/homepage',{message:req.session.name,pd,q,cat});
+      res.render('user/homepage',{message:req.session.name,pd,q,cat,wishlist});
     } 
   },
+
   categorySort:async(req,res)=>{
+    let email =req.session.user.username??req.session.user.email;
+    let user = await User.findOne({email:email});
     let id = req.params.id
     let pd = await Products.find({Category:id});
     let cat = await Category.find();
+    let wish = user.Wishlist;
+    let wishlist = []
+    wish.forEach((item)=>{
+      wishlist.push(item.product.toString());
+    })
     let q = req.session.cartCount||0;
     let message = req.session.name;
 
-    res.render('user/homepage',{message,pd,cat,q})
+    res.render('user/homepage',{message,pd,cat,q,wishlist})
   },
+
   getLogin:(req,res)=>{
     res.render('user/user_login');
   },
+
   postLogin:async(req,res)=>{
-  
-    let a=await User.findOne({email:req.body.username})
+    let {username,password} = req.body;
+    let user=await User.findOne({email:username})
     let pd = await Products.find();
-    
+    //let hash = await bcrypt.hash(password,10);
+    let isValid = await bcrypt.compare(password,user.password);
     let b;
-    if(a)
-      b = a.status??false;
-    if(a==null||!b){
+    if(user)
+      b = user.status??false;
+    if(user==null||!b){
       req.session.message={
           type:'success',
           message:"This user isn't available right now"
       }
       res.redirect('/user/login')
-    }else if(a.email==req.body.username&&a.password==req.body.password){
+    }else if(user.email==username&&isValid){
       req.session.user=req.body
-      req.session.name=a.name
-      let cart = await Cart.findOne({userId :a._id})
-        if(cart)
-      req.session.cartCount = cart.total;
+      req.session.name=user.name
+      let cart = await Cart.findOne({userId :user._id})
+      if(cart)
+        req.session.cartCount = cart.total;
       res.redirect('/user/homepage') 
     }else{
       req.session.message={
@@ -60,10 +83,13 @@ module.exports = {
       res.redirect('/user/login')
     }
   },
+
+
   getaddUser:(req,res)=>{
-    
     res.render("user/user_signup");
   },
+
+
   postAddUser:async(req,res)=>{
     email = req.body.email
     const data= await User.findOne({email})
@@ -79,15 +105,11 @@ module.exports = {
       let otpval = otpFunc.generateOTP()
       otpFunc.sendOTP(req,res,email,otpval)
       console.log(req.body)
-      // const userData = await User.create(req.body);
-      // req.session.name = userData.name;
-      // req.session.message={
-      //   type:'success',
-      //   message:"User Added Successfully"
-      // }
       res.redirect('/user/emailverification') 
     }
   },
+
+
   getEmailVerification:async(req,res)=>{
     const Email = req.session.user.email;
     setTimeout(() => {
@@ -101,6 +123,8 @@ module.exports = {
     }, 60000);
     res.render("user/emailverification");
   },
+
+
   postEmailVerification:async(req,res)=>{
     console.log(req.body)
     let  otp  = req.body.otp;
@@ -120,9 +144,17 @@ module.exports = {
     }
     if (Number(otp.join('')) == matchedOTPrecord.otp) {
         req.session.OtpValid = true;
-        let data = await User.create(req.session.user)
-        req.session.name = data.name;
-        let wallet = await Wallet.create({userId:data._id})
+        let {name,email,phone,password} = req.session.user;
+        let hash =await bcrypt.hash(password,10);
+        let user = new User({
+          name:name,
+          email:email,
+          phone:phone,
+          password:hash
+        });
+        await user.save();
+        req.session.name = user.name;
+        let wallet = await Wallet.create({userId:user._id})
         res.redirect('/user/homepage')
 
     } else {
@@ -130,6 +162,8 @@ module.exports = {
         res.redirect("/user/emailverification");
     }
   },
+
+
   resendOTP:async(req,res)=>{
       let email = req.session.user.email
       let a = await OTP.countDocuments()
@@ -139,6 +173,8 @@ module.exports = {
       }
       res.redirect('/user/emailverification') 
   },
+
+
   getDetailPage:async(req,res)=>{
     let id = req.params.id;
     let pd = await Products.findById(id);
@@ -147,6 +183,8 @@ module.exports = {
     await pd.save()
     res.render('user/productdetail',{pd})
   },
+
+
   review:async(req,res)=>{
     let id = req.params.id
     let review = req.body.review
@@ -155,6 +193,8 @@ module.exports = {
     })
     res.redirect(`/user/detail/${id}`)
   },
+
+
   getAddress:async(req,res)=>{
     try{
       let name = req.session.user.username??req.session.user.email;
@@ -174,6 +214,8 @@ module.exports = {
       res.render('user/userprofile',{q,address:false})
     }
   },
+
+
   setDefault:async(req,res)=>{
     let user = await User.findOne({email:req.session.user.username})
     let id = req.params.id;
@@ -188,8 +230,11 @@ module.exports = {
     await user.save()
     res.redirect('/user/userprofile/address')
   },
+
+
   postAddress:async(req,res)=>{
-    let user =await User.findOne({email:req.session.user.username})
+    let email = req.session.user.username??req.session.user.email;
+    let user =await User.findOne({email:email})
     let id = user._id
     console.log(id)
     await User.findByIdAndUpdate(id,{
@@ -199,9 +244,11 @@ module.exports = {
     })
     res.redirect('/user/userprofile/address')
   },
+
+
   getEditAddress:async(req,res)=>{
     let id = req.params.id;
-    let name = req.session.user.username;
+    let name = req.session.user.username??req.session.user.email;
     const user = await User.findOne({email:name})
     const addressIndex = user.Address.findIndex((a) => a._id.toString() === id);
     let ad = user.Address[addressIndex]
@@ -209,13 +256,12 @@ module.exports = {
     res.render('user/editaddress',{ad})
     console.log(ad)
   },
+
   postEditAddress:async(req,res)=>{
     const addressId = req.params.id;
-    const email = req.session.user.username;
-   
+    const email = req.session.user.username??req.session.user.email;
     const user = await User.findOne({email:email})
     const { name, street, city, pincode,state,mobile } = req.body
-
     const addressIndex = user.Address.findIndex((a) => a._id.toString() === addressId);
     if (addressIndex !== -1) {
         user.Address[addressIndex].name = name;
@@ -232,6 +278,7 @@ module.exports = {
         res.redirect("/user/userprofile/address");
     }
   },
+
   deleteAddress:async(req,res)=>{
     const email = req.session.user.username;
     const addressId = req.params.id; 
@@ -260,12 +307,14 @@ module.exports = {
         return res.status(500).send("Internal Server Error");
     }
   },
+
   getProfile:async(req,res)=>{
-    let email = req.session.user.username;
+    let email = req.session.user.username??req.session.user.email;
     let user = await User.findOne({email:email});
     let q = req.session.cartCount;
     res.render('user/userdetail',{user,q})
   },
+
   editProfile:async(req,res)=>{
     let id = req.params.id;
     let user = await User.findByIdAndUpdate(id,{
@@ -275,13 +324,18 @@ module.exports = {
     })
     res.redirect('/user/userprofile')
   },
+
   changePassword:async(req,res)=>{
     try{
       let id = req.params.id;
+      let {pass,pass1,pass2} = req.body;
       let user = await User.findById(id);
-      if(req.body.pass === user.password){
-        if((req.body.pass1 === req.body.pass2)){
-          user.password = req.body.pass1;
+      //let hash = await bcrypt.hash(pass,10);
+      let isValid = await bcrypt.compare(pass,user.password);
+      if(isValid){
+        if((pass1 === pass2)){
+          let hash = await bcrypt.hash(pass1,10);
+          user.password = hash;
           await user.save()
           res.redirect('/user/userprofile')
         }else{
@@ -297,14 +351,57 @@ module.exports = {
     }
     
   },
+
+  getSearch:async(req,res)=>{
+    let name = req.session.user.username??req.session.user.email;
+    const user = await User.findOne({email:name})
+    let product = await Products.find({Display:true})
+    let cat = await Category.find()
+    let wish = user.Wishlist;
+    let wishlist = []
+    wish.forEach((item)=>{
+      wishlist.push(item.product.toString());
+    })
+    let q = req.session.cartCount||0;
+    res.render('user/searchresult',{message:req.session.name,product,q,cat,wishlist});
+  },
   searchProduct:async(req,res)=>{
     let {q} = req.query;
-    console.log(q)
+    console.log(q);
+    let products = await Products.find({ ProductName: { $regex: new RegExp(q, 'i') } })
+    res.json({products,q})
+  },
+  filterProducts:async(req,res)=>{
+    let filter = Object.keys(req.body);
+    let sort;
+    let products
+    if(req.query.order == 'lth'){
+      sort = 1
+      products = await Products.find({
+        Category:{$in:filter}
+      }).sort({Price:sort}).collation({ locale: 'en', strength: 2 })
+    }else if(req.query.order == 'htl'){
+      sort = -1
+      products = await Products.find({
+        Category:{$in:filter}
+      }).sort({Price:sort}).collation({ locale: 'en', strength: 2 })
+    }else if(req.query.order == 'az'){
+      sort = 1
+      products = await Products.find({
+        Category:{$in:filter}
+      }).sort({ProductName:sort}).collation({ locale: 'en', strength: 2 })
+    }else if(req.query.order == 'za'){
+      sort = -1
+      products = await Products.find({
+        Category:{$in:filter}
+      }).sort({ProductName:sort}).collation({ locale: 'en', strength: 2 })
+    }
     
-    //let product = await Products.find({$text: {$search:q}})
-    //console.log(product)
-    //res.json({product})
-    //res.render('user/searchresult',{product,name})
+    
+    products.forEach((item)=>{
+      console.log(item.ProductName)
+    })
+    res.json({products});
   }
 }
 

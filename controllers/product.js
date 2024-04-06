@@ -1,5 +1,6 @@
 const Product = require('../models/product')
 const Category = require('../models/category')
+const Offer = require('../models/offers')
 
 module.exports = {
   getProduct:async(req,res)=>{
@@ -21,13 +22,21 @@ module.exports = {
     // console.log(req.files);
     const images = [];
     const category = await Category.findOne({ Name: req.body.Category});
+    const categoryOffer = await Offer.findOne({ category: category._id });
     for (let i = 1; i <= 3; i++) {
       const fieldName = `image${i}`;
       if (req.files[fieldName] && req.files[fieldName][0]) {
         images.push(req.files[fieldName][0].filename);
       }
     }
-    const Status = req.body.stock <= 0 ? "Out of Stock" : "In Stock";       
+    const Status = req.body.stock <= 0 ? "Out of Stock" : "In Stock";
+    let amount = req.body.Price;
+    let offerPrice;
+   
+    const discountPercentage = categoryOffer.percentage || 0;
+    offerPrice = amount - (amount * (discountPercentage / 100)) - req.body.discount;
+    console.log("offer price inside ADD NEW PRODUCT", offerPrice);
+  
     const newProduct = new Product({
       ProductName: req.body.ProductName,
       Price: req.body.Price,
@@ -37,7 +46,9 @@ module.exports = {
       Status: Status,
       spec1: req.body.spec1,
       discount: req.body.discount,
-      images: images
+      images: images,
+      offer: categoryOffer ? categoryOffer._id : null,
+      offerPrice:Math.floor(offerPrice)
     });
     await newProduct.save();
     res.redirect("/admin/products");
@@ -56,26 +67,38 @@ module.exports = {
     console.log(pd.Category)
   },
   postEditProduct:async(req,res)=>{
+    
     let id = req.params.id
     const images = [];
+    const pd = await Product.findById(id);
+    let cat = pd.Category;
     const category = await Category.findOne({ Name: req.body.Category});
+    const categoryOffer = await Offer.findOne({ category:cat });
     for (let i = 1; i <= 3; i++) {
       const fieldName = `image${i}`;
       if (req.files[fieldName] && req.files[fieldName][0]) {
             images.push(req.files[fieldName][0].filename);
       }
     }
-    const Status = req.body.stock <= 0 ? "Out of Stock" : "In Stock";       
+    const Status = req.body.stock <= 0 ? "Out of Stock" : "In Stock";
+    let amount = req.body.Price;
+    let offerPrice;
+    let discountPercentage = 0;
+    if(categoryOffer)
+      discountPercentage = categoryOffer.percentage;
+    offerPrice = amount - (amount * (discountPercentage / 100))-req.body.discount;
+    console.log("offer price inside ADD NEW PRODUCT", offerPrice);       
     await Product.findByIdAndUpdate(id,[{
      $set: {
       ProductName: req.body.ProductName,
-      Price: req.body.Price,
+      Price: Number(req.body.Price),
       Description: req.body.Description,
-      stock: req.body.stock,
-      //Category: category._id,
+      stock: Number(req.body.stock),
       Status: Status,
       spec1: req.body.spec1,
-      discount: req.body.discount,
+      discount: Number(req.body.discount),
+      offer: categoryOffer ? categoryOffer._id : null,
+      offerPrice:Math.floor(offerPrice)
       // images: images
     }}]);
     res.redirect("/admin/products");

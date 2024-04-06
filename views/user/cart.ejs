@@ -126,7 +126,7 @@
                     <img src="/images/<%=row.productId.images[0]%>" alt="" style="width: 100px;">
                     <%= row.productId.ProductName%>
                   </td>
-                  <td><%= row.productId.Price.toLocaleString('hi') %></td>
+                  <td><%= row.price.toLocaleString('hi') %></td>
                   <td>
                     <div class="d-flex">
                       <div class="input-group-btn">
@@ -145,7 +145,7 @@
                   </td>
                   <td>
                     <div id="it<%=row._id  %>">
-                      <%= (row.productId.Price * row.quantity).toLocaleString('hi')  %>
+                      <%= (row.price * row.quantity).toLocaleString('hi')  %>
                     </div>
                   </td>
                   <td>
@@ -192,14 +192,18 @@
                   ₹ <%= totalPrice.toLocaleString('hi') %>
                 </div>
               </div>
+              <% if(couponApplied){ %>
               <div class="d-flex justify-content-between m-3 ">
-                <div class="" id="couponname">
-                  
-                </div>
-                <div class="" id="percent">
-                  
-                </div>
+                <div class="" id="couponname">coupon</div>
+                <div class="" id="percent">- <%= couponApplied.discount  %>%</div>
               </div>
+              <% }else{ %>
+                <div class="d-flex justify-content-between m-3 ">
+                  <div class="" id="couponname"></div>
+                  <div class="" id="percent"></div>
+                </div>
+              <% } %>
+
               <div class="d-flex justify-content-between m-3 ">
                 <div class="">
                   Discount
@@ -218,6 +222,16 @@
                 </div>
               </div>
               <hr>
+              <% if(couponApplied){ %>
+              <div class="d-flex justify-content-between m-3 ">
+                <div class="">
+                  Total amount
+                </div>
+                <div class="fw-bold" id="total-price">
+                  ₹ <%= ((totalPrice-totalPrice*couponApplied.discount/100)-discount).toLocaleString('hi') %>
+                </div>
+              </div> 
+              <% }else{ %>
               <div class="d-flex justify-content-between m-3 ">
                 <div class="">
                   Total amount
@@ -225,7 +239,8 @@
                 <div class="fw-bold" id="total-price">
                   ₹ <%= (totalPrice-discount).toLocaleString('hi') %>
                 </div>
-              </div> 
+              </div>
+              <% } %>
             </div>
           </div>
           <div class="col-12 my-0 d-flex justify-content-center">

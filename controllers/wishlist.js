@@ -4,31 +4,34 @@ module.exports = {
   wishlist:async(req,res)=>{
     try{
       let id = req.params.id;
-      let email = req.session.user.username;
+      let email = req.session.user.username??req.session.user.email;
       let user = await User.findOne({email:email}).populate('Wishlist.product');   
-      let index = user.Wishlist.findIndex((a)=>a.product._id.toString() === id);
+      let index = user.Wishlist.findIndex((a)=>a.product._id.toString() === id)??-1;
       let status = true;
+      let wishlist;
       if(index == -1){
-        const uuser =await User.updateOne({_id:user._id},{
+        await User.updateOne({_id:user._id},{
           $addToSet:{Wishlist:{product:id}}
         });
       }
       else{
         user.Wishlist.splice(index, 1);
-        console.log('this is the else printing')
+        
         status = false;
+        
         await user.save()
       }
-      res.json({status})
+      wishlist = user.Wishlist.length++;
+      res.json({status,wishlist})
     }catch(e){
       console.error(e)
     }
   },
   getWishlist:async(req,res)=>{
     try{
-      let email = req.session.user.username;
+      let email = req.session.user.username??req.session.user.email;
       let user = await User.findOne({email:email}).populate('Wishlist.product');
-      let wish = user.Wishlist.reverse();
+      let wish = user.Wishlist.reverse()??false;
       let q = req.session.cartCount
       if(wish)
         res.render('user/wishlist',{wish,q})
@@ -41,7 +44,7 @@ module.exports = {
   },
   deleteWishlist:async(req,res)=>{
     try{
-      let email = req.session.user.username;
+      let email = req.session.user.username??req.session.user.email;
       let user = await User.findOne({email:email});
       let id = req.params.id;
       let index = user.Wishlist.findIndex(a=>a._id.toString()===id);
