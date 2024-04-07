@@ -70,11 +70,16 @@ app.use((req,res,next)=>{
 // app.post("/admin/login",(req,res)=>{
  
 // })
+const Products = require('./models/product')
+app.get('/',async(req,res)=>{
+  let pd = await Products.find({Display:true})
+  res.render('user/landpage',{pd});
+})
 
 app.get("/user/logout",(req,res)=>{
   
   req.session.user = null;
-  res.redirect('/user/landpage');
+  res.redirect('/');
 })
 
 app.get('/admin/logout',(req,res)=>{

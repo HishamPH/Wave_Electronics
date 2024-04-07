@@ -18,8 +18,8 @@ const wishlistController = require('../controllers/wishlist')
 //const checkoutAuth = require('../middlewares/userAuth')
 
 
-router.route('/landpage')
-.get(userController.getLandPage);
+// router.route('/landpage')
+// .get(userController.getLandPage);
 
 
 //======================= LOGIN ===========================
