@@ -12,14 +12,15 @@ module.exports = {
 
 
   getLandPage:async(req,res)=>{
-    let pd = await Products.find({Display:true})
+    let pd = await Products.find({Display:true}).populate('offer').limit(8)
+    
     res.render('user/landpage',{pd});
   },
 
   getHomePage:async(req,res)=>{
     let name = req.session.user.username??req.session.user.email;
     const user = await User.findOne({email:name})
-    let pd = await Products.find({Display:true}).populate('offer')
+    let pd = await Products.find({Display:true}).populate('offer').limit(8)
     let cat = await Category.find()
     let wish = user.Wishlist;
     let wishlist = []
@@ -362,8 +363,10 @@ module.exports = {
     wish.forEach((item)=>{
       wishlist.push(item.product.toString());
     })
+    currentPage =1 ;
+    totalPages = 10;
     let q = req.session.cartCount||0;
-    res.render('user/searchresult',{message:req.session.name,product,q,cat,wishlist});
+    res.render('user/searchresult',{message:req.session.name,product,q,cat,wishlist,currentPage,totalPages});
   },
   searchProduct:async(req,res)=>{
     let {q} = req.query;
@@ -373,12 +376,16 @@ module.exports = {
   },
   filterProducts:async(req,res)=>{
     let filter = Object.keys(req.body);
+    console.log(filter)
+    console.log(req.query);
+    let search = req.query.name
     let sort;
-    let products
+    let products = null;
     if(req.query.order == 'lth'){
       sort = 1
       products = await Products.find({
-        Category:{$in:filter}
+        Category:{$in:filter},
+        ProductName: { $regex: new RegExp(search, 'i') } 
       }).sort({Price:sort}).collation({ locale: 'en', strength: 2 })
     }else if(req.query.order == 'htl'){
       sort = -1
@@ -396,11 +403,7 @@ module.exports = {
         Category:{$in:filter}
       }).sort({ProductName:sort}).collation({ locale: 'en', strength: 2 })
     }
-    
-    
-    products.forEach((item)=>{
-      console.log(item.ProductName)
-    })
+   
     res.json({products});
   }
 }

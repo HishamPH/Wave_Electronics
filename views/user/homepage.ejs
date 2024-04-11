@@ -144,25 +144,33 @@
    
 
     <!-- Banner start -->
-    <!-- <div class="container  position-relative" style="top:140px">
+    <div class="container  position-relative" style="top:110px">
        <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-inner w-50 ">
+        
+        <div class="carousel-inner ">
           <div class="carousel-item active">
             <img src="/img/banner_1.jpg" class="d-block w-100 " alt="...">
+            <div class="carousel-caption d-none d-md-block">
+              <h2>Samsung Galaxy s23 Ultra</h2>
+              <p>Shop galaxy watch 5 with s23 and get upto benfits of ₹12,000</p>
+            </div>
           </div>
-          <div class="carousel-item">
-            <img src="/img/banner_2.jpg" class="d-block w-100 " alt="...">
-          </div>
+          
           <div class="carousel-item">
             <img src="/img/banner_3.jpg" class="d-block w-100 " alt="...">
+            <div class="carousel-caption d-none d-md-block">
+              <h2>Apple iPhone 15 pro max</h2>
+              <p>...</p>
+            </div>
           </div>
         </div>
+       
       </div>
-    </div> -->
+    </div>
    
 
 
-    <div class="container mt-5 position-relative" style="top: 70px;">
+    <div class="container mt-5 position-relative" style="top: 100px;">
       
         <div class="row" id="searchResult">
           
@@ -178,7 +186,7 @@
               <img src="/images/<%= row.images[0]  %>" class="card-img-top card-img-auto" alt="Product Image" style="object-fit: cover;">
               <div class="card-body bg-white" style="height: 220px;">
                 <a href="/user/detail/<%= row._id %>">
-                    <div class="card-title m-0 text-truncate "><%= row.ProductName  %></div>
+                    <div class="card-title m-0 text-truncate fw-bold "><%= row.ProductName  %></div>
                     <p class="card-text fw-bold text-dark mb-2 ">₹<%= row.Price.toLocaleString('hi')  %></p>
                     <p class="card-text text-black " style="height: 48px;"><%= row.spec1 %></p>
                     

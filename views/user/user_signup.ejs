@@ -4,10 +4,27 @@
   <link rel="stylesheet" href="/css/login.css">
 </head>
 <body>
+  <header id="header" class="header fixed-top d-flex align-items-center bg-black " style="height: 90px;">
+
+    <div class="d-flex align-items-center justify-content-between ms-4 ">
+      <div class="col-lg-4  d-flex align-items-center ">
+        <a href="/user/homepage" class="text-decoration-none">
+          <span class="h2 text-uppercase text-warning bg-dark px-2">WAVE</span>
+          <span class="h2 text-uppercase text-dark bg-warning px-2 ml-n1">ELECTRONICS</span>
+        </a>
+        
+      </div>
+      
+    </div><!-- End Logo -->
+
+ 
+
     
-  <div class="container login-container">
+
+  </header>
+  <div class="container login-container bg-white ">
     <div class="login-form">
-        <h2>Add new user</h2>
+        <h2>Sign Up</h2>
         <form action="/user/signup" method="post" id="add-form" onsubmit="return validateForm()">
             <div class="form-group">
               <label for="name">Username:</label>
@@ -38,7 +55,7 @@
             
             <button type="submit" class="btn btn-primary login-btn">Sign Up</button>
             <div class="register-link">
-                <p>Already have an account? &nbsp;&nbsp;<a href="/user/login">Sign In</a></p>
+                <p class="text-black mt-1 ">Already have an account? &nbsp;&nbsp;<a href="/user/login">Sign In</a></p>
             </div>
         </form>
     </div>

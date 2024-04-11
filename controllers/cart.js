@@ -9,10 +9,17 @@ const Coupon = require('../models/coupon')
 module.exports = {
   addToCart:async(req,res)=>{
     try{
-      console.log('hello')
+     
       let cart;
       let id = req.params.id
-      let email = req.session.user.username;
+      if(!req.session.user){
+        
+        res.json({status:true});
+       
+        return;
+      }
+      let email = req.session.user.username??req.session.user.email;
+      
       let user = await User.findOne({email:email});
       let pd = await Products.findById(id)
       cart = await Cart.findOne({userId:user._id})

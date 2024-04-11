@@ -3,12 +3,13 @@ $(document).ready(function() {
     e.preventDefault();
     let filters = $('#filter').serialize();
     let sort = $('#sort').serialize();
-    filterProducts(filters,sort);
+    let q = $('#searchInput').serialize();
+    filterProducts(filters,sort,q);
   });
   
-  function filterProducts(filters,sort) {
+  function filterProducts(filters,sort,q) {
     $.ajax({
-      url: `/user/filters?${sort}`,
+      url: `/user/filters?${sort}&${q}`,
       method: 'post',
       data:filters,
       success:function(res) {
@@ -20,7 +21,20 @@ $(document).ready(function() {
     });
   }
 
-  
+  // $('#searchInput').keyup(function(e){
+  //   e.preventDefault();
+    
+  //   let q = $(this).val()
+  //   $.ajax({
+  //     url:'/user/search',
+  //     method:'get',
+  //     data:{q:q},
+  //     success:function(res){
+  //       updateProducts(res.products);
+        
+  //     }
+  //   })
+  // })
 
 });
 

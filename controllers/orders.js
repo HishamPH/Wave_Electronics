@@ -46,9 +46,7 @@ module.exports = {
       })
       
       console.log(order._id);
-      cart.items = [];
-      cart.total = 0;
-      cart.coupon = null;
+      
       let status = true;
       if(req.body.method === 'card'){
         var options = {
@@ -78,14 +76,14 @@ module.exports = {
               amount:totalPrice,
               date:Date.now()
             })
+            wallet.balance -= totalPrice;
+            await wallet.save();
+            order.paymentStatus = 'success';
+            order.paymentMethod = 'Wallet'
           }else{
             res.json({wallet:true});
-            return;
+         
           }
-          wallet.balance -= totalPrice;
-          await wallet.save();
-          order.paymentStatus = 'success';
-          order.paymentMethod = 'Wallet'
         }
         order.items.forEach(async(item)=>{
           let pd = await Products.findById(item.productId._id);
@@ -95,6 +93,9 @@ module.exports = {
           pd.Status = 'Out of stock';
           await pd.save();
         });
+        cart.items = [];
+        cart.total = 0;
+        cart.coupon = null;
         req.session.cartCount = 0;
         req.session.totalPrice = null;
         await cart.save()
@@ -113,7 +114,6 @@ module.exports = {
   paymentSuccess:async(req,res)=>{
     let or = req.body
     let cart = await Cart.findOne({userId:or.userId}).populate('items.productId');
-    console.log(cart.items)
     let order = new Order({
       userId:or.userId,
       items:or.items,
@@ -135,6 +135,7 @@ module.exports = {
     await order.save();
     cart.items = [];
     cart.total = 0;
+    cart.coupon = null;
     req.session.cartCount = 0;
     await cart.save();
     res.json({status:true})
@@ -190,8 +191,9 @@ module.exports = {
     if(req.body.status === 'delivered'){
       console.log('DELIVERED');
       order.items[index].deliveryDate = new Date();
+      order.paymentStatus = 'success';
     }
-    order.paymentStatus = 'success';
+   
     await order.save()
     console.log(req.body)
     res.redirect(`/admin/orderdetails/${order._id}`)

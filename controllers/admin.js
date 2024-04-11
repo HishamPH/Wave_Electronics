@@ -2,7 +2,7 @@ const User = require('../models/users')
 
 const Order = require('../models/orders');
 const Products = require('../models/product');
-
+const Category = require('../models/category')
 module.exports = {
   getAdminLogin:async(req,res)=>{
     res.render('admin/admin_login')
@@ -43,32 +43,62 @@ module.exports = {
       pdCount.push(q);
       dates.push(lastMonth.toLocaleDateString('en-US', { month: 'long', day: 'numeric' }));
       lastMonth.setDate(lastMonth.getDate()+1);
-    }
-    console.log(pdCount)
-    console.log(dates)
-    res.render('admin/index',{pdCount,dates});
-
-    // let pd = await Products.find();
-    // let od = await Order.find({
-    //   'items.status':{$in:['delivered','return rejected']}
-    // });
-    // let bestpd = [];
-    // let bestCount = [];
-    // let a =await od.aggregate([
-    //   { $unwind: "$items" },
-    //   { 
-    //     $group: {
-    //       _id: "$items.productId",
-    //       totalQuantity: { $sum: "$items.quantity" }
-    //     }
-    //   },
+    } 
+    let a =await Order.aggregate([
+      {$match:{
+        'items.status':{$in:['delivered','return rejected']}
+      }},
+      { $unwind: "$items" },
+      { 
+        $group: {
+          _id: "$items.productId",
+         totalQuantity: { $sum: "$items.quantity" }
+        }
+      },
   
-    //   { $sort: { totalQuantity: -1 } },
+      { $sort: { totalQuantity: -1 } },
 
-    //   { $limit: 3 }
-    // ]);
-    // console.log(a)
-
+      { $limit: 3 },
+      
+    ]);
+    let b = await Order.aggregate([
+      {$match:{
+        'items.status':{$in:['delivered','return rejected']}
+      }},
+      { $unwind: "$items" },
+      {
+        $lookup: {
+          from: "products", // Name of the Product collection
+          localField: "items.productId",
+          foreignField: "_id",
+          as: "product"
+        }
+      },
+      { $unwind: "$product" },
+      {
+        $group: {
+          _id: "$product.Category",
+          totalQuantity: { $sum: "$items.quantity" }
+        }
+      },
+      { $sort: { totalQuantity: -1 } },
+      { $limit: 3 }
+    ]);
+    let bestSellingProducts = [];
+    let bestSellingCategories = [];
+    let p1 = a.map(async(item)=>{
+      let x = await Products.findById(item._id)
+      bestSellingProducts.push(x);
+      console.log(x.ProductName)
+    });
+    let p2 = b.map(async(item)=>{
+      let x = await Category.findById(item._id)
+      bestSellingCategories.push(x);
+      console.log(x.Name);
+    });
+    await Promise.all(p1)
+    await Promise.all(p2);
+    res.render('admin/index',{pdCount,dates,bestSellingProducts,bestSellingCategories,a});
   },
   getUser:async(req,res)=>{
     const user = await User.find()

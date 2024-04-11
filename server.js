@@ -72,7 +72,7 @@ app.use((req,res,next)=>{
 // })
 const Products = require('./models/product')
 app.get('/',async(req,res)=>{
-  let pd = await Products.find({Display:true})
+  let pd = await Products.find({Display:true}).populate('offer').limit(8)
   res.render('user/landpage',{pd});
 })
 

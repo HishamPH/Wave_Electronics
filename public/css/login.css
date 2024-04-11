@@ -7,18 +7,18 @@ body {
 .login-container {
   max-width: 400px;
   margin: auto;
-  margin-top: 100px;
+  margin-top: 150px;
 }
 
 .login-form {
-  background-color:rgba(0, 0, 0, 0.7);
+  background-color:rgba(255, 255, 255, 0.7);
   padding: 30px;
-  border-radius: 15px;
+  border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(0, 0,0, 0.3);
 }
 
 .login-form h2 {
+  color: black;
   text-align: center;
   margin-bottom: 30px;
 }
@@ -29,18 +29,19 @@ body {
 
 .form-group label {
   font-weight: bold;
+  color: black;
 }
 
 
 .input-text{
-  color: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
 }
 
 .form-group input {
   background-color: rgba(0, 0, 0, 0);
   width: 100%;
   padding: 10px;
-  border: 1px solid #353535;
+  border: 1px solid #d1d1d1;
   border-radius: 5px;
 }
 

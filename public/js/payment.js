@@ -80,7 +80,7 @@ function paymentFailure(order){
 
 
 function paymentSuccess(order){
-  console.log(order)
+  
   let data = JSON.stringify(order)
   // console.log(data)
   $.ajax({

@@ -287,9 +287,22 @@
             <div class="card-body">
               <h5 class="card-title">Best Selling Products</h5>
               <div class="d-flex justify-content-between mx-5 ">
-                <div>helo</div>
-                <div>helo</div>
-                <div>helo</div>
+                <% bestSellingProducts.forEach((row,index)=>{%>
+                  <div class="col-xl-3 col-md-6 ">
+                    <div class="card rounded-0 ">
+                      
+                      <img src="/images/<%= row.images[0]  %>" class="card-img-top card-img-auto" alt="Product Image" style="object-fit: cover;">
+                      <div class="card-body bg-white" >
+                       
+                        <div class="card-title m-0 text-truncate fw-bold "><%= row.ProductName  %></div>
+                        
+                      
+                      
+                        
+                      </div>
+                    </div>
+                  </div>
+                  <%});%>
               </div>
             </div>
           </div>
@@ -301,6 +314,11 @@
           <div class="card info-card sales-card">
             <div class="card-body">
               <h5 class="card-title">Best Selling Categories</h5>
+              <div class="d-flex justify-content-between mx-5 ">
+                <% bestSellingCategories.forEach((row,index)=>{%>
+                  <div><%= row.Name  %></div>
+                <%});%>
+              </div>
             </div>
           </div>
         </div>

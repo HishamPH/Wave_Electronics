@@ -20,7 +20,7 @@
 
     <!-- Libraries Stylesheet -->
    
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- Customized Bootstrap Stylesheet -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="/css/style.css">
@@ -29,124 +29,95 @@
 
 <body>
     <!-- Topbar Start -->
-    <div class="container-fluid">
-        
-        <div class="row align-items-center bg-light py-3 px-xl-5 d-none d-lg-flex justify-content-between">
-            <div class="col-lg-4">
-                <a href="" class="text-decoration-none">
-                    <span class="h1 text-uppercase text-warning bg-dark px-2">WAVE</span>
-                    <span class="h1 text-uppercase text-dark bg-warning px-2 ml-n1">ELECTRONICS</span>
-                </a>
-            </div>
-            <div class="col-lg-4 col-6 text-left">
-              <div class="input-group d-flex align-items-center h-100">
-                <input type="text" class="form-control" placeholder="Search for products">
-                <div class="input-group-append h-50 ">
-                  <span class="input-group-text bg-transparent text-primary ">
-                      <i class="fa fa-search "></i>
-                  </span>
-                </div>
-              </div>
-            </div>
+
+    <header id="header" class="header fixed-top d-flex align-items-center bg-black " style="height: 90px;">
+
+        <div class="d-flex align-items-center justify-content-between">
+          <div class="col-lg-4  d-flex align-items-center">
+            <a href="/user/homepage" class="text-decoration-none">
+              <span class="h2 text-uppercase text-warning bg-dark px-2">WAVE</span>
+              <span class="h2 text-uppercase text-dark bg-warning px-2 ml-n1">ELECTRONICS</span>
+            </a>
+            
+          </div>
           
-            <div class="col-lg-4 col-6 text-right d-flex justify-content-end">
-              <a href="/user/login"><button class="btn btn-primary rounded-pill mx-3">Login</button></a>
-              <a href="/user/signup"><button class="btn btn-secondary rounded-pill">SignUp</button></a>
-            </div>
+        </div><!-- End Logo -->
+    
+        <div class="search-bar">
+          <form class="search-form d-flex align-items-center" action="" method="get">
+            <input type="search" name="name" placeholder="Search" title="Enter search keyword" id="" onclick="">
+            <button type="submit" title="Search"><i class="bi bi-search"></i></button>
+          </form>
+        </div><!-- End Search Bar -->
+        <div class="col-lg-4 col-6 text-right d-flex justify-content-end">
+            <a href="/user/login"><button class="btn btn-primary rounded-pill mx-3">Login</button></a>
+            <a href="/user/signup"><button class="btn btn-secondary rounded-pill">SignUp</button></a>
+          </div>
+        
+    
+    </header>
+
+
+   
+
+
+
+
+   
+   
+    <div class="container  position-relative" style="top:110px">
+        <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
          
-        </div>
-    </div>
-    <!-- Topbar End -->
-
-
-    <!-- Navbar Start -->
-    <div class="container-fluid bg-dark mb-30">
-        <div class="row px-xl-5">
-            <div class="col-lg-3 d-none d-lg-block">
-                <a class="btn d-flex align-items-center justify-content-between bg-warning w-100" data-toggle="collapse" href="#navbar-vertical" style="height: 65px; padding: 0 30px;">
-                    <h6 class="text-dark m-0"><i class="fa fa-bars mr-2"></i>Categories</h6>
-                    <i class="fa fa-angle-down text-dark"></i>
-                </a>
-               
-            </div>
-            <div class="col-lg-9">
-                <nav class="navbar navbar-expand-lg bg-dark navbar-dark py-3 py-lg-0 px-0">
-                    <a href="" class="text-decoration-none d-block d-lg-none">
-                        <span class="h1 text-uppercase text-dark bg-light px-2">Multi</span>
-                        <span class="h1 text-uppercase text-light bg-primary px-2 ml-n1">Shop</span>
-                    </a>
-                    <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
-                        <div class="navbar-nav mr-auto py-0">
-                            <a href="#" class="nav-item nav-link active">Home</a>
-                            <a href="#" class="nav-item nav-link">Shop</a>
-                            <a href="#" class="nav-item nav-link">Shop Detail</a>
-                            <div class="nav-item dropdown">
-                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages <i class="fa fa-angle-down mt-1"></i></a>
-                                <div class="dropdown-menu bg-primary rounded-0 border-0 m-0">
-                                    <a href="#" class="dropdown-item">Shopping Cart</a>
-                                    <a href="#" class="dropdown-item">Checkout</a>
-                                </div>
-                            </div>
-                            <a href="#" class="nav-item nav-link">Contact</a>
-                        </div>
-                      
-                    </div>
-                </nav>
-            </div>
-        </div>
-    </div>
-    <!-- Navbar End -->
-
-
-
-
-    <!-- Featured Start -->
-    <div class="container-fluid pt-5">
-        <div class="row px-xl-5 pb-3">
-            <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
-                <div class="d-flex align-items-center bg-light mb-4" style="padding: 30px;">
-                    <h1 class="fa fa-check text-primary m-0 mr-3"></h1>
-                    <h5 class="font-weight-semi-bold m-0">Quality Product</h5>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
-                <div class="d-flex align-items-center bg-light mb-4" style="padding: 30px;">
-                    <h1 class="fa fa-shipping-fast text-primary m-0 mr-2"></h1>
-                    <h5 class="font-weight-semi-bold m-0">Free Shipping</h5>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
-                <div class="d-flex align-items-center bg-light mb-4" style="padding: 30px;">
-                    <h1 class="fas fa-exchange-alt text-primary m-0 mr-3"></h1>
-                    <h5 class="font-weight-semi-bold m-0">14-Day Return</h5>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
-                <div class="d-flex align-items-center bg-light mb-4" style="padding: 30px;">
-                    <h1 class="fa fa-phone-volume text-primary m-0 mr-3"></h1>
-                    <h5 class="font-weight-semi-bold m-0">24/7 Support</h5>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Featured End -->
-    <div class="container mt-5">
-        <div class="row">
+         <div class="carousel-inner ">
+           <div class="carousel-item active">
+             <img src="/img/banner_1.jpg" class="d-block w-100 " alt="...">
+             <div class="carousel-caption d-none d-md-block">
+               <h2>Samsung Galaxy s23 Ultra</h2>
+               <p>Shop galaxy watch 5 with s23 and get upto benfits of ₹12,000</p>
+             </div>
+           </div>
+           
+           <div class="carousel-item">
+             <img src="/img/banner_3.jpg" class="d-block w-100 " alt="...">
+             <div class="carousel-caption d-none d-md-block">
+               <h2>Apple iPhone 15 pro max</h2>
+               <p>...</p>
+             </div>
+           </div>
+         </div>
+        
+       </div>
+     </div>
+     <div class="container mt-5 position-relative" style="top: 100px;">
+      
+        <div class="row" id="searchResult">
+          
         <% pd.forEach((row,index)=>{%>
-          <div class="col-md-3">
-            <div class="card">
-              <img src="/images/<%= row.images[0]  %>" class="card-img-top card-img-auto" alt="Product Image" style="object-fit: cover;">
-              <div class="card-body">
-                <a href="/user/detail/<%= row._id %>">
-                    <h5 class="card-title"><%= row.ProductName  %></h5>
-                    <p class="card-text"><%= row.spec1 %></p>
-                    <p class="card-text text-danger fw-bold">Price: ₹<%= row.Price  %></p>
-                </a>
+          <div class="col-xl-3 col-lg-4 col-md-6 ">
+            <div class="card rounded-0 ">
+              <% if (row.offer) { %>
+                <span class="badge position-absolute  p-2  bg-danger w-auto rounded-0  " style="top: 15px; right: 15px;">
+                   - <%= row.offer.percentage %>%
+                </span>
                 
-                <button class="btn btn-primary rounded-pill">Add to cart</button>
+              <% } %>
+              <img src="/images/<%= row.images[0]  %>" class="card-img-top card-img-auto" alt="Product Image" style="object-fit: cover;">
+              <div class="card-body bg-white" style="height: 220px;">
+                <a href="/user/detail/<%= row._id %>">
+                    <div class="card-title m-0 text-truncate fw-bold "><%= row.ProductName  %></div>
+                    <p class="card-text fw-bold text-dark mb-2 ">₹<%= row.Price.toLocaleString('hi')  %></p>
+                    <p class="card-text text-black " style="height: 48px;"><%= row.spec1 %></p>
+                    
+                </a>
+                <div class="d-flex justify-content-between mt-3" style="bottom:0px;">
+                  <button data-path="<%= row._id %>" class="btn btn-dark rounded-pill addtocart">Add to cart</button>
+                  
+                  <button data-path="<%= row._id %>" class="btn rounded-circle  shadow-sm text-danger"><img src="/img/heart-white.png" class="img-fluid heart-image" style="width: 10px;" alt=""></button>
+                  
+                </div>
+                
+                
+                
               </div>
             </div>
           </div>
@@ -155,12 +126,9 @@
         </div>
     </div>
    
-   
-
-   
 
     <!-- Footer Start -->
-    <div class="container-fluid bg-dark text-secondary mt-5 pt-5">
+    <div class="container-fluid bg-dark text-secondary mt-5 pt-5 position-relative " style="top: 100px;">
         <div class="row px-xl-5 pt-5">
             <div class="col-lg-4 col-md-12 mb-5 pr-3 pr-xl-5">
                 <h5 class="text-secondary text-uppercase mb-4">Get In Touch</h5>
@@ -227,20 +195,20 @@
         </div>
     </div>
     <!-- Footer End -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+   
+   
 
     <!-- Back to Top -->
     <a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
     <!-- JavaScript Libraries -->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
     
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
+    <script src="/js/cartCount.js"></script>    
 </body>
 
 </html>

@@ -184,31 +184,34 @@
           <div class="card ">
             <div class="card-body px-0 ">
               <h1 class="ps-3 pt-2 fw-bolder ">My wallet</h1>
-              <table class="table table-striped table-group-divider   table-hover">
+              <div class="overflow-auto " style="height: 300px;">
+                <table class="table table-striped table-group-divider table-hover overflow-auto">
                 
-                <thead class="table-warning ">
-                  <tr>
-                    <th>Serial No</th>
-                    <th>type</th>
-                    <th>Date</th>
-                    <th style="width:100px;">Amount</th>
-                  </tr>
-                </thead>
-                <tbody class="table-group-divider ">
-                  <%wallet.transactions.forEach((item,index)=>{ %> 
-                    <tr class="align-middle ">
-                      <td class="ps-4 "><%= index+1 %></td>
-                      <td><%= item.type %></td>                  
-                      <td><%= item.date.toLocaleString('en-US', { dateStyle: 'long' }) %></td>
-                      <% if(item.type == 'purchase'){ %>
-                        <td class="text-danger fw-bold ">- <%= item.amount %></td>
-                      <%} else{ %>
-                        <td class="text-success fw-bold ">+ <%= item.amount %></td>
-                      <% } %>
+                  <thead class="table-warning ">
+                    <tr>
+                      <th>Serial No</th>
+                      <th>type</th>
+                      <th>Date</th>
+                      <th style="width:100px;">Amount</th>
                     </tr>
-                  <% }) %>
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody class="table-group-divider ">
+                    <%wallet.transactions.forEach((item,index)=>{ %> 
+                      <tr class="align-middle ">
+                        <td class="ps-4 "><%= index+1 %></td>
+                        <td><%= item.type %></td>                  
+                        <td><%= item.date.toLocaleString('en-US', { dateStyle: 'long' }) %></td>
+                        <% if(item.type == 'purchase'){ %>
+                          <td class="text-danger fw-bold ">- <%= item.amount %></td>
+                        <%} else{ %>
+                          <td class="text-success fw-bold ">+ <%= item.amount %></td>
+                        <% } %>
+                      </tr>
+                    <% }) %>
+                  </tbody>
+                </table>
+              </div>
+              
               <div class="d-flex justify-content-between mt-4   mx-3 ">
                 <h5 class="fw-bold ">Wallet Balance</h5>
                 <h5>₹<%= wallet.balance.toLocaleString('hi')  %></h5>
