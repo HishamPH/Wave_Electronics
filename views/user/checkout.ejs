@@ -212,7 +212,7 @@
                     <div>
                       <% if(fullPrice>10000){ %>
                       <input type="radio" id="cod" name="method" value="COD" disabled>
-                      <label for="cod">Cash on Delivery</label>
+                      <label for="cod">Cash on Delivery<span class="text-danger">(COD not available for orders above 10000)</span></label>
                       <%} else{ %>
                         <input type="radio" id="cod" name="method" value="COD">
                         <label for="cod">Cash on Delivery</label>

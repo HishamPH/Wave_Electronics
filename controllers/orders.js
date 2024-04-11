@@ -113,6 +113,7 @@ module.exports = {
   },
   paymentSuccess:async(req,res)=>{
     let or = req.body
+
     let cart = await Cart.findOne({userId:or.userId}).populate('items.productId');
     let order = new Order({
       userId:or.userId,
@@ -142,19 +143,44 @@ module.exports = {
   },
   paymentFailed:async(req,res)=>{
     try{
-      let id = req.params.id;
-      let order = await Order.findById(id);
-      let cart = await Card.findById(order.userId);
-      cart.items = order.items;
-      cart.total = order.items.length;
+      let or = req.body;
+      console.log(or);
+      let cart = await Cart.findOne({userId:or.userId}).populate('items.productId');
+      let order = new Order({
+        userId:or.userId,
+        items:or.items,
+        paymentMethod:'razorpay',
+        orderDate:or.orderDate,
+        totalPrice:or.totalPrice,
+        Address:or.Address,
+        coupon:cart.coupon,
+        paymentStatus:'failed'
+      });
+      order.items.forEach(async(item)=>{
+        let pd = await Products.findById(item.productId._id);
+        console.log(pd.stock)
+        pd.stock -=  item.quantity;
+        if(pd.stock === 0)
+          pd.Status = 'Out of stock';
+        await pd.save();
+      });
+      await order.save();
+      cart.items = [];
+      cart.total = 0;
+      cart.coupon = null;
+      req.session.cartCount = 0;
       await cart.save();
-      await Order.findByIdAndDelete(id);
+      res.json({status:true})
 
     }catch(e){
       console.log('this is the catch of payment failed')
       console.error(e)
 
     }
+  },
+
+  continuePayment:async(req,res)=>{
+    
   },
 
   getUserOrders:async(req,res)=>{

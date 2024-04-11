@@ -163,11 +163,12 @@
 
           </div>
         </div>
+
         <div class="col-12 col-lg-4">
           <div class="card info-card sales-card mb-2">
             <div class="card-body">
-              <div class="d-flex align-items-center justify-content-between mt-3">
-                <form class="" id="coupon">
+              <div class="mt-3 ">
+                <form class="d-flex " id="coupon">
                   <div class="form-group">
                     <input type="text" name="code" class="form-control bg-secondary "
                   id="couponCode">
@@ -178,11 +179,32 @@
                   </button>
 
                 </form>
+                <div class="overflow-auto mt-3 " style="height: 150px;">
+                  <% coupons.forEach((row)=>{ %>
+                  <div class="coupon-card mt-2 " >
+      
+                    <div class="coupon-content">
+                      <p>Get  <span class="discount "><%= row.discount %>% </span> off</p>
+                      <p>Use code: <span class="code "><%= row.code %></span></p>
+                      <p>Valid until <span class="validity"><%= row.expire.toLocaleString('en-US',{dateStyle:'short'})%></span></p>
+                    </div>
+                  </div>
+
+                  <% }) %>
+
+                </div>
+                
                 <div class="text text-success " id="applied">
 
                 </div>
               </div>
-              <hr>
+       
+              
+            </div>
+          </div>
+          <div class="card info-card sales-card mb-2">
+            <div class="card-body">
+              
               <h4>Cart summary</h4>
               <div class="d-flex justify-content-between m-3 ">
                 <div class="">
@@ -232,7 +254,7 @@
                 </div>
               </div> 
               <% }else{ %>
-              <div class="d-flex justify-content-between m-3 ">
+              <div class="d-flex justify-content-between m-3 mb-0 ">
                 <div class="">
                   Total amount
                 </div>
@@ -241,15 +263,16 @@
                 </div>
               </div>
               <% } %>
+              <div class="col-12 my-0 d-flex justify-content-center">
+                <a href="/user/checkout">
+                  <button class="btn btn-primary px-5 py-2 fw-bolder">
+                    checkout
+                  </button>
+                </a>
+              </div>
             </div>
           </div>
-          <div class="col-12 my-0 d-flex justify-content-center">
-            <a href="/user/checkout">
-              <button class="btn btn-primary px-5 py-2 fw-bolder">
-                checkout
-              </button>
-            </a>
-          </div>
+          
         </div>
       </div>
     </section>

@@ -56,22 +56,26 @@ module.exports = {
     let email = req.session.user.username??req.session.user.email
     let user = await User.findOne({email:email})
     let cart = await Cart.findOne({userId:user._id}).populate('items.productId coupon')
-
+    let coupons = await Coupon.find();
+    cart.coupon = null;
+    await cart.save()
     if(cart&&cart.items.length){
       let items = cart.items
       cart.total = cart.items.length;
       req.session.cartQuantity = cart.total;
       console.log(cart.total)
+      
       await cart.save()
       let totalPrice =0,discount = 0;
       cart.items.forEach((item,index)=>{
         totalPrice += Number(item.productId.Price)*Number(item.quantity)
         discount += Number(item.productId.discount)*Number(item.quantity)
       });
+      req.session.totalPrice = totalPrice-discount;
       let couponApplied = false;
       if(cart.coupon !== null)
         couponApplied = cart.coupon;
-      res.render('user/cart',{items,msg:false,totalPrice,total:cart.total,discount,couponApplied})
+      res.render('user/cart',{items,msg:false,totalPrice,total:cart.total,discount,couponApplied,coupons})
     }else{
       res.render('user/cart',{msg:'your cart is empty'}) 
     }

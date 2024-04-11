@@ -245,51 +245,56 @@
                   <div class="fw-bold mb-3 ">
                     status
                   </div>
-                  <% if(pd.status == 'cancelled') {%>
-                    <span class="badge bg-danger">
-                      <%= pd.status %>
-                    </span>
-                  <%}else if(pd.status=='confirmed'){%>
-                    <span class="badge bg-warning ">
-                      <%= pd.status %>
-                    </span>
-                  <%}else if(pd.status=='shipped'){%>
-                    <span class="badge bg-info ">
-                      <%= pd.status %>
-                    </span>
-                  <%}else if(pd.status=='delivered'){%>
-                    <span class="badge bg-success">
-                    <%= pd.status %>
-                    </span>
-               
-                    <% if(checkDate&&(new Date() < checkDate)){%>
-                    <button type="button" class="btn btn-warning"   data-bs-toggle="modal" data-bs-target="#returnReason">
-                      return
-                    </button>
-                    <% }  %>
+                
 
-                  <%}else if(pd.status == 'Order Placed') {%>
-                    <span class="badge bg-success p-2 bg-opacity-25 text-success  ">
+                    <% if(pd.status == 'cancelled') {%>
+                      <span class="badge bg-danger">
+                        <%= pd.status %>
+                      </span>
+                    <%}else if(pd.status=='confirmed'){%>
+                      <span class="badge bg-warning ">
+                        <%= pd.status %>
+                      </span>
+                    <%}else if(pd.status=='shipped'){%>
+                      <span class="badge bg-info ">
+                        <%= pd.status %>
+                      </span>
+                    <%}else if(pd.status=='delivered'){%>
+                      <span class="badge bg-success">
                       <%= pd.status %>
-                    </span>
-                    <a href="/user/orders/cancelorders/<%= pd._id  %>">
-                      <button class="btn btn-danger ">
-                        cancel
+                      </span>
+                
+                      <% if(checkDate&&(new Date() < checkDate)){%>
+                      <button type="button" class="btn btn-warning"   data-bs-toggle="modal" data-bs-target="#returnReason">
+                        return
                       </button>
-                    </a>
-                  <% }else if(pd.status == 'returned') {%>
-                    <span class="badge bg-warning  ">
-                      <%= pd.status %>
-                    </span>
-                  <% }else if(pd.status == 'return request'){ %>
-                    <span class="badge bg-warning  ">
-                      <%= pd.status %>
-                    </span>
-                  <% }else{ %>
-                    <span class="badge bg-secondary bg-opacity-25  p-2 text-black  ">
-                      <%= pd.status %>
-                    </span>
-                  <% } %>
+                      <% }  %>
+
+                    <%}else if(pd.status == 'Order Placed') {%>
+                      <span class="badge bg-success p-2 bg-opacity-25 text-success  ">
+                        <%= pd.status %>
+                      </span>
+                      <a href="/user/orders/cancelorders/<%= pd._id  %>">
+                        <button class="btn btn-danger ">
+                          cancel
+                        </button>
+                      </a>
+                    <% }else if(pd.status == 'returned') {%>
+                      <span class="badge bg-warning  ">
+                        <%= pd.status %>
+                      </span>
+                    <% }else if(pd.status == 'return request'){ %>
+                      <span class="badge bg-warning  ">
+                        <%= pd.status %>
+                      </span>
+                    <% }else{ %>
+                      <span class="badge bg-secondary bg-opacity-25  p-2 text-black  ">
+                        <%= pd.status %>
+                      </span>
+                    <% } %>
+
+
+                
                 </div>
                 <div class="border-start  border-dark">
                 </div>
@@ -354,6 +359,8 @@
       </div>
     </div>
   </div>
+
+
  
 
 
@@ -377,6 +384,7 @@
   <!-- Template Javascript -->
   <script src="/js/main.js"></script>
   <script src="/js/cartCount.js"></script>
+
 </body>
 
 </html>

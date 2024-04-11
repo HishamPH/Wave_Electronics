@@ -59,7 +59,7 @@ function paymentConfirm(or,order){
     
     alert(res.error.code);
     alert('there has been a payment failure')
-    // paymentFailure(order);
+    paymentFailure(order);
     //location.href = '/user/checkout'
   });
   rzp1.open();
@@ -67,13 +67,15 @@ function paymentConfirm(or,order){
 
 
 function paymentFailure(order){
+  let data = JSON.stringify(order)
   $.ajax({
-    url: `/user/paymentfailed/${order._id}`,
-    method: 'get',
-    data:method,
+    url: `/user/paymentfailed`,
+    method: 'post',
+    contentType:'application/json',
+    data:data,
     success:function(res){
       if(res.status)
-        location.href='/user/checkout'
+        location.href='/user/userprofile/orders'
     }
   })
 }

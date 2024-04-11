@@ -899,3 +899,42 @@ h6 {
 
 /*========================HEART shape ========================*/
 
+.coupon-card {
+  width: 300px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.coupon-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.coupon-header h3 {
+  color: #333;
+  font-size: 24px;
+}
+
+.coupon-content {
+  color: #666;
+}
+
+.discount {
+  font-size: 28px;
+  font-weight: bold;
+  color: #e74c3c;
+}
+
+.code {
+  font-size: 18px;
+  font-weight: bold;
+  color: #3498db;
+}
+
+.validity {
+  font-size: 16px;
+  font-style: italic;
+}

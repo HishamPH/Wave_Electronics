@@ -184,7 +184,7 @@
       
       
     </div><!-- End Page Title -->
-    
+    <% if(orders){%>
     <table class="table table-bordered table-hover mt-3" >
       <thead class="table-secondary ">
           <tr class="text-center">
@@ -205,7 +205,7 @@
         
           <tr class="align-middle text-center ">
             <td><%= index+1 %></td>
-            <td><%=  row.userId.name%></td>
+            <td><%=  row.userId.name %></td>
             <td><%= row.items.reduce((acc,item)=>acc+=item.quantity,0) %></td>
             <td><%= row.totalPrice.toLocaleString('hi') %></td>
             <td><%= row.orderDate.toJSON().slice(0,10) %>,<%= row.orderDate.toJSON().slice(11,16) %>
@@ -228,7 +228,11 @@
                 <span class="badge bg-warning p-2 bg-opacity-25 text-black  rounded-pill ">
                   <%= row.paymentStatus %>
                 </span>
-              <% } %>
+              <% }else{ %>
+                <span class="badge bg-danger p-2 bg-opacity-25 text-danger  rounded-pill ">
+                  <%= row.paymentStatus %>
+                </span>
+              <% }  %>
             </td>
             
           </tr>
@@ -238,7 +242,7 @@
         
       </tbody>
     </table> 
-    
+    <% }  %>
 
 
     <!-- ======= Footer ======= -->
