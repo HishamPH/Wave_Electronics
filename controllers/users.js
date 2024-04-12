@@ -364,7 +364,7 @@ module.exports = {
       wishlist.push(item.product.toString());
     })
     currentPage =1 ;
-    totalPages = 10;
+    totalPages = 3;
     let q = req.session.cartCount||0;
     res.render('user/searchresult',{message:req.session.name,product,q,cat,wishlist,currentPage,totalPages});
   },

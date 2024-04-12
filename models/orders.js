@@ -22,7 +22,8 @@ const ordersSchema = new mongoose.Schema({
     status:{type:String,default:"Order Placed"},
     returnDate:{type:Date},
     deliveryDate:{type:Date},
-    returnReason:{type:String}
+    returnReason:{type:String},
+    paymentStatus:{type:String}
   }],
   paymentMethod: { type: String },
   orderDate: { type: Date },
