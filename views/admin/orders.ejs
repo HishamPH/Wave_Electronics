@@ -111,13 +111,13 @@
 
       <li class="nav-item">
         <a class="nav-link collapsed" href="/admin/panel">
-          <i class="bi bi-grid"></i>
+          <i class=" bi-clipboard-data"></i>
           <span>Dashboard</span>
         </a>
       </li>
       <li class="nav-item">
         <a class="nav-link collapsed" href="/admin/products">
-          <i class="bi bi-person"></i>
+          <i class="bi bi-box-seam-fill"></i>
           <span>Products</span>
           
         </a>
@@ -142,13 +142,13 @@
       </li>
       <li class="nav-item">
         <a class="nav-link collapsed" href="/admin/coupons">
-          <i class="bi bi-person"></i>
+          <i class="bi bi-ticket-perforated-fill"></i>
           <span>Coupons</span>
         </a>
       </li>
       <li class="nav-item">
         <a class="nav-link collapsed" href="/admin/offers">
-          <i class="bi bi-person"></i>
+          <i class="bi bi-tags-fill"></i>
           <span>Offers</span>
         </a>
       </li>
@@ -190,12 +190,12 @@
           <tr class="text-center">
               <th>Order Id</th>
               <th>User Name</th>
-              <th>Quantity</th>
-              <th>FullAmount</th>
+              <th>items</th>
+              <th>Amount</th>
               <th>Order Date</th>
-              
-              <th>Details</th>
               <th >Payment Status</th>
+              <th>Details</th>
+              
           </tr>
       </thead>
       
@@ -210,7 +210,7 @@
             <td><%= row.totalPrice.toLocaleString('hi') %></td>
             <td><%= row.orderDate.toJSON().slice(0,10) %>,<%= row.orderDate.toJSON().slice(11,16) %>
             </td>
-            
+            <td><%= row.paymentMethod  %></td>
             <td>
               <a href="/admin/orderdetails/<%= row._id %>">
                 <button class="btn btn-secondary ">
@@ -219,21 +219,7 @@
               </a>
               
             </td>
-            <td>
-            <% if(row.paymentStatus === 'success'){%>
-              <span class="badge bg-success p-2 bg-opacity-25 text-success rounded-pill  ">
-                <%= row.paymentStatus %>
-              </span>
-              <% }else if(row.paymentStatus === 'Pending'){%>
-                <span class="badge bg-warning p-2 bg-opacity-25 text-black  rounded-pill ">
-                  <%= row.paymentStatus %>
-                </span>
-              <% }else{ %>
-                <span class="badge bg-danger p-2 bg-opacity-25 text-danger  rounded-pill ">
-                  <%= row.paymentStatus %>
-                </span>
-              <% }  %>
-            </td>
+            
             
           </tr>
        

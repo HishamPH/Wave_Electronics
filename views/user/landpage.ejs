@@ -30,7 +30,7 @@
 <body>
     <!-- Topbar Start -->
 
-    <header id="header" class="header fixed-top d-flex align-items-center bg-black " style="height: 90px;">
+    <header id="header" class="header fixed-top d-flex align-items-center bg-black justify-content-between " style="height: 90px;">
 
         <div class="d-flex align-items-center justify-content-between">
           <div class="col-lg-4  d-flex align-items-center">
@@ -44,15 +44,18 @@
         </div><!-- End Logo -->
     
         <div class="search-bar">
-          <form class="search-form d-flex align-items-center" action="" method="get">
+          <form class="search-form d-flex align-items-start " action="" method="get">
             <input type="search" name="name" placeholder="Search" title="Enter search keyword" id="" onclick="">
             <button type="submit" title="Search"><i class="bi bi-search"></i></button>
           </form>
         </div><!-- End Search Bar -->
-        <div class="col-lg-4 col-6 text-right d-flex justify-content-end">
+        <div class="d-flex justify-content-end">
+          
             <a href="/user/login"><button class="btn btn-primary rounded-pill mx-3">Login</button></a>
-            <a href="/user/signup"><button class="btn btn-secondary rounded-pill">SignUp</button></a>
-          </div>
+            <a href="/user/signup"><button class="btn btn-secondary rounded-pill me-3">SignUp</button></a>
+          
+            
+        </div>
         
     
     </header>

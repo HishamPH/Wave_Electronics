@@ -16,14 +16,16 @@ const ordersSchema = new mongoose.Schema({
   userId:  { type: Schema.Types.ObjectId, ref: 'User' },
   status: { type: String, default: "Order Placed" },
   items: [{
+    orderId:{type:String},
     productId: { type: Schema.Types.ObjectId, ref: "Products" },
     quantity: { type: Number },
     price:{type:Number},
     status:{type:String,default:"Order Placed"},
+    confirmDate:{type:Date},
     returnDate:{type:Date},
     deliveryDate:{type:Date},
     returnReason:{type:String},
-    paymentStatus:{type:String}
+    paymentStatus:{type:String,default:'pending'}
   }],
   paymentMethod: { type: String },
   orderDate: { type: Date },

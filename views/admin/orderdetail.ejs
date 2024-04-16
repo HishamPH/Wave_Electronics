@@ -209,11 +209,13 @@
                   <thead class="table-dark">
                       <tr class="text-center ">
                           <th style="width: 400px;">Product</th>
-                          <th>Price</th>
+                  
                           <th>Quantity</th>
                           <th>Total</th>
+                          
                           <th>status</th>
                           <th>action</th>
+                          <th>Payment</th>
                       </tr>
                   </thead>
                   <tbody>
@@ -228,9 +230,10 @@
                         </div>
                         
                       </td>
-                      <td><%= row.productId.Price %></td>
+              
                       <td><%= row.quantity %></td>
-                      <td><%= (row.productId.Price-row.productId.discount)*row.quantity %></td>
+                      <td><%= row.price*row.quantity %></td>
+                      
                       <% if(row.status === 'Order Placed'){%>
                         <td>
                           <div class="badge bg-primary rounded-pill">
@@ -325,6 +328,21 @@
                           </td>
                         </td>
                       <% }  %>
+                      <td>
+                        <% if(row.paymentStatus === 'success'){%>
+                          <span class="badge bg-success p-2 bg-opacity-25 text-success rounded-pill  ">
+                            <%= row.paymentStatus %>
+                          </span>
+                          <% }else if(row.paymentStatus === 'pending'){%>
+                            <span class="badge bg-warning p-2 bg-opacity-25 text-black  rounded-pill ">
+                              <%= row.paymentStatus %>
+                            </span>
+                          <% }else{ %>
+                            <span class="badge bg-danger p-2 bg-opacity-25 text-danger  rounded-pill ">
+                              <%= row.paymentStatus %>
+                            </span>
+                          <% }  %>
+                      </td>
                     </tr>
                    
                     <% }) %>

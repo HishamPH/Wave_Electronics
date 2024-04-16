@@ -44,32 +44,8 @@ app.use((req,res,next)=>{
 
 // app.use(express.static('views'))
 
-// const isAuthenticatedAdmin = (req, res, next) => {
-//   if(req.session && req.session.admin){
-//     next();
-//   }else {
-//     res.redirect('/admin');
-//   }
-// };
-
-// function checkAuthenticated(req,res,next){
-//   if(req.session.admin){
-//     res.redirect('/admin/panel');
-//   }
-//   next();
-// }
 
 
-// app.get('/admin/panel',isAuthenticatedAdmin,(req,res)=>{
-  
-// });
-
-// app.get("/admin",checkAuthenticated,(req,res)=>{
-  
-// })
-// app.post("/admin/login",(req,res)=>{
- 
-// })
 const Products = require('./models/product')
 app.get('/',async(req,res)=>{
   let pd = await Products.find({Display:true}).populate('offer').limit(8)

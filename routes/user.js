@@ -145,10 +145,10 @@ router.route('/userprofile/orders')
 router.route('/placeorder/:id')
 .post(orderController.placeOrder)
 
-router.route('/paymentfailed')
+router.route('/paymentfailed/:id')
 .post(orderController.paymentFailed)
 
-router.route('/paymentsuccess')
+router.route('/paymentsuccess/:id')
 .post(orderController.paymentSuccess)
 
 router.route('/orders/cancelorders/:id')
@@ -161,7 +161,7 @@ router.route('/orders/returnorder/:id')
 router.route('/orderdetails/:id')
 .get(orderController.userOrderDetails)
 
-router.route('/continuepayment/:id')
+router.route('/orders/continuepayment/:id')
 .post(orderController.continuePayment);
 
 //===================== Profile ============================

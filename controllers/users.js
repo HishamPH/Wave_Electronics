@@ -18,19 +18,25 @@ module.exports = {
   },
 
   getHomePage:async(req,res)=>{
-    let name = req.session.user.username??req.session.user.email;
-    const user = await User.findOne({email:name})
-    let pd = await Products.find({Display:true}).populate('offer').limit(8)
-    let cat = await Category.find()
-    let wish = user.Wishlist;
-    let wishlist = []
-    wish.forEach((item)=>{
-      wishlist.push(item.product.toString());
-    })
-    let q = req.session.cartCount||0;
-    if(req.session.user){
-      res.render('user/homepage',{message:req.session.name,pd,q,cat,wishlist});
-    } 
+    try{
+      let name = req.session.user.username??req.session.user.email;
+      const user = await User.findOne({email:name})
+      let pd = await Products.find({Display:true}).populate('offer').limit(8)
+      let cat = await Category.find()
+      let wish = user.Wishlist;
+      let wishlist = []
+      wish.forEach((item)=>{
+        wishlist.push(item.product.toString());
+      })
+      let q = req.session.cartCount||0;
+      if(req.session.user){
+        res.render('user/homepage',{message:req.session.name,pd,q,cat,wishlist});
+      } 
+    }catch(e){
+      res.redirect('/');
+      console.error(e);
+    }
+    
   },
 
   categorySort:async(req,res)=>{
@@ -55,34 +61,43 @@ module.exports = {
   },
 
   postLogin:async(req,res)=>{
-    let {username,password} = req.body;
-    let user=await User.findOne({email:username})
-    let pd = await Products.find();
-    //let hash = await bcrypt.hash(password,10);
-    let isValid = await bcrypt.compare(password,user.password);
-    let b;
-    if(user)
-      b = user.status??false;
-    if(user==null||!b){
-      req.session.message={
-          type:'success',
-          message:"This user isn't available right now"
+    try{
+      let {username,password} = req.body;
+      let user=await User.findOne({email:username})
+      let pd = await Products.find();
+      let b;
+      let isValid =false;
+      if(user){
+        b = user.status??false;
+        isValid = await bcrypt.compare(password,user.password);
       }
-      res.redirect('/user/login')
-    }else if(user.email==username&&isValid){
-      req.session.user=req.body
-      req.session.name=user.name
-      let cart = await Cart.findOne({userId :user._id})
-      if(cart)
-        req.session.cartCount = cart.total;
-      res.redirect('/user/homepage') 
-    }else{
-      req.session.message={
-          type:'success',
-          message:"incorrect username or password"
+      if(user==null){
+        req.session.message={
+            type:'success',
+            message:"incorrect Username or Password"
+        }
+        console.log(req.session);
+        res.redirect('/user/login')
+      }else if(user.email==username&&isValid){
+        req.session.user=req.body
+        req.session.name=user.name
+        let cart = await Cart.findOne({userId :user._id})
+        if(cart)
+          req.session.cartCount = cart.total;
+        res.redirect('/user/homepage') 
+      }else if(!b){
+        req.session.message={
+            type:'success',
+            message:"This user isn't available right now"
+        }
+        
+        res.redirect('/user/login')
       }
+    }catch(e){
       res.redirect('/user/login')
+      console.error(e);
     }
+    
   },
 
 

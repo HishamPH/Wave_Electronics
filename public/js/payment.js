@@ -25,7 +25,67 @@ $(document).ready(function() {
           }
       });
   }
+  $("#continuePayment").click(function(e) {
+    e.preventDefault();
+    let id = $(this).data('path');
+    let amount = Number($('#pdprice').text());
+    let orderId = $('#orderId').val();
+    console.log(amount)
+    continuePayment(id,amount,orderId);
+  });
+  function continuePayment(id,amount,orderId) {
+    var options = {
+      "key": "rzp_test_ZCCSyrCe5ZqrEH",
+      "amount": amount*100,
+      "currency": "INR",
+      "name": "Wave Electronics",
+      "description": "Test Transaction",
+      "order_id": orderId,
+      "handler": function(res){
+        continuePaymentSuccess(id,res,'success');
+      },
+      "prefill": {
+          "name": 'Hisham',
+          "email": "hishamnarakkal@gmail.com", 
+          "contact": '9999999999' 
+      },
+      "notes": {
+          "address": "Razorpay Corporate Office"
+      },
+      "theme": {
+          "color": "#3399cc"
+      }
+    };
+    var rzp1 = new Razorpay(options);
+    rzp1.on('payment.failed', function (res){
+      
+      alert(res.error.code);
+      alert('there has been a payment failure')
+      continuePaymentSuccess(id,res,'failed');
+      //location.href = '/user/checkout'
+    });
+    rzp1.open();
+  }
 });
+
+
+function continuePaymentSuccess(id,res,status) {
+  $.ajax({
+      url: `/user/orders/continuePayment/${id}`,
+      method: 'post',
+      data:{status:status},
+      success: function(res) {
+        location.href='/user/userprofile/orders'
+      },
+      error: function(xhr, status, error) {
+        console.error("Error updating quantity:", error);
+      }
+  });
+}
+
+
+
+
 function paymentConfirm(or,order){
   var options = {
     "key": "rzp_test_ZCCSyrCe5ZqrEH",
@@ -33,14 +93,10 @@ function paymentConfirm(or,order){
     "currency": "INR",
     "name": "Wave Electronics",
     "description": "Test Transaction",
-   // "image": "",
     "order_id": or.id,
     "handler": function(res){
-        // alert(res.razorpay_payment_id);
-        // alert(res.razorpay_order_id);
-        // alert(res.razorpay_signature)
-        //alert('payment was successful')
-        paymentSuccess(order);
+       
+        paymentSuccess(order,or.id);
     },
     "prefill": {
         "name": 'Hisham',
@@ -59,17 +115,17 @@ function paymentConfirm(or,order){
     
     alert(res.error.code);
     alert('there has been a payment failure')
-    paymentFailure(order);
+    paymentFailure(order,or.id);
     //location.href = '/user/checkout'
   });
   rzp1.open();
 }
 
 
-function paymentFailure(order){
+function paymentFailure(order,id){
   let data = JSON.stringify(order)
   $.ajax({
-    url: `/user/paymentfailed`,
+    url: `/user/paymentfailed/${id}`,
     method: 'post',
     contentType:'application/json',
     data:data,
@@ -81,12 +137,12 @@ function paymentFailure(order){
 }
 
 
-function paymentSuccess(order){
+function paymentSuccess(order,id){
   
   let data = JSON.stringify(order)
   // console.log(data)
   $.ajax({
-    url: `/user/paymentsuccess`,
+    url: `/user/paymentsuccess/${id}`,
     method: 'post',
     contentType:'application/json',
     data:data,

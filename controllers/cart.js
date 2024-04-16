@@ -9,13 +9,10 @@ const Coupon = require('../models/coupon')
 module.exports = {
   addToCart:async(req,res)=>{
     try{
-     
       let cart;
       let id = req.params.id
       if(!req.session.user){
-        
         res.json({status:true});
-       
         return;
       }
       let email = req.session.user.username??req.session.user.email;
@@ -57,8 +54,7 @@ module.exports = {
     let user = await User.findOne({email:email})
     let cart = await Cart.findOne({userId:user._id}).populate('items.productId coupon')
     let coupons = await Coupon.find();
-    cart.coupon = null;
-    await cart.save()
+    
     if(cart&&cart.items.length){
       let items = cart.items
       cart.total = cart.items.length;
@@ -128,23 +124,33 @@ module.exports = {
     
   },
   getCheckout:async(req,res)=>{
-    let email = req.session.user.username;
-    let user = await User.findOne({email:email});
-    let cart = await Cart.findOne({userId:user._id}).populate('items.productId');
-    //let adIndex = user.Address.findIndex(item => item.main === true);
-    let address = user.Address??null;
-    let items = cart.items;
-    cart.total = cart.items.length;
-    req.session.cartQuantity = cart.total;
-    await cart.save()
-    let totalPrice =0,discount = 0;
-    cart.items.forEach((item)=>{
-      totalPrice += Number(item.productId.Price)*Number(item.quantity)
-      discount += Number(item.productId.discount)*Number(item.quantity)
-    });
-    req.session.checkout = true;
-    let fullPrice = req.session.totalPrice??(totalPrice - discount);
-    res.render('user/checkout',{cart,items,totalPrice,total:cart.total,discount,address,fullPrice})
+    try{
+      let email = req.session.user.username??req.session.user.email
+      let user = await User.findOne({email:email});
+      let cart = await Cart.findOne({userId:user._id}).populate('items.productId');
+      //let adIndex = user.Address.findIndex(item => item.main === true);
+      let address = user.Address??null;
+      if(address== null||address.length ==0){
+        res.redirect('/user/userprofile/address')
+        return;
+      }
+      let items = cart.items;
+      cart.total = cart.items.length;
+      req.session.cartQuantity = cart.total;
+      await cart.save()
+      let totalPrice =0,discount = 0;
+      cart.items.forEach((item)=>{
+        totalPrice += Number(item.productId.Price)*Number(item.quantity)
+        discount += Number(item.productId.discount)*Number(item.quantity)
+      });
+      req.session.checkout = true;
+      let fullPrice = req.session.totalPrice??(totalPrice - discount);
+      res.render('user/checkout',{cart,items,totalPrice,total:cart.total,discount,address,fullPrice})
+    }catch(e){
+      console.error(e);
+      res.redirect('/user/homepage');
+    }
+    
   },
 
   addressDefault:async (req,res)=>{
@@ -217,7 +223,7 @@ module.exports = {
   },
   applyCoupon:async(req,res)=>{
 
-    let email = req.session.user.username;
+    let email = req.session.user.username??req.session.user.email
     let user = await User.findOne({email:email});
     let cart = await Cart.findOne({userId:user._id}).populate('items.productId coupon')
     let code = req.body.code;
@@ -245,5 +251,12 @@ module.exports = {
       applied = false;
       res.json({applied})
     }
+  },
+  removeCoupon:async(req,res)=>{
+    let email = req.session.user.username??req.session.user.email;
+    let id = req.params.id;
+    let cart = await Cart.findById(id);
+    cart.coupon = null;
+
   }
 }
