@@ -95,7 +95,7 @@ router.route('/addtocart/:id')
 router.route('/cart')
 .get(cartController.getCart)
 
-router.route('/cart/coupon')
+router.route('/cart/coupon/:id')
 .post(cartController.applyCoupon)
 
 router.route('/cart/:id')

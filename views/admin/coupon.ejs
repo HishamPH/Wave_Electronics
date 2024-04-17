@@ -218,7 +218,7 @@
           <td><%= row.status %></td>
           <td>
             
-              <button type="button" class="btn btn-secondary  mb-3 rounded-pill" data-bs-toggle="modal" data-bs-target="#couponEditModal" style="font-weight: bold;">
+              <button type="button" class="btn btn-secondary  mb-3 rounded-pill" data-bs-toggle="modal" data-bs-target="#couponEditModal<%= row._id%>" style="font-weight: bold;">
                 Edit
               </button>
               <a href="/admin/coupons/delete/<%= row._id%>">
@@ -235,7 +235,7 @@
     <% }  %>
 
     <% coupon.forEach((row)=>{%>
-    <div class="modal fade" id="couponEditModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal fade" id="couponEditModal<%= row._id%>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -268,14 +268,19 @@
                 value="<%= row.minPurchase %>"/>
               </div>
               <div class="form-group">
+                <label for="maxPurchase">maxPurchase:</label>
+                <input type="number" name="maxPurchase" class="form-control bg-light" id="maxPurchase"
+                value="<%= row.maxPurchase %>"/>
+              </div>
+              <div class="form-group">
                 <label for="start">start date:</label>
                 <input type="date" name="start" class="form-control bg-light" id="start"
-                value="<%= row.start %>" required/>
+                value="<%= row.start.toJSON().slice(0,10) %>" required/>
               </div>
               <div class="form-group">
                 <label for="expire">expire date:</label>
                 <input type="date" name="expire" class="form-control bg-light" id="expire"
-                value="<%= row.expire %>" required/>
+                value="<%= row.expire.toJSON().slice(0,10) %>" required/>
               </div>
             
               <div class="d-flex justify-content-center mb-3">
@@ -320,6 +325,11 @@
                 <label for="minPurchase">minPurchase:</label>
                 <input type="number" name="minPurchase" class="form-control bg-light" id="minPurchase"
                     placeholder="Enter the minPurchase" required />
+              </div>
+              <div class="form-group">
+                <label for="maxPurchase">maxPurchase:</label>
+                <input type="number" name="maxPurchase" class="form-control bg-light" id="maxPurchase"
+                    placeholder="Enter the maxPurchase" required />
               </div>
               <div class="form-group">
                 <label for="start">start date:</label>

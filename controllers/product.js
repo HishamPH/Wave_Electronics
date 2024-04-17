@@ -80,6 +80,10 @@ module.exports = {
             images.push(req.files[fieldName][0].filename);
       }
     }
+    let insertImages = pd.images;
+    if(images.length !== 0){
+      insertImages = images;
+    }
     const Status = req.body.stock <= 0 ? "Out of Stock" : "In Stock";
     let amount = req.body.Price;
     let offerPrice;
@@ -98,8 +102,8 @@ module.exports = {
       spec1: req.body.spec1,
       discount: Number(req.body.discount),
       offer: categoryOffer ? categoryOffer._id : null,
-      offerPrice:Math.floor(offerPrice)
-      // images: images
+      offerPrice:Math.floor(offerPrice),
+      images: insertImages
     }}]);
     res.redirect("/admin/products");
   }

@@ -60,7 +60,7 @@ module.exports = {
       cart.total = cart.items.length;
       req.session.cartQuantity = cart.total;
       console.log(cart.total)
-      
+      cart.coupon = null;
       await cart.save()
       let totalPrice =0,discount = 0;
       cart.items.forEach((item,index)=>{
@@ -68,10 +68,7 @@ module.exports = {
         discount += Number(item.productId.discount)*Number(item.quantity)
       });
       req.session.totalPrice = totalPrice-discount;
-      let couponApplied = false;
-      if(cart.coupon !== null)
-        couponApplied = cart.coupon;
-      res.render('user/cart',{items,msg:false,totalPrice,total:cart.total,discount,couponApplied,coupons})
+      res.render('user/cart',{items,msg:false,totalPrice,total:cart.total,discount,coupons})
     }else{
       res.render('user/cart',{msg:'your cart is empty'}) 
     }
@@ -86,6 +83,7 @@ module.exports = {
 
     cart.items.splice(pdIndex,1);
     cart.total--;
+    cart.coupon = null;
     await cart.save()
     req.session.cartCount = cart.total
     res.redirect('/user/cart')
@@ -100,6 +98,7 @@ module.exports = {
       let pdIndex = cart.items.findIndex(a => a._id.toString()=== id)
       let msg = false;
       cartQuantity = value;
+      cart.coupon = null
       if (action === 'increment'&&cart.items[pdIndex].quantity<2) {
         if((cart.items[pdIndex].productId.stock - (cart.items[pdIndex].quantity+1))>=0)
           cart.items[pdIndex].quantity++;
@@ -222,34 +221,52 @@ module.exports = {
     }
   },
   applyCoupon:async(req,res)=>{
-
+    let id = req.params.id;
     let email = req.session.user.username??req.session.user.email
     let user = await User.findOne({email:email});
-    let cart = await Cart.findOne({userId:user._id}).populate('items.productId coupon')
-    let code = req.body.code;
+    let cart = await Cart.findOne({userId:user._id}).populate('items.productId');
     let price = 0;
-    
-    let coupon = await Coupon.findOne({code:code})
-    let applied = false;
-    if(coupon&&!applied){
-      let discount = coupon.discount;
-      cart.items.forEach((item)=>{
-        price += item.quantity*(item.productId.Price - item.productId.discount);
-        // item.price = Math.floor(item.price - (item.price * (discount/100)));
-      });
+    let coupon = await Coupon.findById(id);
+    let ID = coupon._id;
+    console.log(cart.coupon);
+    console.log(coupon._id)
+    cart.items.forEach((item)=>{
+      price += item.quantity*(item.productId.Price - item.productId.discount);
+      // item.price = Math.floor(item.price - (item.price * (discount/100)));
+    });
+    if(coupon&&(cart.coupon == null)){
+      console.log('hello')
+      let limit;
+      if(price<coupon.minPurchase){
+        console.log('price too low')
+       
+        res.json({limit:'min'})
+      }else if(price>coupon.maxPurchase){
+        console.log('price too high')
+        res.json({limit:'max'})
+      }else{
+        let discount = coupon.discount;
+        let dis = price * (discount/100);
+        let fullPrice = Math.floor(price -dis)
+        coupon.couponCount--;
+        req.session.totalPrice = fullPrice;
+        console.log(fullPrice)
+        cart.coupon = coupon._id;
+        
+        await cart.save();
+        await coupon.save();
+        res.json({applied:true,fullPrice,discount,ID})
+      }
       
-      let dis = price * (discount/100);
-      let fullPrice = Math.floor(price -dis)
-      coupon.couponCount--;
+    }else if(!(cart.coupon.equals(coupon._id))&&(cart.coupon != null)){
+      res.json({exist:true})
+    }else if(cart.coupon.equals(coupon._id)){
+      let fullPrice = Math.floor(price)
+      coupon.couponCount++;
       req.session.totalPrice = fullPrice;
-      console.log(fullPrice)
-      cart.coupon = coupon._id;
+      cart.coupon = null;
       await cart.save();
-      await coupon.save();
-      res.json({applied:true,fullPrice,discount})
-    }else{
-      applied = false;
-      res.json({applied})
+      res.json({applied:false,ID,fullPrice})
     }
   },
   removeCoupon:async(req,res)=>{

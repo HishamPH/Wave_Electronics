@@ -405,17 +405,20 @@ module.exports = {
     }else if(req.query.order == 'htl'){
       sort = -1
       products = await Products.find({
-        Category:{$in:filter}
+        Category:{$in:filter},
+        ProductName: { $regex: new RegExp(search, 'i') } 
       }).sort({Price:sort}).collation({ locale: 'en', strength: 2 })
     }else if(req.query.order == 'az'){
       sort = 1
       products = await Products.find({
-        Category:{$in:filter}
+        Category:{$in:filter},
+        ProductName: { $regex: new RegExp(search, 'i') } 
       }).sort({ProductName:sort}).collation({ locale: 'en', strength: 2 })
     }else if(req.query.order == 'za'){
       sort = -1
       products = await Products.find({
-        Category:{$in:filter}
+        Category:{$in:filter},
+        ProductName: { $regex: new RegExp(search, 'i') } 
       }).sort({ProductName:sort}).collation({ locale: 'en', strength: 2 })
     }
    

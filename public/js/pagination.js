@@ -1,25 +1,25 @@
 $(document).ready(function() {
+  let filters = $('#filter').serialize();
+  let sort = $('#sort').serialize();
+  let q = $('#searchInput').serialize();
+  let page = $('.page-link.active').text();
   $('.filter').on('change',function(e){
     e.preventDefault();
-    let filters = $('#filter').serialize();
-    let sort = $('#sort').serialize();
-    let q = $('#searchInput').serialize();
-    filterProducts(filters,sort,q);
+    // let filters = $('#filter').serialize();
+    // let sort = $('#sort').serialize();
+    // let q = $('#searchInput').serialize();
+    //let page = $('.page-link.active').text();
+    
+    
+    filterProducts(filters,sort,q,page);
   });
   
-  function filterProducts(filters,sort,q) {
-    $.ajax({
-      url: `/user/filters?${sort}&${q}`,
-      method: 'post',
-      data:filters,
-      success:function(res) {
-        updateProducts(res.products);
-      },
-      error: function(xhr, status, error) {
-          console.error("Error updating quantity:", error);
-      }
-    });
-  }
+  $('#pagination').on('click','button',function(e){
+    e.preventDefault();
+    alert('hello');
+    page = $('.page-link').text()
+    filterProducts(filters,sort,q,page);
+  })
 
   // $('#searchInput').keyup(function(e){
   //   e.preventDefault();
@@ -38,6 +38,22 @@ $(document).ready(function() {
 
 });
 
+
+
+
+function filterProducts(filters,sort,q,page) {
+  $.ajax({
+    url: `/user/filters?${sort}&${q}&page=${page}`,
+    method: 'post',
+    data:filters,
+    success:function(res) {
+      updateProducts(res.products);
+    },
+    error: function(xhr, status, error) {
+        console.error("Error updating quantity:", error);
+    }
+  });
+}
 
 function updateProducts(products){
   $('#searchResult').empty();

@@ -217,7 +217,7 @@
           <%});%>
           </div>
           <!-- <div class="w-100 d-flex justify-content-center gap-2 "> 
-            <form class="pagination" id="pagination">
+            <form class="filter" id="pagination">
               <button class="btn btn-primary rounded-pill">prev</button>
               <button class="btn btn-light rounded-circle">1</button>
               <button class="btn btn-light rounded-circle active">2</button>
@@ -236,34 +236,39 @@
           </div>
           <% } %>  
           <!-- Pagination controls -->
-          <nav aria-label="Product Pagination">
-            <ul class="pagination justify-content-center">
-              <!-- Previous page button -->
-              <% if (currentPage > 1) { %>
-                <li class="page-item">
-                  <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                  </a>
-                </li>
-              <% } %>
+          <form id="pagination">
+            <nav aria-label="Product Pagination">
+              <ul class="pagination justify-content-center">
+                <!-- Previous page button -->
               
-              <!-- Page numbers -->
-              <% for (let i = 1; i <= totalPages; i++) { %>
-                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                  <a class="page-link" href="?page=<%= i %>"><%= i %></a>
-                </li>
-              <% } %>
-
-              <!-- Next page button -->
-              <% if (currentPage < totalPages) { %>
-                <li class="page-item">
-                  <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                  </a>
-                </li>
-              <% } %>
-            </ul>
-          </nav>
+                  <li class="page-item">
+                    <button class="page-link" id="previous" data-path="prev" aria-label="Previous">
+                      prev
+                    </button>
+                  </li>
+              
+                
+                <!-- Page numbers -->
+                <% for (let i = 1; i <= totalPages; i++) { %>
+                  <li class="page-item " >
+                    <button class="page-link <%= currentPage === i ? 'active' : '' %>" name="page"><%= i %>
+                    </button>
+                  </li>
+                <% } %>
+  
+               
+                
+                  <li class="page-item">
+                    <button class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
+                      next
+                    </button>
+                  </li>
+              </ul>
+            </nav>
+          </form>
+            
+        
+          
       </div>
       
     </div>

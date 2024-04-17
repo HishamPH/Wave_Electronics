@@ -34,6 +34,8 @@ $(document).ready(function() {
         $('#items-price').text(`₹ ${res.totalPrice.toLocaleString('hi')}`)
         $('#total-price').text(`₹ ${(res.totalPrice-res.discount).toLocaleString('hi')}`)
         $('#discount').text(`– ₹${res.discount.toLocaleString('hi')}`)
+        $('#couponname').text('')
+          $('#percent').text('')
         if(res.msg)
           alert('There are no more stock available')
       },
@@ -48,25 +50,38 @@ $(document).ready(function() {
 });
 
 $(document).ready(function() {
-  $('#coupon').submit(function(e){
+  $('.applyCoupon').click(function(e){
     e.preventDefault()
-    let code = $(this).serialize();
-    applyCoupon(code);
+    let id = $(this).data('path');
+    applyCoupon(id);
   })
 
-  function applyCoupon(code){
+  function applyCoupon(id){
     $.ajax({
-      url:`/user/cart/coupon`,
+      url:`/user/cart/coupon/${id}`,
       method:'POST',
-      data:code,
       success:function(res){
-        if(res.applied){
+        if(res.limit){
+          if(res.limit == 'max')
+            alert('coupon purchase limit exceeded');
+          else
+            alert('minimum coupon purchase have not met')
+        }else if(res.exist){
+          alert('You can only apply one coupon at a time')
+        }else if(res.applied){
           $('#couponname').text('Coupon')
           $('#percent').text(`-${res.discount}%`)
           $('#total-price').text(`₹ ${res.fullPrice.toLocaleString('hi')}`)
+          $(`#applyCoupon${res.ID}`).addClass('d-none');
+          $(`#removeCoupon${res.ID}`).removeClass('d-none');
           alert('coupon applied')
         }else{
-          alert('wrong coupon code')
+          $('#couponname').text('')
+          $('#percent').text('')
+          $('#total-price').text(`₹ ${res.fullPrice.toLocaleString('hi')}`)
+          $(`#applyCoupon${res.ID}`).removeClass('d-none');
+          $(`#removeCoupon${res.ID}`).addClass('d-none');
+          alert('Coupon removed')
         }
           
       }

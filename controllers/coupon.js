@@ -13,13 +13,14 @@ module.exports = {
   },
   addCoupon:async(req,res)=>{
 
-    let {code,count,discount,minPurchase,start,expire} = req.body
+    let {code,count,discount,minPurchase,maxPurchase,start,expire} = req.body
     try{
       let coupon = new Coupon({
         couponCount:count,
         code:code,
         discount:discount,
         minPurchase:minPurchase,
+        maxPurchase:maxPurchase,
         start:start,
         expire:expire
       })
@@ -33,12 +34,13 @@ module.exports = {
   },
   editCoupon:async(req,res)=>{
     let id = req.params.id;
-    let {code,count,discount,minPurchase,start,expire} = req.body
+    let {code,count,discount,minPurchase,maxPurchase,start,expire} = req.body
     let coupon = await Coupon.findByIdAndUpdate(id,{
       code:code,
       couponCount:count,
       discount:discount,
       minPurchase:minPurchase,
+      maxPurchase:maxPurchase,
       start:start,
       expire:expire
     });
