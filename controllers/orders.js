@@ -132,16 +132,30 @@ module.exports = {
       coupon:cart.coupon,
       paymentStatus:'success'
     });
-    order.items.forEach(async(item)=>{
+    // order.items.forEach(async(item)=>{
+    //   let pd = await Products.findById(item.productId._id);
+    //   console.log(pd.stock)
+    //   pd.stock -=  item.quantity;
+    //   item.paymentStatus = 'success';
+    //   if(pd.stock === 0)
+    //     pd.Status = 'Out of stock';
+    //   await pd.save();
+    // });
+    // await order.save();
+
+    for (const item of order.items) {
       let pd = await Products.findById(item.productId._id);
-      console.log(pd.stock)
-      pd.stock -=  item.quantity;
-      item.paymentStatus = 'success';
-      if(pd.stock === 0)
+      pd.stock -= item.quantity;
+      item.orderId = orderId;
+      item.paymentStatus = 'success'; 
+      if (pd.stock === 0){
         pd.Status = 'Out of stock';
+      }
       await pd.save();
-    });
+    }
     await order.save();
+
+
     cart.items = [];
     cart.total = 0;
     cart.coupon = null;
@@ -260,6 +274,8 @@ module.exports = {
       order.items[index].paymentStatus = 'success';
       order.items[index].deliveryDate = new Date();
       order.paymentStatus = 'success';
+    }else if(req.body.status === 'confirmed'){
+      order.items[index].confirmDate = new Date();
     }
    
     await order.save();
@@ -304,19 +320,45 @@ module.exports = {
     
   },
   cancelOrders:async(req,res)=>{
-    let id = req.params.id;
-    let order = await Order.findOne({
-      'items._id':id
-    }).populate('items.productId')
-    let index = order.items.findIndex(a=>a._id.toString() === id);
+    try{
+      let id = req.params.id;
+      let order = await Order.findOne({
+        'items._id':id
+      }).populate('items.productId coupon')
+      let index = order.items.findIndex(a=>a._id.toString() === id);
+      if(order.items[index].paymentStatus === 'success'){
+        let coupon = 0;
+        if(order.coupon)
+          coupon = order.coupon.discount;
+        let q = order.items[index].quantity;
+        let price = order.items[index].price;
     
-    let pd = await Products.findById(order.items[index].productId._id);
-    pd.stock +=  order.items[index].quantity;
-    await pd.save()
-    order.items[index].status = 'cancelled';
-    await order.save();
-    console.log(order.items[index].productId.ProductName+' was cancelled')
-    res.redirect(`/user/orderdetails/${id}`)
+        let returnPrice = Math.floor((price - (price * coupon/100)) * q);
+
+        let wallet = await Wallet.findOneAndUpdate({userId:order.userId},{
+          $push:{
+            transactions:{
+              type:'refund',
+              amount:returnPrice,
+              date:Date.now()
+            }
+          }
+        });
+      }
+      
+  
+      let pd = await Products.findById(order.items[index].productId._id);
+      pd.stock +=  order.items[index].quantity;
+      await pd.save()
+      order.items[index].status = 'cancelled';
+      await order.save();
+      console.log(order.items[index].productId.ProductName+' was cancelled')
+      res.redirect(`/user/orderdetails/${id}`)
+    }catch(e){
+      console.error(e);
+      res.redirect('/user/userprofile/orders')
+    }
+ 
   },
   returnOrder:async(req,res)=>{
     let reason = req.body.return;
@@ -340,19 +382,24 @@ module.exports = {
 
     let order = await Order.findOne({
       'items._id':id
-    })
+    }).populate('coupon')
     let index = order.items.findIndex(a=>a._id.toString() === id);
     if(req.body.approve){
       let pd = await Products.findById(order.items[index].productId._id);
       pd.stock +=  order.items[index].quantity;
       await pd.save()
-  
+      let coupon = 0;
+      if(order.coupon)
+        coupon = order.coupon.discount;
+      let q = order.items[index].quantity;
+      let price = order.items[index].price;
+      let returnPrice = Math.floor((price - (price * coupon/100)) * q);
       order.items[index].status = 'returned';
       let wallet = await Wallet.findOneAndUpdate({userId:order.userId},{
         $push:{
           transactions:{
             type:'refund',
-            amount:order.items[index].price*order.items[index].quantity,
+            amount:returnPrice,
             date:Date.now()
           }
         }

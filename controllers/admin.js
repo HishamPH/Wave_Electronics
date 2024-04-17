@@ -88,17 +88,17 @@ module.exports = {
     let bestSellingCategories = [];
     let p1 = a.map(async(item)=>{
       let x = await Products.findById(item._id)
-      bestSellingProducts.push(x);
-      console.log(x.ProductName)
+      let obj = {pd:x,count:item.totalQuantity};
+      bestSellingProducts.push(obj);
     });
     let p2 = b.map(async(item)=>{
       let x = await Category.findById(item._id)
-      bestSellingCategories.push(x);
-      console.log(x.Name);
+      let obj = {pd:x,count:item.totalQuantity};
+      bestSellingCategories.push(obj);
     });
     await Promise.all(p1)
     await Promise.all(p2);
-    res.render('admin/index',{pdCount,dates,bestSellingProducts,bestSellingCategories,a});
+    res.render('admin/index',{pdCount,dates,bestSellingProducts,bestSellingCategories,a,i:1});
   },
   getUser:async(req,res)=>{
     const user = await User.find()
@@ -157,14 +157,15 @@ module.exports = {
       'items.status':{$in:['delivered','return rejected']}
     }).populate('userId items.productId').sort({orderDate:-1});
     let q = 0,tp= 0;
-    
+    let full_discount = 0;
     orders.forEach((item)=>{
       item.items.forEach((order)=>{
+        full_discount += order.productId.discount;
         q += order.quantity;
       })
       tp += item.totalPrice;
     })
-    res.render('admin/salesreportcustom',{orders,q,tp,range})
+    res.render('admin/salesreportcustom',{orders,q,tp,range,full_discount})
    
   },
   getChart:async(req,res)=>{

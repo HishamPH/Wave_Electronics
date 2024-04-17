@@ -373,11 +373,10 @@
           <td>
             <%= row.orderDate.toJSON().slice(0,10)  %>
           </td>
-          <td><%= row.totalPrice %>
-          </td>
+          <td><%= row.totalPrice %></td>
           <td><%= (row.items.reduce((acc,item)=>{
-            return acc + item.productId.Price*item.quantity
-        },0))-row.totalPrice %></td>
+            return acc + item.productId.Price*item.quantity},0))-row.totalPrice %>
+          </td>
           <td>
             <% if(row.coupon){ %>
               applied

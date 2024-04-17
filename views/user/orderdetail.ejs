@@ -189,23 +189,50 @@
                 <div class="container">
                   <div class="row">
                     <div class="col-12 col-md-10 hh-grayBox pt45 pb20">
-                      <div class="row d-flex  justify-content-between">
-                        <div class="order-tracking completed">
-                          <span class="is-complete"></span>
-                          <p>Ordered<br><span id="date"><%= orderDate  %></span></p>
-                        </div>
-                        <div class="order-tracking completed">
-                          <span class="is-complete"></span>
-                          <p>Shipped<br><span>Tue, June 25</span></p>
-                        </div>
-                        <div class="order-tracking">
-                          <span class="is-complete"></span>
-                          <p>Delivered<br><span>Fri, June 28</span></p>
-                        </div>
-                        <div class="order-tracking">
-                          <span class="is-complete"></span>
-                          <p>Delivered<br><span>Fri, June 28</span></p>
-                        </div>
+                      <div class="row d-flex  justify-content-center ">
+                        <% if(pd.deliveryDate&&pd.confirmDate){ %>
+                          <div class="order-tracking completed">
+                            <span class="is-complete"></span>
+                            <p>Ordered<br><span id="date"><%= orderDate  %></span></p>
+                          </div>
+                          <div class="order-tracking completed">
+                            <span class="is-complete"></span>
+                            <p>Confirmed<br><span><%= pd.confirmDate.toLocaleString('en-US', { dateStyle: 'long' }) %></span></p>
+                          </div>
+                          <div class="order-tracking completed">
+                            <span class="is-complete"></span>
+                            <p>Delivered<br><span><%= pd.deliveryDate.toLocaleString('en-US', { dateStyle: 'long' }) %></span></p>
+                          </div>
+                        <% }else if(pd.confirmDate){%>
+                          <div class="order-tracking completed">
+                            <span class="is-complete"></span>
+                            <p>Ordered<br><span id="date"><%= orderDate  %></span></p>
+                          </div>
+                          <div class="order-tracking completed">
+                            <span class="is-complete"></span>
+                            <p>confirmed<br><span><%= pd.confirmDate.toLocaleString('en-US', { dateStyle: 'long' }) %></span></p>
+                          </div>
+                          <div class="order-tracking">
+                            <span class="is-complete"></span>
+                            <p>Delivered<br><span></span></p>
+                          </div>
+                        <% }else if(orderDate){ %>
+                          <div class="order-tracking completed">
+                            <span class="is-complete"></span>
+                            <p>Ordered<br><span id="date"><%= orderDate  %></span></p>
+                          </div>
+                          <div class="order-tracking">
+                            <span class="is-complete"></span>
+                            <p>Shipped<br><span></span></p>
+                          </div>
+                          <div class="order-tracking">
+                            <span class="is-complete"></span>
+                            <p>Delivered<br><span></span></p>
+                          </div>
+                        <% }%>
+
+                        
+                        
                        
                       </div>
                     </div>

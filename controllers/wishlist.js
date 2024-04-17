@@ -10,18 +10,19 @@ module.exports = {
       let status = true;
       let wishlist;
       if(index == -1){
-        await User.updateOne({_id:user._id},{
+        let u = await User.updateOne({_id:user._id},{
           $addToSet:{Wishlist:{product:id}}
         });
-      }
-      else{
+        wishlist = user.Wishlist.length + 1;
+      }else{
         user.Wishlist.splice(index, 1);
         
         status = false;
         
         await user.save()
+        wishlist = user.Wishlist.length
       }
-      wishlist = user.Wishlist.length++;
+       
       res.json({status,wishlist})
     }catch(e){
       console.error(e)

@@ -371,7 +371,7 @@ module.exports = {
   getSearch:async(req,res)=>{
     let name = req.session.user.username??req.session.user.email;
     const user = await User.findOne({email:name})
-    let product = await Products.find({Display:true})
+    let product = await Products.find({Display:true}).limit(4)
     let cat = await Category.find()
     let wish = user.Wishlist;
     let wishlist = []
@@ -379,7 +379,10 @@ module.exports = {
       wishlist.push(item.product.toString());
     })
     currentPage =1 ;
-    totalPages = 3;
+    console.log(product.length)
+    let noOfDocs = await Products.find({Display:true}).countDocuments();
+
+    let totalPages = Math.ceil(noOfDocs/8);
     let q = req.session.cartCount||0;
     res.render('user/searchresult',{message:req.session.name,product,q,cat,wishlist,currentPage,totalPages});
   },
@@ -390,8 +393,16 @@ module.exports = {
     res.json({products,q})
   },
   filterProducts:async(req,res)=>{
+    let name = req.session.user.username??req.session.user.email;
+    const user = await User.findOne({email:name})
+    let wish = user.Wishlist;
+      let wishlist = []
+      wish.forEach((item)=>{
+        wishlist.push(item.product.toString());
+      })
     let filter = Object.keys(req.body);
-    console.log(filter)
+    let page = req.query.page;
+    let limit = 8;
     console.log(req.query);
     let search = req.query.name
     let sort;
@@ -401,28 +412,28 @@ module.exports = {
       products = await Products.find({
         Category:{$in:filter},
         ProductName: { $regex: new RegExp(search, 'i') } 
-      }).sort({Price:sort}).collation({ locale: 'en', strength: 2 })
+      }).sort({Price:sort}).collation({ locale: 'en', strength: 2 }).populate('offer').skip((page-1)*limit).limit(limit);
     }else if(req.query.order == 'htl'){
       sort = -1
       products = await Products.find({
         Category:{$in:filter},
         ProductName: { $regex: new RegExp(search, 'i') } 
-      }).sort({Price:sort}).collation({ locale: 'en', strength: 2 })
+      }).sort({Price:sort}).collation({ locale: 'en', strength: 2 }).populate('offer').skip((page-1)*limit).limit(limit)
     }else if(req.query.order == 'az'){
       sort = 1
       products = await Products.find({
         Category:{$in:filter},
         ProductName: { $regex: new RegExp(search, 'i') } 
-      }).sort({ProductName:sort}).collation({ locale: 'en', strength: 2 })
+      }).sort({ProductName:sort}).collation({ locale: 'en', strength: 2 }).populate('offer').skip((page-1)*limit).limit(limit)
     }else if(req.query.order == 'za'){
       sort = -1
       products = await Products.find({
         Category:{$in:filter},
         ProductName: { $regex: new RegExp(search, 'i') } 
-      }).sort({ProductName:sort}).collation({ locale: 'en', strength: 2 })
+      }).sort({ProductName:sort}).collation({ locale: 'en', strength: 2 }).populate('offer').skip((page-1)*limit).limit(limit)
     }
-   
-    res.json({products});
+    
+    res.json({products,wishlist,page});
   }
 }
 

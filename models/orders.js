@@ -21,9 +21,9 @@ const ordersSchema = new mongoose.Schema({
     quantity: { type: Number },
     price:{type:Number},
     status:{type:String,default:"Order Placed"},
-    confirmDate:{type:Date},
-    returnDate:{type:Date},
-    deliveryDate:{type:Date},
+    confirmDate:{type:Date,default:null},
+    returnDate:{type:Date,default:null},
+    deliveryDate:{type:Date,default:null},
     returnReason:{type:String},
     paymentStatus:{type:String,default:'pending'}
   }],

@@ -1,4 +1,4 @@
-const { changeStatus } = require("../../controllers/orders");
+const { changeStatus } = require("../controllers/orders");
 
 $(document).ready(function() {
   $("#changeStatus").click(function(e) {

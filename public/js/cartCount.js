@@ -85,6 +85,7 @@ $(document).ready(function() {
 
 
   $(".wishlist").click(function() {
+    
     if($(this).find(".heart-image").attr("src")=='/img/heart.png')
       $(this).find(".heart-image").attr("src",'/img/heart-white.png');
     else
