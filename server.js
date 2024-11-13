@@ -1,72 +1,57 @@
-const express = require('express');
-const session = require('express-session');
-require('dotenv').config();
-const bodyParser = require('body-parser');
-const {v4:uuidv4}=require('uuid');
-const nocache = require('nocache');
-const db = require('./config/db');
+const express = require("express");
+const session = require("express-session");
+require("dotenv").config();
+const bodyParser = require("body-parser");
+const { v4: uuidv4 } = require("uuid");
+const nocache = require("nocache");
 const PORT = 3000;
 const app = express();
 
-const cookieParser = require('cookie-parser');
-const Category = require("./models/category");
+const cookieParser = require("cookie-parser");
 
-const adminRouter = require('./routes/admin')
-const userRouter = require('./routes/user')
+const adminRouter = require("./routes/adminRouter");
+const userRouter = require("./routes/userRouter");
+const guestRouter = require("./routes/guestRouter");
 
-const cors = require('cors');
+const cors = require("cors");
 
-app.use(cookieParser());
+const createServer = async () => {
+  try {
+    app.use(cookieParser());
+    app.use(cors());
+    app.options("*", cors());
+    app.use(express.urlencoded({ extended: false }));
+    app.use(express.json());
 
-app.use(cors());
-app.options('*',cors());
-app.use(express.urlencoded({extended:false}));
-app.use(express.json());
-const mongoose = require('mongoose')
-app.set('view engine','ejs')
-app.use(nocache());
-app.use(express.static('public'))
-app.use(bodyParser.urlencoded({ extended: true }));
+    app.set("view engine", "ejs");
+    app.use(nocache());
+    app.use(express.static("public"));
+    app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(session({
-  secret: uuidv4(),
-  resave: false,
-  saveUninitialized: true
-}));
+    app.use(
+      session({
+        secret: uuidv4(),
+        resave: false,
+        saveUninitialized: true,
+      })
+    );
 
+    app.use((req, res, next) => {
+      res.locals.message = req.session.message;
+      res.locals.name = req.session.name;
+      delete req.session.message;
+      next();
+    });
 
-app.use((req,res,next)=>{
-  res.locals.message=req.session.message;
-  res.locals.name = req.session.name
-  delete req.session.message;
-  next();
-})
+    // app.use(express.static('views'))
+    app.use("/", guestRouter);
+    app.use("/user", userRouter);
+    app.use("/admin", adminRouter);
 
-// app.use(express.static('views'))
+    return app;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-
-
-const Products = require('./models/product')
-app.get('/',async(req,res)=>{
-  let pd = await Products.find({Display:true}).populate('offer').limit(8)
-  res.render('user/landpage',{pd});
-})
-
-app.get("/user/logout",(req,res)=>{
-  
-  req.session.user = null;
-  res.redirect('/');
-})
-
-app.get('/admin/logout',(req,res)=>{
-  req.session.admin = null;
-  res.redirect('/admin');
-})
-
-
-
-app.use('/admin',adminRouter)
-app.use('/user',userRouter);
-app.listen(PORT,()=>{
-  console.log(`server running on port ${PORT}`)
-});
+module.exports = createServer;

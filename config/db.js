@@ -1,22 +1,21 @@
-const mongoose=require('mongoose')
-require('dotenv').config()
+const mongoose = require("mongoose");
+require("dotenv").config();
+const MONGODB_URL = process.env.MONGO_URL;
 
-const MONGO_ATLAS_URL = process.env.MONGO_ATLAS_URL
+const connectDB = async () => {
+  try {
+    await mongoose.connect(MONGODB_URL, { serverSelectionTimeoutMS: 30000 });
+  } catch (error) {
+    console.error("error in database", error);
+  }
+};
 
-const MONGODB_URL=process.env.MONGO_URL
-
-mongoose.connect(MONGODB_URL)
-.then((msg)=>{
-  console.log('db connected')
-})
-.catch((err)=>{
-  console.log(err.msg)
+mongoose.connection.on("connected", () => {
+  console.log("Connected to Database Successfully!!!");
 });
 
-mongoose.connection.on('connected',()=>{
-    console.log('Connected to Database Successfully!!!')
-})
+mongoose.connection.on("disconnected", () => {
+  console.log("Failed to Connect the  Database!!!");
+});
 
-mongoose.connection.on('disconnected',()=>{
-    console.log('Failed to Connect the  Database!!!')
-})
+module.exports = connectDB;
