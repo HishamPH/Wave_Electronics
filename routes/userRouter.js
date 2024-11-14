@@ -18,7 +18,7 @@ router
 
 router.get("/homepage", userAuth, userController.getHomePage);
 
-router.route("/homepage/:id").get(userController.categorySort);
+router.get("/homepage/:id", userAuth, userController.categorySort);
 
 //====================== SIGN UP =========================
 
@@ -36,103 +36,119 @@ router.route("/resendotp").get(userController.resendOTP);
 
 //================== PRODUCT DETAILS =====================
 
-router.route("/detail/:id").get(userController.getDetailPage);
+router.get("/detail/:id", userAuth, userController.getDetailPage);
 
-router.route("/review/:id").post(userController.review);
+router.post("/review/:id", userAuth, userController.review);
 
 //==================== USER PROFILE ====================
 
 router
   .route("/userprofile/address")
+  .all(userAuth)
   .get(userController.getAddress)
   .post(userController.postAddress);
 
-router
-  .route("/userprofile/address/setdefault/:id")
-  .post(userController.setDefault);
+router.post(
+  "/userprofile/address/setdefault/:id",
+  userAuth,
+  userController.setDefault
+);
 
 router
   .route("/userprofile/address/edit/:id")
+  .all(userAuth)
   .get(userController.getEditAddress)
   .post(userController.postEditAddress);
 
-router
-  .route("/userprofile/address/delete/:id")
-  .get(userController.deleteAddress);
+router.get(
+  "/userprofile/address/delete/:id",
+  userAuth,
+  userController.deleteAddress
+);
 
 //====================== CART ===========================
 
-router.route("/addtocart/:id").get(cartController.addToCart);
+router.get("/addtocart/:id", userAuth, cartController.addToCart);
 
-router.route("/cart").get(cartController.getCart);
+router.get("/cart", userAuth, cartController.getCart);
 
-router.route("/cart/coupon/:id").post(cartController.applyCoupon);
+router.post("/cart/coupon/:id", userAuth, cartController.applyCoupon);
 
-router.route("/cart/:id").post(cartController.changeQuantity);
+router.post("/cart/:id", userAuth, cartController.changeQuantity);
 
-router.route("/cart/delete/:id").get(cartController.deleteFromCart);
+router.get("/cart/delete/:id", userAuth, cartController.deleteFromCart);
 
 //====================== Wish List ======================
 
-router.route("/wishlist").get(wishlistController.getWishlist);
+router.get("/wishlist", userAuth, wishlistController.getWishlist);
 
-router.route("/wishlist/delete/:id").get(wishlistController.deleteWishlist);
+router.get("/wishlist/delete/:id", userAuth, wishlistController.deleteWishlist);
 
-router.route("/addwishlist/:id").get(wishlistController.wishlist);
+router.get("/addwishlist/:id", userAuth, wishlistController.wishlist);
 
 //===================== CHECKOUT ======================
 
-router.route("/checkout").get(cartController.getCheckout);
+router.get("/checkout", userAuth, cartController.getCheckout);
 
-router
-  .route("/checkout/address/change/:id")
-  .post(cartController.addressDefault);
+router.post(
+  "/checkout/address/change/:id",
+  userAuth,
+  cartController.addressDefault
+);
 
-router.route("/checkout/address/edit/:id").post(cartController.addressEdit);
+router.post("/checkout/address/edit/:id", userAuth, cartController.addressEdit);
 
-router.route("/checkout/address/delete/:id").get(cartController.addressDelete);
+router.get(
+  "/checkout/address/delete/:id",
+  userAuth,
+  cartController.addressDelete
+);
 
 //====================== orders ============================
 
-router.route("/userprofile/orders").get(orderController.getUserOrders);
+router.get("/userprofile/orders", userAuth, orderController.getUserOrders);
 
-router.route("/placeorder/:id").post(orderController.placeOrder);
+router.post("/placeorder/:id", userAuth, orderController.placeOrder);
 
-router.route("/paymentfailed/:id").post(orderController.paymentFailed);
+router.post("/paymentfailed/:id", userAuth, orderController.paymentFailed);
 
-router.route("/paymentsuccess/:id").post(orderController.paymentSuccess);
+router.post("/paymentsuccess/:id", userAuth, orderController.paymentSuccess);
 
-router.route("/orders/cancelorders/:id").get(orderController.cancelOrders);
+router.get("/orders/cancelorders/:id", userAuth, orderController.cancelOrders);
 
-router.route("/orders/returnorder/:id").post(orderController.returnOrder);
+router.post("/orders/returnorder/:id", userAuth, orderController.returnOrder);
 
-router.route("/orderdetails/:id").get(orderController.userOrderDetails);
+router.get("/orderdetails/:id", userAuth, orderController.userOrderDetails);
 
-router
-  .route("/orders/continuepayment/:id")
-  .post(orderController.continuePayment);
+router.post(
+  "/orders/continuepayment/:id",
+  userAuth,
+  orderController.continuePayment
+);
 
 //===================== Profile ============================
 
-router.route("/userprofile").get(userController.getProfile);
+router.get("/userprofile", userAuth, userController.getProfile);
 
-router.route("/userprofile/edit/:id").post(userController.editProfile);
+router.post("/userprofile/edit/:id", userAuth, userController.editProfile);
 
-router
-  .route("/userprofile/changepassword/:id")
-  .post(userController.changePassword);
+router.post(
+  "/userprofile/changepassword/:id",
+  userAuth,
+  userController.changePassword
+);
 
 //======================== Wallet ======================
 
-router.route("/wallet").get(walletController.getWallet);
+router.get("/wallet", userAuth, walletController.getWallet);
 
 //======================= Search ========================
 
-router.route("/getsearch").get(userController.getSearch);
+router.get("/getsearch", userAuth, userController.getSearch);
 
-router.route("/search").get(userController.searchProduct);
+router.get("/search", userAuth, userController.searchProduct);
 
-router.route("/filters").post(userController.filterProducts);
+router.post("/filters", userAuth, userController.filterProducts);
 
 //========================= Logout ======================
 

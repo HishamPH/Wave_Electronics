@@ -38,7 +38,10 @@ const createServer = async () => {
 
     app.use((req, res, next) => {
       res.locals.message = req.session.message;
-      res.locals.name = req.session.name;
+      res.locals.name = req.session.user?.name;
+      res.locals.cartCount = req.session.cartCount || 0;
+      res.locals.wishList = req.session.wishList || 0;
+      res.locals.adminname = req.session.admin?.name;
       delete req.session.message;
       next();
     });

@@ -1,11 +1,11 @@
-const User = require("../models/users");
+const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
-const Products = require("../models/product");
-const OTP = require("../models/otp");
+const Products = require("../models/productModel");
+const OTP = require("../models/otpModel");
 const otpFunc = require("../utility/otpfunctions");
-const Cart = require("../models/cart");
-const Category = require("../models/category");
-const Wallet = require("../models/wallet");
+const Cart = require("../models/cartModel");
+const Category = require("../models/categoryModel");
+const Wallet = require("../models/walletModel");
 const { loginAccessToken, loginRefreshToken } = require("../utility/jwtToken");
 
 module.exports = {
@@ -20,8 +20,7 @@ module.exports = {
 
   getHomePage: async (req, res) => {
     try {
-      let name = req.session.user?.username ?? req.session.user?.email;
-      const userId = req.session.result._id;
+      const userId = req.session.user._id;
       const user = await User.findById(userId);
       let pd = await Products.find({ Display: true })
         .populate("offer")
@@ -33,24 +32,22 @@ module.exports = {
         wishlist.push(item.product.toString());
       });
       let q = req.session.cartCount || 0;
-      if (req.session.user) {
-        res.render("user/homepage", {
-          message: req.session.name,
-          pd,
-          q,
-          cat,
-          wishlist,
-        });
-      }
+
+      res.render("user/homepage", {
+        message: req.session.name,
+        pd,
+        q,
+        cat,
+        wishlist,
+      });
     } catch (e) {
-      res.redirect("/");
       console.error(e);
     }
   },
 
   categorySort: async (req, res) => {
-    let email = req.session.user.username ?? req.session.user.email;
-    let user = await User.findOne({ email: email });
+    const userId = req.session.user._id;
+    const user = await User.findById(userId);
     let id = req.params.id;
     let pd = await Products.find({ Category: id });
     let cat = await Category.find();
@@ -93,7 +90,7 @@ module.exports = {
         };
         res.redirect("/user/login");
       } else if (user.email == username && isValid) {
-        req.session.user = req.body;
+        req.session.result = req.body;
         req.session.name = user.name;
         let cart = await Cart.findOne({ userId: user._id });
         if (cart) req.session.cartCount = cart.total;
@@ -141,7 +138,7 @@ module.exports = {
       res.redirect("/user/signup");
     }
     if (data == null) {
-      req.session.user = req.body;
+      req.session.result = req.body;
       let otpval = otpFunc.generateOTP();
       otpFunc.sendOTP(req, res, email, otpval);
       console.log(req.body);
@@ -150,7 +147,7 @@ module.exports = {
   },
 
   getEmailVerification: async (req, res) => {
-    const Email = req.session.user.email;
+    const Email = req.session.result.email;
     setTimeout(() => {
       OTP.deleteOne({ Email: Email })
         .then(() => {
@@ -167,7 +164,7 @@ module.exports = {
     console.log(req.body);
     let otp = req.body.otp;
     console.log(otp.join(""));
-    const Email = req.session.user.email;
+    const Email = req.session.result.email;
     const matchedOTPrecord = await OTP.findOne({
       Email: Email,
     });
@@ -182,8 +179,8 @@ module.exports = {
     }
     if (Number(otp.join("")) == matchedOTPrecord.otp) {
       req.session.OtpValid = true;
-      let { name, email, phone, password } = req.session.user;
       let hash = await bcrypt.hash(password, 10);
+      let { name, email, phone, password } = req.session.result;
       let user = new User({
         name,
         email,
@@ -192,7 +189,7 @@ module.exports = {
       });
       await user.save();
       req.session.name = user.name;
-      let wallet = await Wallet.create({ userId: user._id });
+      await Wallet.create({ userId: user._id });
       const { _id } = user;
       const result = { _id, email };
       const accessToken = await loginAccessToken(result);
@@ -215,7 +212,7 @@ module.exports = {
   },
 
   resendOTP: async (req, res) => {
-    let email = req.session.user.email;
+    let email = req.session.result.email;
     let a = await OTP.countDocuments();
     if (!a) {
       let otpval = otpFunc.generateOTP();
@@ -246,8 +243,8 @@ module.exports = {
 
   getAddress: async (req, res) => {
     try {
-      let name = req.session.user.username ?? req.session.user.email;
-      const user = await User.findOne({ email: name });
+      const userId = req.session.user._id;
+      const user = await User.findById(userId);
       let address = user ? user.Address : null;
       let cart = await Cart.findOne({ userId: user._id });
       let q = cart ? cart.total : 0;
@@ -265,7 +262,8 @@ module.exports = {
   },
 
   setDefault: async (req, res) => {
-    let user = await User.findOne({ email: req.session.user.username });
+    const userId = req.session.user._id;
+    const user = await User.findById(userId);
     let id = req.params.id;
     console.log(req.body.main);
     const addressIndex = user.Address.findIndex((a) => a._id.toString() === id);
@@ -280,8 +278,8 @@ module.exports = {
   },
 
   postAddress: async (req, res) => {
-    let email = req.session.user.username ?? req.session.user.email;
-    let user = await User.findOne({ email: email });
+    const userId = req.session.user._id;
+    const user = await User.findById(userId);
     let id = user._id;
     console.log(id);
     await User.findByIdAndUpdate(id, {
@@ -294,8 +292,8 @@ module.exports = {
 
   getEditAddress: async (req, res) => {
     let id = req.params.id;
-    let name = req.session.user.username ?? req.session.user.email;
-    const user = await User.findOne({ email: name });
+    const userId = req.session.user._id;
+    const user = await User.findById(userId);
     const addressIndex = user.Address.findIndex((a) => a._id.toString() === id);
     let ad = user.Address[addressIndex];
     let address = user.Address;
@@ -305,8 +303,8 @@ module.exports = {
 
   postEditAddress: async (req, res) => {
     const addressId = req.params.id;
-    const email = req.session.user.username ?? req.session.user.email;
-    const user = await User.findOne({ email: email });
+    const userId = req.session.user._id;
+    const user = await User.findById(userId);
     const { name, street, city, pincode, state, mobile } = req.body;
     const addressIndex = user.Address.findIndex(
       (a) => a._id.toString() === addressId
@@ -328,11 +326,11 @@ module.exports = {
   },
 
   deleteAddress: async (req, res) => {
-    const email = req.session.user.username;
     const addressId = req.params.id;
     console.log("address id is to delete", addressId);
     try {
-      const user = await User.findOne({ email: email });
+      const userId = req.session.user._id;
+      const user = await User.findById(userId);
       if (!user) {
         console.log("User not found");
         return res.redirect("/user/userprofile/address");
@@ -356,9 +354,9 @@ module.exports = {
   },
 
   getProfile: async (req, res) => {
-    let email = req.session.user.username ?? req.session.user.email;
-    let user = await User.findOne({ email: email });
-    let q = req.session.cartCount;
+    const userId = req.session.user._id;
+    const user = await User.findById(userId);
+    const q = req.session.cartCount;
     res.render("user/userdetail", { user, q });
   },
 
@@ -406,8 +404,8 @@ module.exports = {
 
   getSearch: async (req, res) => {
     try {
-      let name = req.session.user.username ?? req.session.user.email;
-      const user = await User.findOne({ email: name });
+      const userId = req.session.user._id;
+      const user = await User.findById(userId);
       let product = await Products.find({ Display: true }).limit(8);
       let cat = await Category.find();
       let wish = user.Wishlist;
@@ -438,13 +436,13 @@ module.exports = {
     let { q } = req.query;
     console.log(q);
     let products = await Products.find({
-      ProductName: { $regex: new RegExp(q.name, "i") },
+      ProductName: { $regex: new RegExp(q, "i") },
     });
     res.json({ products, q });
   },
   filterProducts: async (req, res) => {
-    let name = req.session.user.username ?? req.session.user.email;
-    const user = await User.findOne({ email: name });
+    const userId = req.session.user._id;
+    const user = await User.findById(userId);
     let wish = user.Wishlist;
     let wishlist = [];
     wish.forEach((item) => {
@@ -508,7 +506,9 @@ module.exports = {
   logoutUser: async (req, res) => {
     try {
       console.log("user logout");
+      req.session.result = null;
       req.session.user = null;
+      req.session.name = null;
       res.clearCookie("accessToken");
       res.clearCookie("refreshToken");
       res.redirect("/");

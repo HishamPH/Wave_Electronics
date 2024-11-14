@@ -1,12 +1,12 @@
-const Offer = require("../models/offers");
+const Offer = require("../models/offerModel");
 
-const Category = require("../models/category");
+const Category = require("../models/categoryModel");
 
 module.exports = {
   getOffer: async (req, res) => {
     let cat = await Category.find();
     let offer = await Offer.find().populate("category");
-    res.render("admin/offer", { cat, offer });
+    res.render("admin/offer", { activePage: "offers", cat, offer });
   },
   addOffer: async (req, res) => {
     try {

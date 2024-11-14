@@ -1,22 +1,22 @@
-const User = require("../models/users");
+const User = require("../models/userModel");
 
-const Products = require('../models/product');
+const Products = require("../models/productModel");
 
-const Wallet = require('../models/wallet')
+const Wallet = require("../models/walletModel");
 
 module.exports = {
-  getWallet:async(req,res)=>{
-    try{
-      let email = req.session.user.username;
-      let user = await User.findOne({email:email})
-      let wallet = await Wallet.findOne({userId:user._id})
+  getWallet: async (req, res) => {
+    try {
+      const userId = req.session.user._id;
+      const user = await User.findById(userId);
+      let wallet = await Wallet.findOne({ userId: user._id });
       //wallet.balance = 10000;
-      await wallet.save()
+      await wallet.save();
       let q = req.session.cartCount;
-      res.render('user/wallet',{wallet,q});
-    }catch(e){
+      res.render("user/wallet", { wallet, q });
+    } catch (e) {
       console.error(e);
-      console.log('catch in getWallet in wallet.js')
+      console.log("catch in getWallet in wallet.js");
     }
-  }
-}
+  },
+};

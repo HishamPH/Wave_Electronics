@@ -1,11 +1,11 @@
-const Products = require("../models/product");
+const Products = require("../models/productModel");
 // const Coupon = require('../models/coupon')
-const Cart = require("../models/cart");
+const Cart = require("../models/cartModel");
 
-const Order = require("../models/orders");
-const User = require("../models/users");
+const Order = require("../models/orderModel");
+const User = require("../models/userModel");
 
-const Wallet = require("../models/wallet");
+const Wallet = require("../models/walletModel");
 
 require("dotenv").config();
 const Razorpay = require("razorpay");
@@ -233,8 +233,8 @@ module.exports = {
 
   getUserOrders: async (req, res) => {
     try {
-      let email = req.session.user.username ?? req.session.user.email;
-      let user = await User.findOne({ email: email });
+      const userId = req.session.user._id;
+      const user = await User.findById(userId);
       let cart = await Cart.findOne({ userId: user._id });
       let orders = await Order.find({ userId: user._id })
         .populate("items.productId userId")
@@ -253,8 +253,8 @@ module.exports = {
     let orders = await Order.find()
       .populate("items.productId userId")
       .sort({ orderDate: -1 });
-    if (orders) res.render("admin/orders", { orders });
-    else res.render("admin/orders");
+    if (orders) res.render("admin/orders", { activePage: "orders", orders });
+    else res.render("admin/orders", { activePage: "orders" });
   },
   changeStatus: async (req, res) => {
     let id = req.params.id;
@@ -281,7 +281,12 @@ module.exports = {
     let address = order.Address;
     let items = order.items;
     let tp = order.totalPrice;
-    res.render("admin/orderdetail", { items, address, tp });
+    res.render("admin/orderdetail", {
+      activePage: "orders",
+      items,
+      address,
+      tp,
+    });
   },
   userOrderDetails: async (req, res) => {
     try {
@@ -363,8 +368,9 @@ module.exports = {
   returnOrder: async (req, res) => {
     let reason = req.body.return;
     let id = req.params.id;
-    let email = req.session.user.username;
-    let user = await User.findOne({ email: email });
+
+    const userId = req.session.user._id;
+    const user = await User.findById(userId);
     let order = await Order.findOne({
       userId: user._id,
       "items._id": id,

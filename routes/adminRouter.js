@@ -8,18 +8,12 @@ const { uploadImage } = require("../middlewares/multer");
 const orderController = require("../controllers/orderController");
 const couponController = require("../controllers/couponController");
 const offerController = require("../controllers/offerController");
-
-const isAuthenticatedAdmin = (req, res, next) => {
-  if (req.session && req.session.admin) {
-    next();
-  } else {
-    res.redirect("/admin");
-  }
-};
+const adminAuth = require("../middlewares/adminAuth");
 
 function checkAuthenticated(req, res, next) {
-  if (req.session.admin) {
+  if (req.cookies.adminAccessToken) {
     res.redirect("/admin/panel");
+    return;
   }
   next();
 }
@@ -27,87 +21,89 @@ function checkAuthenticated(req, res, next) {
 //========================Dashboard======================
 
 router.route("/").get(checkAuthenticated, adminController.getAdminLogin);
+router.post("/login", adminController.postAdminLogin);
+router.get("/panel", adminAuth, adminController.getDashboard);
 
-router.route("/login").post(adminController.postAdminLogin);
+//====================== Userlist ====================
 
-router.route("/panel").get(isAuthenticatedAdmin, adminController.getDashboard);
-// --------------------------Userlist----------------------------------
+router.get("/users", adminAuth, adminController.getUser);
+router.get("/users/:id", adminAuth, adminController.blockUser);
 
-router.route("/users").get(adminController.getUser);
+//===================== Category =====================
 
-router.route("/users/:id").get(adminController.blockUser);
-
-//---------------------Category---------------------
-
-router.get("/category", categoryController.category);
-
-router.get("/addcategory", categoryController.addCategory);
-
-router.post("/addcategory", categoryController.postAddCategory);
-
+router.get("/category", adminAuth, categoryController.category);
+router.get("/addcategory", adminAuth, categoryController.addCategory);
+router.post("/addcategory", adminAuth, categoryController.postAddCategory);
 router
   .route("/editcategory/:id")
+  .all(adminAuth)
   .get(categoryController.getEditCategory)
   .post(categoryController.postEditCategory);
+router.get(
+  "/category/delete/:id",
+  adminAuth,
+  categoryController.deleteCategory
+);
 
-router.get("/category/delete/:id", categoryController.deleteCategory);
+//======================== products ===================
 
-// -------------------------------product-----------------------------------------------------
-
-router.route("/products").get(productController.getProduct);
+router.get("/products", adminAuth, productController.getProduct);
 
 router
   .route("/addproduct")
+  .all(adminAuth)
   .get(productController.getAddProduct)
   .post(uploadImage, productController.postAddProduct);
 
-router.route("/products/block/:id").get(productController.blockProduct);
+router.get("/products/block/:id", adminAuth, productController.blockProduct);
 
 // router.route('/viewproductdetails/:_id')
 // .get(productController.getviewProductDetails)
 
 router
   .route("/editproduct/:id")
+  .all(adminAuth)
   .get(productController.getEditProduct)
   .post(uploadImage, productController.postEditProduct);
 
-//--------------------------orders---------------------
+//=========================== ORDERS =====================
 
-router.route("/orders").get(orderController.getAdminOrders);
+router.get("/orders", adminAuth, orderController.getAdminOrders);
+router.post(
+  "/orders/changestatus/:id",
+  adminAuth,
+  orderController.changeStatus
+);
 
-router.route("/orders/changestatus/:id").post(orderController.changeStatus);
+router.get("/orderdetails/:id", adminAuth, orderController.adminOrderDetails);
 
-router.route("/orderdetails/:id").get(orderController.adminOrderDetails);
+router.post(
+  "/orders/returnorder/:id",
+  adminAuth,
+  orderController.returnApprove
+);
 
-router.route("/orders/returnorder/:id").post(orderController.returnApprove);
+//========================== COUPONS =======================
 
-//==================== Coupons =======================
+router.get("/coupons", adminAuth, couponController.getCoupon);
+router.post("/coupons/addcoupon", adminAuth, couponController.addCoupon);
+router.post("/coupons/edit/:id", adminAuth, couponController.editCoupon);
+router.get("/coupons/delete/:id", adminAuth, couponController.deleteCoupon);
 
-router.route("/coupons").get(couponController.getCoupon);
+//=========================== OFFERS =======================
 
-router.route("/coupons/addcoupon").post(couponController.addCoupon);
+router.get("/offers", adminAuth, offerController.getOffer);
+router.post("/offers/addoffer", adminAuth, offerController.addOffer);
+router.post("/offers/edit/:id", adminAuth, offerController.editOffer);
 
-router.route("/coupons/edit/:id").post(couponController.editCoupon);
+//============================= SALES ======================
 
-router.route("/coupons/delete/:id").get(couponController.deleteCoupon);
+router.get("/sales/:id", adminAuth, adminController.customSalesReport);
+router.get("/sales", adminAuth, adminController.salesReport);
 
-//===================== Offers ==========================
+//============================ CHARTS ==================
 
-router.route("/offers").get(offerController.getOffer);
-
-router.route("/offers/addoffer").post(offerController.addOffer);
-
-router.route("/offers/edit/:id").post(offerController.editOffer);
-
-//====================== Sales =========================
-
-router.route("/sales/:id").get(adminController.customSalesReport);
-
-router.route("/sales").get(adminController.salesReport);
-
-//============================ Chart.js ==================
-
-router.route("/chart/:id").get(adminController.getChart);
+router.get("/chart/:id", adminAuth, adminController.getChart);
 
 //========================== Logout =====================
 

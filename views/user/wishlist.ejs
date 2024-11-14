@@ -11,6 +11,7 @@
     <!-- Favicon -->
     <link href="img/favicon.ico" rel="icon">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">  
@@ -68,7 +69,7 @@
                   <div class="nav-link nav-icon">
                   
                     <i class="bi bi-cart"></i>
-                    <span class="badge bg-danger badge-number" id="cartCount"><%= q%></span>
+                    <span class="badge bg-danger badge-number" id="cartCount"><%= cartCount %></span>
                   </div>
                 </div>
               </a>
@@ -87,14 +88,14 @@
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
             <img src="/img/user.png" alt="Profile" class="rounded-circle">
             <span class="d-none d-md-block dropdown-toggle ps-2">
-              <%= locals.name %>
+              <%= name %>
             </span>
           </a><!-- End Profile Iamge Icon -->
 
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
             <li class="dropdown-header">
               <h6>
-                <%= locals.name %>
+                <%= name %>
               </h6>
               <span>Web Designer</span>
             </li>
@@ -160,60 +161,59 @@
         <a class="nav-link collapsed" href="/user/wallet">
           <i class="bi bi-person"></i>
           <span>Wallet</span>
-          
         </a>
       </li>
       <li class="nav-heading">Pages</li>
     </ul>
-  </aside><!-- End Sidebar-->
+  </aside>
+  
+  <!-- End Sidebar-->
   
   <main id="main" class="main" style="top:300px;">
 
-    <!-- <div class="pagetitle">
-      <h1>Dashboard</h1>
-      <nav>
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/admin/panel">Home</a></li>
-          <li class="breadcrumb-item active">Dashboard</li>
-        </ol>
-      </nav>
-    </div> -->
 
     <section class="section dashboard position-relative" style="top:70px">
-      <h1 class="ps-3 py-3 fw-bolder ">wishlist</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/user/homepage">Home</a></li>
+          <li class="breadcrumb-item active">Wishlist</li>
+        </ol>
+      </nav>
+      <h1 class=" fw-bolder ">wishlist</h1>
       <div class="row">
-        <div class="col-9 ">
-          <%if(wish){%>
-            <%wish.forEach((item)=>{ %>
-              <div class="card mb-3 ">
-                <div class="card-body ">
-                  <div class="col-12 d-flex justify-content-between mt-3 ">
-                    <div class="d-flex ">
-                      <div style="width: 120px; height: 120px;">
-                        <img src="/images/<%= item.product.images[0]  %>" alt="" class="img-fluid ">
-                       </div>
-                       <div class="ms-4 mt-3 ">
-                        <p><%= item.product.ProductName %></p>
-                        <h5>₹<%= item.product.Price  %></h5>
-                       </div>
-                    </div>
-                    <a href="/user/wishlist/delete/<%= item._id  %>">
-                      <i class="bi bi-trash text-danger bg"></i>
-                    </a>
-                    
+        <%if(wish && wish.length > 0){%>
+          <%wish.forEach((item)=>{ %>
+            <div class="col-md-6 col-12 ">
+            <div class="card mb-3">
+              <div class="card-body ">
+                <div class="col-12 d-flex justify-content-between mt-3 ">
+                  <div class="d-flex ">
+                    <div style="width: 120px; height: 120px;">
+                      <img src="/images/<%= item.product.images[0]  %>" alt="" class="img-fluid ">
+                      </div>
+                      <div class="ms-4 mt-3 ">
+                      <p><%= item.product.ProductName %></p>
+                      <h5>₹<%= item.product.Price  %></h5>
+                      </div>
                   </div>
-                 
-                 
+                  <a href="/user/wishlist/delete/<%= item._id  %>">
+                    <i class="bi bi-trash text-danger bg"></i>
+                  </a>
+                  
                 </div>
                 
+                
               </div>
-            <%})%>
-          <%}else{%>
-            <div class="d-flex justify-content-center align-items-center ">
-              Your orders is empty
+              
             </div>
-          <%}  %>
-        </div><!-- End Left side columns -->
+            </div>
+          <%})%>
+        <%}else{%>
+          <h1 class="mt-5 d-flex justify-content-center align-items-center fw-bolder">
+            Your wishlist is Empty
+          </h1>
+        <%}  %>
+       <!-- End Left side columns -->
       </div>
     </section>
 

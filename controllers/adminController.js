@@ -1,23 +1,51 @@
-const User = require("../models/users");
+const bcrypt = require("bcrypt");
 
-const Order = require("../models/orders");
-const Products = require("../models/product");
-const Category = require("../models/category");
+const User = require("../models/userModel");
+const Order = require("../models/orderModel");
+const Products = require("../models/productModel");
+const Category = require("../models/categoryModel");
+const Admin = require("../models/adminModel");
+const { loginAccessToken, loginRefreshToken } = require("../utility/jwtToken");
+
 module.exports = {
   getAdminLogin: async (req, res) => {
     res.render("admin/admin_login");
   },
   postAdminLogin: async (req, res) => {
-    const admin_id = "admin@gmail.com";
-    const admin_password = "a";
-    if (admin_id == req.body.adminname && admin_password == req.body.password) {
-      req.session.admin = req.body;
+    try {
+      const { adminname, password } = req.body;
+      const admin = await Admin.findOne({ email: adminname });
+      if (!admin) {
+        res.render("admin/admin_login", { message: `admin doesn't exist` });
+        return;
+      }
+      const isValid = await bcrypt.compare(password, admin.password);
+      if (!isValid) {
+        res.render("admin/admin_login", { message: `invalid credentials` });
+        return;
+      }
+      const { _id, name, email } = admin;
+      const result = { _id, name, email };
+      req.session.admin = result;
+      const accessToken = await loginAccessToken(result);
+      const refreshToken = await loginRefreshToken(result);
+      if (accessToken && refreshToken) {
+        res.cookie("adminRefreshToken", refreshToken, {
+          httpOnly: true,
+          maxAge: 30 * 24 * 60 * 60 * 1000,
+        });
+        res.cookie("adminAccessToken", accessToken, {
+          httpOnly: true,
+          maxAge: 30 * 24 * 60 * 60 * 1000,
+        });
+      }
       res.redirect("/admin/panel");
+    } catch (error) {
+      console.error(error);
     }
   },
   getDashboard: async (req, res) => {
     let date = new Date();
-
     let lastMonth = new Date(date);
     lastMonth.setDate(lastMonth.getDate() - 10);
     let limit = 10;
@@ -103,6 +131,7 @@ module.exports = {
     await Promise.all(p1);
     await Promise.all(p2);
     res.render("admin/index", {
+      activePage: "index",
       pdCount,
       dates,
       bestSellingProducts,
@@ -113,7 +142,7 @@ module.exports = {
   },
   getUser: async (req, res) => {
     const user = await User.find();
-    res.render("admin/users", { user });
+    res.render("admin/users", { activePage: "users", user });
   },
 
   blockUser: async (req, res) => {
@@ -147,7 +176,13 @@ module.exports = {
       });
       tp += item.totalPrice;
     });
-    res.render("admin/salesreport", { orders, q, tp, full_discount });
+    res.render("admin/salesreport", {
+      activePage: "sales",
+      orders,
+      q,
+      tp,
+      full_discount,
+    });
   },
   customSalesReport: async (req, res) => {
     console.log(req.query);
@@ -185,6 +220,7 @@ module.exports = {
       tp += item.totalPrice;
     });
     res.render("admin/salesreportcustom", {
+      activePage: "sales",
       orders,
       q,
       tp,
@@ -210,7 +246,6 @@ module.exports = {
       limit = 12;
       let prev = date.getFullYear() - 1;
       lastMonth = new Date(prev, date.getMonth() + 1, date.getDate());
-      console.log(lastMonth);
     }
     let order = await Order.find({
       orderDate: { $gte: lastMonth, $lte: date },
@@ -275,6 +310,8 @@ module.exports = {
     try {
       console.log("admin logout");
       req.session.admin = null;
+      res.clearCookie("adminAccessToken");
+      res.clearCookie("adminRefreshToken");
       res.redirect("/admin");
     } catch (error) {
       console.log(error);

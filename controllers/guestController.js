@@ -1,5 +1,5 @@
-const productModel = require("../models/product");
-const categoryModel = require("../models/category");
+const productModel = require("../models/productModel");
+const categoryModel = require("../models/categoryModel");
 
 module.exports = {
   getSearch: async (req, res) => {
