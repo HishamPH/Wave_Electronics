@@ -54,7 +54,7 @@ const ProductsSchema = new mongoose.Schema({
     },
   },
   Description: { type: String, required: true },
-  images: { type: Array, required: true },
+  images: { type: Array },
   stock: {
     type: Number,
     validate: {
@@ -75,7 +75,7 @@ const ProductsSchema = new mongoose.Schema({
     },
   },
   Display: { type: Boolean, reqired: true, default: true },
-  Status: { type: String, required: true },
+  Status: { type: String },
   spec1: { type: String },
   spec2: { type: String },
   spec3: { type: String },

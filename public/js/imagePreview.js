@@ -120,12 +120,13 @@ $(document).ready(function () {
     const name = $("#colorName").val();
     const price = $("#colorPrice").val();
     let isDefault = $("#colorDefault").prop("checked");
+    const stock = $("#colorStock").val();
     if (name) {
       if (isDefault) colorVariants.forEach((v) => (v.isDefault = false));
 
       if (colorVariants.length === 0) isDefault = true;
 
-      colorVariants.push({ name, price, isDefault, images });
+      colorVariants.push({ name, price, isDefault, stock, images });
       updateColorVariantsDisplay();
       const modal = $("#colorModal");
       const modalInstance = mdb.Modal.getInstance(modal[0]);
@@ -140,17 +141,17 @@ $(document).ready(function () {
 
   $("#addStorageVariant").click(function () {
     const image4 = $("#image4")[0].files[0];
-
     const image5 = $("#image5")[0].files[0];
     const image6 = $("#image6")[0].files[0];
     const images = [image4, image5, image6];
     const name = $("#storageName").val();
     const price = $("#storagePrice").val();
     let isDefault = $("#storageDefault").prop("checked");
+    const stock = $("#storageStock").val();
     if (name) {
       if (isDefault) storageVariants.forEach((v) => (v.isDefault = false));
       if (storageVariants.length === 0) isDefault = true;
-      storageVariants.push({ name, price, isDefault, images });
+      storageVariants.push({ name, price, isDefault, stock, images });
       updateStorageVariantsDisplay();
       const modal = $("#storageModal");
       const modalInstance = mdb.Modal.getInstance(modal[0]);
@@ -167,7 +168,7 @@ $(document).ready(function () {
     const container = $("#colorVariants");
     container.empty();
     colorVariants.forEach((variant, index) => {
-      const variantHTML = `
+      let variantHTML = `
         <div class="variant-item">
           <div class="form-check mb-0">
             <input class="form-check-input" type="radio" name="colorVariant" id="color${index}" ${
@@ -180,6 +181,38 @@ $(document).ready(function () {
           <i class="fas fa-times delete-variant" onclick="deleteColorVariant(${index})"></i>
         </div>
       `;
+      //================================================================
+
+      variant.images.forEach((image, imageIndex) => {
+        variantHTML += `
+      <input type="file" name="color[${index}][images][${imageIndex}]" class="d-none" id="colorImage${index}_${imageIndex}">
+    `;
+        // Set the input's file object programmatically
+        const hiddenFileInput = document.createElement("input");
+        hiddenFileInput.type = "file";
+        hiddenFileInput.name = `color[${index}][images][${imageIndex}]`;
+        hiddenFileInput.className = "d-none";
+        document.body.append(hiddenFileInput);
+
+        // Assign the file object (assuming it's already in the `variant.images` array)
+        const dataTransfer = new DataTransfer();
+        if (image && image instanceof File) {
+          console.log(
+            `Adding file at color[${index}][images][${imageIndex}]`,
+            image
+          );
+          dataTransfer.items.add(image);
+        } else {
+          console.error(
+            `Invalid or undefined image at color[${index}][images][${imageIndex}]`,
+            image
+          );
+        }
+        hiddenFileInput.files = dataTransfer.files;
+      });
+
+      //================================================================
+
       container.append(variantHTML);
     });
 
@@ -191,7 +224,7 @@ $(document).ready(function () {
     container.empty();
 
     storageVariants.forEach((variant, index) => {
-      const variantHTML = `
+      let variantHTML = `
         <div class="variant-item">
           <div class="form-check mb-0">
             <input class="form-check-input" type="radio" name="storageVariant" id="storage${index}" ${
@@ -204,6 +237,38 @@ $(document).ready(function () {
           <i class="fas fa-times delete-variant" onclick="deleteStorageVariant(${index})"></i>
         </div>
       `;
+
+      //=====================================
+
+      variant.images.forEach((image, imageIndex) => {
+        variantHTML += `
+      <input type="file" name="storage[${index}][images][${imageIndex}]" class="d-none" id="storageImage${index}_${imageIndex}">
+    `;
+        // Set the input's file object programmatically
+        const hiddenFileInput = document.createElement("input");
+        hiddenFileInput.type = "file";
+        hiddenFileInput.name = `storage[${index}][images][${imageIndex}]`;
+        hiddenFileInput.className = "d-none";
+        document.body.append(hiddenFileInput);
+
+        // Assign the file object (assuming it's already in the `variant.images` array)
+        const dataTransfer = new DataTransfer();
+        if (image && image instanceof File) {
+          console.log(
+            `Adding file at storage[${index}][images][${imageIndex}]`,
+            image
+          );
+          dataTransfer.items.add(image);
+        } else {
+          console.error(
+            `Invalid or undefined image at storage[${index}][images][${imageIndex}]`,
+            image
+          );
+        } // Add the file object
+        hiddenFileInput.files = dataTransfer.files;
+      });
+
+      //======================================
       container.append(variantHTML);
     });
 
@@ -233,21 +298,21 @@ $(document).ready(function () {
       storageVariants[0].isDefault = true;
     updateStorageVariantsDisplay();
   };
-  console.log(colorVariants);
   function updateHiddenInputs() {
-    $("#selectedColorVariant").val(JSON.stringify(colorVariants));
-    $("#selectedStorageVariant").val(JSON.stringify(storageVariants));
+    console.log("hiiiii");
+    // $("#selectedColorVariant").val(JSON.stringify(colorVariants));
+    // $("#selectedStorageVariant").val(JSON.stringify(storageVariants));
   }
 
   $("#addProduct").submit(async function (e) {
     e.preventDefault();
     const formData = new FormData(this);
-    // Append storage variants
+    //Append storage variants
     storageVariants.forEach((variant, storageIndex) => {
-      formData.append(`storage[${storageIndex}][name]`, variant.name);
+      formData.append(`storage[${storageIndex}][variant]`, variant.name);
       formData.append(`storage[${storageIndex}][price]`, variant.price);
-      formData.append(`storage[${storageIndex}][isDefault]`, variant.isDefault);
-
+      formData.append(`storage[${storageIndex}][default]`, variant.isDefault);
+      formData.append(`storage[${storageIndex}][stock]`, variant.stock);
       // Append each image file in this variant
       variant.images.forEach((image, imageIndex) => {
         if (image) {
@@ -255,20 +320,38 @@ $(document).ready(function () {
             `storage[${storageIndex}][images][${imageIndex}]`,
             image
           );
+          formData.append(
+            `storage[${storageIndex}][imageNames][${imageIndex}]`,
+            `storage[${storageIndex}][images][${imageIndex}]`
+          );
+        } else {
+          formData.append(
+            `storage[${storageIndex}][imageNames][${imageIndex}]`,
+            false
+          );
         }
       });
     });
 
-    // Append color variants
+    // // Append color variants
     colorVariants.forEach((variant, colorIndex) => {
-      formData.append(`color[${colorIndex}][name]`, variant.name);
+      formData.append(`color[${colorIndex}][variant]`, variant.name);
       formData.append(`color[${colorIndex}][price]`, variant.price);
-      formData.append(`color[${colorIndex}][isDefault]`, variant.isDefault);
-
+      formData.append(`color[${colorIndex}][default]`, variant.isDefault);
+      formData.append(`color[${colorIndex}][stock]`, variant.stock);
       // Append each image file in this variant
       variant.images.forEach((image, imageIndex) => {
         if (image) {
           formData.append(`color[${colorIndex}][images][${imageIndex}]`, image);
+          formData.append(
+            `color[${colorIndex}][imageNames][${imageIndex}]`,
+            `color[${colorIndex}][images][${imageIndex}]`
+          );
+        } else {
+          formData.append(
+            `color[${colorIndex}][imageNames][${imageIndex}]`,
+            false
+          );
         }
       });
     });

@@ -35,7 +35,7 @@
             <!-- Categories -->
             <div class="row mb-4">
                 <div class="col-md-6 offset-md-3">
-                    <select class="form-select bg-muted border" id="category" name="Category" required>
+                    <select class="form-select bg-muted border" id="category" name="Category">
                         <option value="" selected disabled>Select a category</option>
                         <% cat.forEach((x)=> { %>
                             <option>
@@ -50,14 +50,14 @@
             <div class="row mb-4">
                 <div class="col-md-6 mb-4 mb-md-0">
                     <div class="form-outline bg-muted shadow-sm" data-mdb-input-init>
-                        <input type="text" name="ProductName" id="productName" class="form-control" required />
+                        <input type="text" name="ProductName" id="productName" class="form-control" />
                         <label class="form-label" for="productName">Product Name</label>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-outline bg-light shadow-sm" data-mdb-input-init>
                         <textarea class="form-control" name="Description" id="productDescription" rows="3"
-                            required></textarea>
+                           ></textarea>
                         <label class="form-label" for="productDescription">Product Description</label>
                     </div>
                 </div>
@@ -69,7 +69,7 @@
                 <div class="col-md-4 mb-4 mb-md-0">
                     <div class="form-outline bg-light" data-mdb-input-init>
                         <textarea class="form-control" name="spec1" id="Specification1" rows="3"
-                            required></textarea>
+                           ></textarea>
                         <label class="form-label" for="Specification1">Specification 1</label>
                     </div>
                 </div>
@@ -95,20 +95,20 @@
                 <h4 class="mb-3"><i class="fas fa-tag me-2"></i>Pricing and Stock</h4>
                 <div class="col-md-4 mb-4 mb-md-0">
                     <div class="form-outline bg-light" data-mdb-input-init>
-                        <input type="number" name="Price" id="basePrice" class="form-control" required />
+                        <input type="number" name="Price" id="basePrice" class="form-control" />
                         <label class="form-label" for="basePrice">Base Price</label>
                     </div>
                 </div>
                 <div class="col-md-4 mb-4 mb-md-0">
                     <div class="form-outline bg-light" data-mdb-input-init>
                         <input type="number" name="discount" id="discountAmount" class="form-control"
-                            required />
+                            />
                         <label class="form-label" for="discountAmount">Discount Amount</label>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-outline bg-light" data-mdb-input-init>
-                        <input type="number" name="stock" id="quantity" class="form-control" required />
+                        <input type="number" name="stock" id="quantity" class="form-control" />
                         <label class="form-label" for="quantity">Quantity</label>
                     </div>
                 </div>
@@ -208,6 +208,10 @@
                             <label class="form-label">Price Adjustment</label>
                             <input type="number" class="form-control" id="colorPrice" value="0">
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label">Stock Adjustment</label>
+                            <input type="number" class="form-control" id="colorStock" value="0">
+                        </div>
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="colorDefault">
                             <label class="form-check-label">Set as Default</label>
@@ -302,6 +306,10 @@
                         <div class="mb-3">
                             <label class="form-label">Price Adjustment</label>
                             <input type="number" class="form-control" id="storagePrice" value="0">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Stock Adjustment</label>
+                            <input type="number" class="form-control" id="storageStock" value="0">
                         </div>
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="storageDefault">
