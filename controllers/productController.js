@@ -17,7 +17,43 @@ module.exports = {
     res.render("admin/addproduct", { activePage: "products", cat });
   },
   postAddProduct: async (req, res) => {
-    // console.log(req.files);
+    const { color: colorVariants, storage: storageVariants } = req.body;
+    const files = req.files;
+
+    // Parse the color and storage variants if they are JSON strings
+    let colors = [];
+    let storages = [];
+
+    if (colorVariants) colors = JSON.parse(colorVariants);
+    if (storageVariants) storages = JSON.parse(storageVariants);
+
+    // Helper function to extract indexes from fieldnames
+    function extractIndexes(fieldname) {
+      const matches = fieldname.match(/(\d+)/g); // Extract all numbers
+      return matches ? matches.map(Number) : [];
+    }
+
+    // Assign filenames to their respective objects
+    files.forEach((file) => {
+      const { fieldname, filename } = file; // We only need the `filename`
+
+      if (fieldname.startsWith("color[")) {
+        const [colorIndex, imageIndex] = extractIndexes(fieldname);
+        if (colors[colorIndex]) {
+          if (!colors[colorIndex].images) colors[colorIndex].images = [];
+          colors[colorIndex].images[imageIndex] = filename; // Assign filename to images array
+        }
+      } else if (fieldname.startsWith("storage[")) {
+        const [storageIndex, imageIndex] = extractIndexes(fieldname);
+        if (storages[storageIndex]) {
+          if (!storages[storageIndex].images)
+            storages[storageIndex].images = [];
+          storages[storageIndex].images[imageIndex] = filename; // Assign filename to images array
+        }
+      }
+    });
+    console.log(colors);
+    return;
     const images = [];
     const category = await Category.findOne({ Name: req.body.Category });
     const categoryOffer = await Offer.findOne({ category: category._id });
@@ -31,7 +67,7 @@ module.exports = {
     let amount = req.body.Price;
     let offerPrice;
 
-    const discountPercentage = categoryOffer.percentage || 0;
+    const discountPercentage = categoryOffer?.percentage || 0;
     offerPrice =
       amount - amount * (discountPercentage / 100) - req.body.discount;
     console.log("offer price inside ADD NEW PRODUCT", offerPrice);

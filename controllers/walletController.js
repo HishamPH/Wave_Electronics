@@ -13,7 +13,7 @@ module.exports = {
       //wallet.balance = 10000;
       await wallet.save();
       let q = req.session.cartCount;
-      res.render("user/wallet", { wallet, q });
+      res.render("user/wallet", { activePage: "wallet", wallet, q });
     } catch (e) {
       console.error(e);
       console.log("catch in getWallet in wallet.js");

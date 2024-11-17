@@ -1,47 +1,98 @@
-const mongoose = require('mongoose');
-const {Schema,ObjectId} = mongoose 
-const ProductsSchema = new mongoose.Schema({
+const mongoose = require("mongoose");
+const { Schema, ObjectId } = mongoose;
 
-  ProductName: {type: String,required: true},
-  Price: {type: Number,required: true,
+const variantSchema = new Schema(
+  {
+    variant: {
+      type: String,
+      required: true,
+    },
+    stock: {
+      type: Number,
+      required: true,
+      validate: {
+        validator: function (value) {
+          return value >= 0;
+        },
+        message: "Quantity Can't be less than 0",
+      },
+    },
+    price: {
+      type: Number, // Price specific to this variant
+      required: true,
+      validate: {
+        validator: function (value) {
+          return value > 0;
+        },
+        message: "Price must be a positive number.",
+      },
+    },
+    images: {
+      type: [String], // Array of image filenames/URLs for this variant
+      required: true,
+    },
+    default: {
+      type: Boolean,
+      required: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+const ProductsSchema = new mongoose.Schema({
+  ProductName: { type: String, required: true },
+  Price: {
+    type: Number,
+    required: true,
     validate: {
       validator: function (value) {
         return value > 0;
       },
-      message: 'Price must be a positive number.'
-    }
+      message: "Price must be a positive number.",
+    },
   },
-  Description: {type: String,required: true},
-  images: {type: Array,required: true},
-  stock: {type: Number,
+  Description: { type: String, required: true },
+  images: { type: Array, required: true },
+  stock: {
+    type: Number,
     validate: {
-      validator: function(value) {
-        return value >= 0; 
+      validator: function (value) {
+        return value >= 0;
       },
-      message: "Quantity Can't be less than 0"
-    }
+      message: "Quantity Can't be less than 0",
+    },
   },
-  Category: {type:Schema.Types.ObjectId,required: true,ref: 'Categories'},
-  discount: {type: Number,
+  Category: { type: Schema.Types.ObjectId, required: true, ref: "Categories" },
+  discount: {
+    type: Number,
     validate: {
       validator: function (value) {
         return value >= 0 && value <= this.Price;
       },
-      message: 'Discount amount must be less than the Price.'
-    }
+      message: "Discount amount must be less than the Price.",
+    },
   },
-  Display:{type:Boolean,reqired:true,default:true},
-  Status: {type: String,required: true},
-  spec1: {type: String},
-  spec2: {type: String},
-  rating:{type:Number},
-  reviews:{type:Array},
+  Display: { type: Boolean, reqired: true, default: true },
+  Status: { type: String, required: true },
+  spec1: { type: String },
+  spec2: { type: String },
+  spec3: { type: String },
+  rating: { type: Number },
+  reviews: { type: Array },
   offer: {
     type: Schema.Types.ObjectId,
-    ref: 'Offer',
+    ref: "Offer",
   },
   offerPrice: {
     type: Number,
+  },
+  color: {
+    type: [variantSchema],
+  },
+  storage: {
+    type: [variantSchema],
   },
   // reviews:[{
   //   userId:{type:Schema.Types.ObjectId,ref:'User'},
@@ -51,7 +102,7 @@ const ProductsSchema = new mongoose.Schema({
   // storage:{type:Number,default:128}
 });
 
-ProductsSchema.index({ProductName:'text'});
+ProductsSchema.index({ ProductName: "text" });
 
 const Products = mongoose.model("Products", ProductsSchema);
 

@@ -36,11 +36,13 @@ router.route("/resendotp").get(userController.resendOTP);
 
 //================== PRODUCT DETAILS =====================
 
+router.get("/detail-guest/:id", userController.getDetailPage);
+
 router.get("/detail/:id", userAuth, userController.getDetailPage);
 
 router.post("/review/:id", userAuth, userController.review);
 
-//==================== USER PROFILE ====================
+//=================== ADDRESS MANAGEMENT ===================
 
 router
   .route("/userprofile/address")
@@ -74,9 +76,13 @@ router.get("/cart", userAuth, cartController.getCart);
 
 router.post("/cart/coupon/:id", userAuth, cartController.applyCoupon);
 
-router.post("/cart/:id", userAuth, cartController.changeQuantity);
+router.post(
+  "/cart/update-quantity/:id",
+  userAuth,
+  cartController.changeQuantity
+);
 
-router.get("/cart/delete/:id", userAuth, cartController.deleteFromCart);
+router.delete("/cart/delete/:id", userAuth, cartController.deleteFromCart);
 
 //====================== Wish List ======================
 

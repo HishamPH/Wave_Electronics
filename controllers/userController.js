@@ -108,6 +108,8 @@ module.exports = {
             maxAge: 30 * 24 * 60 * 60 * 1000,
           });
         }
+        req.session.isUser = true;
+        res.locals.isUser = true;
         res.redirect("/user/homepage");
       } else if (!b) {
         req.session.message = {
@@ -179,8 +181,8 @@ module.exports = {
     }
     if (Number(otp.join("")) == matchedOTPrecord.otp) {
       req.session.OtpValid = true;
-      let hash = await bcrypt.hash(password, 10);
       let { name, email, phone, password } = req.session.result;
+      let hash = await bcrypt.hash(password, 10);
       let user = new User({
         name,
         email,
@@ -204,6 +206,8 @@ module.exports = {
           maxAge: 30 * 24 * 60 * 60 * 1000,
         });
       }
+      req.session.isUser = true;
+      res.locals.isUser = true;
       res.redirect("/user/homepage");
     } else {
       console.log("Entered OTP does not match stored OTP.");
@@ -252,12 +256,16 @@ module.exports = {
         user.Address[0].main = true;
         await user.save();
       }
-      res.render("user/userprofile", { address, q });
+      res.render("user/userprofile", { activePage: "address", address, q });
     } catch (e) {
       console.error(e);
       console.log("this is catch");
       let q = 0;
-      res.render("user/userprofile", { q, address: false });
+      res.render("user/userprofile", {
+        activePage: "address",
+        q,
+        address: false,
+      });
     }
   },
 
@@ -357,7 +365,7 @@ module.exports = {
     const userId = req.session.user._id;
     const user = await User.findById(userId);
     const q = req.session.cartCount;
-    res.render("user/userdetail", { user, q });
+    res.render("user/userdetail", { activePage: "profile", user, q });
   },
 
   editProfile: async (req, res) => {
@@ -505,7 +513,7 @@ module.exports = {
   },
   logoutUser: async (req, res) => {
     try {
-      console.log("user logout");
+      console.log("user logout", new Date());
       req.session.result = null;
       req.session.user = null;
       req.session.name = null;

@@ -940,3 +940,22 @@ font-family: "Nunito", sans-serif;
   font-size: 16px;
   font-style: italic;
 }
+
+
+
+/*=================== truncate text ==================== */
+.truncate-text {
+  display: -webkit-box;
+  /* Enables the line-clamping mechanism */
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  /* Number of lines to show */
+  -webkit-box-orient: vertical;
+  /* Determines the box orientation */
+  overflow: hidden;
+  /* Hides overflow content */
+  text-overflow: ellipsis;
+  /* Adds ellipsis (...) at the end */
+  height: 48px;
+  /* Optional: Ensure consistent height */
+}

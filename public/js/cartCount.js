@@ -1,3 +1,5 @@
+import { Success, Failed } from "./toast.js";
+
 $(document).ready(function () {
   $("#invoice").click(async function (e) {
     e.preventDefault();
@@ -55,36 +57,39 @@ $(document).ready(function () {
     easyinvoice.download("myInvoice.pdf", result.pdf);
   });
 
-  $(".addtocart").click(function () {
-    let id = $(this).data("path");
-    updateQuantity(id);
+  $("#searchResult").on("click", ".addtocart", function () {
+    const productId = $(this).data("path");
+    updateQuantity(productId);
   });
-  function updateQuantity(id) {
-    $.ajax({
-      url: `/user/addtocart/${id}`,
-      method: "GET",
-      success: function (res) {
-        if (!res.status) {
-          $("#cartCount").text(res.count);
-        } else {
-          console.log("hello");
-          location.href = "/user/login";
-        }
-      },
-      error: function (xhr, status, error) {
-        console.error("Error updating quantity:", error);
-      },
-    });
+
+  $("#searchResult").on("click", ".wishlist", function () {
+    const productId = $(this).data("path");
+    const divs = $(this).find("img");
+    updateWishlist(productId, divs);
+  });
+
+  // $(".addtocart").click(function () {
+  //   let id = $(this).data("path");
+  //   updateQuantity(id);
+  // });
+  async function updateQuantity(id) {
+    try {
+      const res = await axios.get(`/user/addtocart/${id}`);
+      console.log(res);
+      $("#cartCount").text(res.data.count);
+      Success("added to cart");
+    } catch (err) {
+      Failed(err.response ? err.response.data.message : err.message);
+      console.log(err.message);
+    }
   }
 
-  $(".wishlist").click(function () {
-    if ($(this).find(".heart-image").attr("src") == "/img/heart.png")
-      $(this).find(".heart-image").attr("src", "/img/heart-white.png");
-    else $(this).find(".heart-image").attr("src", "/img/heart.png");
-    let id = $(this).data("path");
-    updateWishlist(id);
-  });
-  function updateWishlist(id) {
+  // $(".wishlist").click(function () {
+  //   const divs = $(this).find("img");
+  //   let id = $(this).data("path");
+  //   updateWishlist(id, divs);
+  // });
+  function updateWishlist(id, divs) {
     $.ajax({
       url: `/user/addwishlist/${id}`,
       method: "GET",
@@ -98,7 +103,9 @@ $(document).ready(function () {
             backdrop: false,
             timer: 1500,
             background: "black",
+            allowOutsideClick: false,
           });
+          divs.attr("src", "/img/heart.png");
         } else {
           Swal.fire({
             position: "bottom",
@@ -106,7 +113,9 @@ $(document).ready(function () {
             showConfirmButton: false,
             backdrop: false,
             timer: 1500,
+            allowOutsideClick: false,
           });
+          divs.attr("src", "/img/heart-white.png");
         }
       },
       error: function (xhr, status, error) {
@@ -115,29 +124,3 @@ $(document).ready(function () {
     });
   }
 });
-
-// function updateProducts(products){
-//   $('#searchResult').empty();
-//   products.forEach((row) => {
-//     const html = `<div class="col-xl-3 col-lg-4 col-md-6 ">
-//     <div class="card">
-//       <img src="/images/${row.images[0]}" class="card-img-top card-img-auto" alt="Product Image" style="object-fit: cover;">
-//       <div class="card-body bg-light">
-//         <a href="/user/detail/${row._id}">
-//             <h5 class="card-title">${row.ProductName}</h5>
-//             <p class="card-text text-danger fw-bold">Price: ₹${row.Price.toLocaleString('hi')}</p>
-//             <p class="card-text">${row.spec1} </p>
-
-//         </a>
-//         <div class="d-flex justify-content-between mt-3">
-//           <button data-path="${row._id}" class="btn btn-primary rounded-pill shadow-sm addtocart">Add to cart</button>
-//           <button data-path="${row._id}" class="btn rounded-circle  shadow-sm text-danger wishlist"><i class="bi bi-heart" id="wishlist"></i></button>
-//         </div>
-
-//       </div>
-//     </div>
-//   </div>`;
-
-//   $('#searchResult').append(html);
-//   });
-// }

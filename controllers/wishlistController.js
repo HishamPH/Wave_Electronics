@@ -30,7 +30,7 @@ module.exports = {
       const userId = req.session.user._id;
       const user = await User.findById(userId).populate("Wishlist.product");
       let wish = user.Wishlist.reverse() ?? false;
-      res.render("user/wishlist", { wish });
+      res.render("user/wishlist", { activePage: "wishlist", wish });
     } catch (e) {
       console.error(e);
       console.log("catch in wishlist 40");

@@ -16,9 +16,11 @@ const userAuth = async (req, res, next) => {
       req.session.user = { _id, email, name };
       req.session.cartCount = cart.total || 0;
       req.session.wishList = Wishlist.length || 0;
+      req.session.isUser = true;
       res.locals.name = name || "";
       res.locals.cartCount = cart.total || 0;
       res.locals.wishList = Wishlist.length || 0;
+      res.locals.isUser = true;
     }
     next();
   } catch (error) {

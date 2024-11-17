@@ -1,90 +1,157 @@
-$(document).ready(function() {
-  $(".increment").click(function(e) {
-    e.preventDefault()
-    let divs = $(this).parent().prev('.quantity')
-    let q = parseInt(divs.text());
-    if(q===2){
+import { Success, Failed } from "./toast.js";
+
+$(document).ready(function () {
+  $(".increment").click(function (e) {
+    e.preventDefault();
+    const divs = $(this).parent().prev(".quantity");
+    const quantity = parseInt(divs.text());
+    const productId = divs.data("quantity-id");
+    if (quantity >= 2) {
       Swal.fire({
-        position: "bottom",
-        text: 'maximum quantity for a person reached',
+        position: "top",
+        text: "maximum quantity for a person reached",
         showConfirmButton: false,
-        backdrop:false,
-        timer:1500
+        backdrop: false,
+        timer: 1500,
+        allowOutsideClick: false,
       });
+      return;
     }
-    updateQuantity('increment',q,divs);
+    updateQuantity("increment", quantity, productId);
   });
-  $(".decrement").click(function(e) {
-    e.preventDefault()
-    let divs = $(this).parent().next('.quantity')
-    let q = parseInt(divs.text());      
-    updateQuantity('decrement',q,divs);
+  $(".decrement").click(function (e) {
+    e.preventDefault();
+    const divs = $(this).parent().next(".quantity");
+    const quantity = parseInt(divs.text());
+    const productId = divs.data("quantity-id");
+    if (quantity <= 1) return;
+    updateQuantity("decrement", quantity, productId);
   });
-  function updateQuantity(action,currentQuantity,divs) {
-    let id = divs.data('path')
-   
-    console.log(id)
-    $.ajax({
-      url: `/user/cart/${id}`,
-      method: 'POST',
-      data: { action:action,value:currentQuantity},
-      success:function(res) {
-        divs.text(res.quantity)
-        $(`#it${id}`).text(((res.quantity)*(res.price)).toLocaleString('hi'))
-        $('#items-price').text(`₹ ${res.totalPrice.toLocaleString('hi')}`)
-        $('#total-price').text(`₹ ${(res.totalPrice-res.discount).toLocaleString('hi')}`)
-        $('#discount').text(`– ₹${res.discount.toLocaleString('hi')}`)
-        $('#couponname').text('')
-          $('#percent').text('')
-        if(res.msg)
-          alert('There are no more stock available')
-      },
-      error: function(xhr, status, error) {
-          console.error("Error updating quantity:", error);
+  async function updateQuantity(action, currentQuantity, id) {
+    try {
+      const res = await axios.post(
+        `/user/cart/update-quantity/${id}`,
+        { action, value: currentQuantity },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const { quantity, price, totalPrice, discount } = res.data;
+      const decr = $(`#decr-${id}`);
+      if (quantity > 1) {
+        decr.prop("disabled", false);
+      } else {
+        decr.prop("disabled", true);
       }
-    });
+
+      $(`#pd-${id}`).text(quantity);
+      $(`#it${id}`).text((quantity * price).toLocaleString("hi"));
+      $("#items-price").text(`₹ ${totalPrice.toLocaleString("hi")}`);
+      $("#total-price").text(
+        `₹ ${(totalPrice - discount).toLocaleString("hi")}`
+      );
+      $("#discount").text(`– ₹${discount.toLocaleString("hi")}`);
+      $("#couponname").text("");
+      $("#percent").text("");
+    } catch (err) {
+      Failed(err.response ? err.response.data.message : err.message);
+      console.log(err?.message);
+    }
   }
-
-  
-
 });
 
-$(document).ready(function() {
-  $('.applyCoupon').click(function(e){
-    e.preventDefault()
-    let id = $(this).data('path');
+$(document).ready(function () {
+  $(".applyCoupon").click(function (e) {
+    e.preventDefault();
+    let id = $(this).data("path");
     applyCoupon(id);
-  })
+  });
 
-  function applyCoupon(id){
+  async function applyCoupon(id) {
+    try {
+      //const res = await axios.post(`/user/cart/coupon/${id}`);
+    } catch (err) {
+      Failed(err.response ? err.response.data.message : err.message);
+      console.log(err?.message);
+    }
+
     $.ajax({
-      url:`/user/cart/coupon/${id}`,
-      method:'POST',
-      success:function(res){
-        if(res.limit){
-          if(res.limit == 'max')
-            alert('coupon purchase limit exceeded');
-          else
-            alert('minimum coupon purchase have not met')
-        }else if(res.exist){
-          alert('You can only apply one coupon at a time')
-        }else if(res.applied){
-          $('#couponname').text('Coupon')
-          $('#percent').text(`-${res.discount}%`)
-          $('#total-price').text(`₹ ${res.fullPrice.toLocaleString('hi')}`)
-          $(`#applyCoupon${res.ID}`).addClass('d-none');
-          $(`#removeCoupon${res.ID}`).removeClass('d-none');
-          alert('coupon applied')
-        }else{
-          $('#couponname').text('')
-          $('#percent').text('')
-          $('#total-price').text(`₹ ${res.fullPrice.toLocaleString('hi')}`)
-          $(`#applyCoupon${res.ID}`).removeClass('d-none');
-          $(`#removeCoupon${res.ID}`).addClass('d-none');
-          alert('Coupon removed')
+      url: `/user/cart/coupon/${id}`,
+      method: "POST",
+      success: function (res) {
+        if (res.limit) {
+          if (res.limit == "max") alert("coupon purchase limit exceeded");
+          else alert("minimum coupon purchase have not met");
+        } else if (res.exist) {
+          alert("You can only apply one coupon at a time");
+        } else if (res.applied) {
+          $("#couponname").text("Coupon");
+          $("#percent").text(`-${res.discount}%`);
+          $("#total-price").text(`₹ ${res.fullPrice.toLocaleString("hi")}`);
+          $(`#applyCoupon${res.ID}`).addClass("d-none");
+          $(`#removeCoupon${res.ID}`).removeClass("d-none");
+          alert("coupon applied");
+        } else {
+          $("#couponname").text("");
+          $("#percent").text("");
+          $("#total-price").text(`₹ ${res.fullPrice.toLocaleString("hi")}`);
+          $(`#applyCoupon${res.ID}`).removeClass("d-none");
+          $(`#removeCoupon${res.ID}`).addClass("d-none");
+          alert("Coupon removed");
         }
-          
-      }
+      },
     });
+  }
+});
+
+$(document).ready(function () {
+  $(".delete").click(function (e) {
+    e.preventDefault();
+    let id = $(this).data("delete");
+    console.log(id);
+    deleteQuantity(id);
+  });
+  async function deleteQuantity(productId) {
+    try {
+      const result = await Swal.fire({
+        title: "Remove Item",
+        text: "Do you want to remove this item from cart",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Remove",
+      });
+      if (result.isConfirmed) {
+        const res = await axios.delete(`/user/cart/delete/${productId}`);
+        const { status, message, totalPrice, discount, count } = res.data;
+
+        if (!count) {
+          $("#empty-cart").removeClass("d-none");
+          $("#cart-section").remove();
+
+          return;
+        }
+        const row = $(`tr[data-product-id="${productId}"]`);
+        if (row.length > 0) {
+          row.remove();
+          $("#items-count").text(`price(${count} items)`);
+          $("#items-price").text(`₹ ${totalPrice.toLocaleString("hi")}`);
+          $("#total-price").text(
+            `₹ ${(totalPrice - discount).toLocaleString("hi")}`
+          );
+          $("#discount").text(`– ₹${discount.toLocaleString("hi")}`);
+          Success(message);
+        } else {
+          console.error("Row with the given productId not found.");
+          Failed("some error occured");
+        }
+      }
+    } catch (err) {
+      Failed(err.response ? err.response.data.message : err.message);
+      console.log(err?.message);
+    }
   }
 });

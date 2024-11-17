@@ -12,11 +12,7 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage });
-let uploadImage = upload.fields([
-  { name: "image1", maxCount: 1 },
-  { name: "image2", maxCount: 1 },
-  { name: "image3", maxCount: 1 },
-]);
+let uploadImage = upload.any();
 
 // const uploadImage = multer({ storage: size }).array('images', 3);
 

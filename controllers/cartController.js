@@ -9,46 +9,40 @@ const Coupon = require("../models/couponModel");
 module.exports = {
   addToCart: async (req, res) => {
     try {
-      let cart;
       let id = req.params.id;
-      if (!req.session.user) {
-        console.log(
-          `I dont't know why? this is in 15th line of cartController`
-        );
-        res.json({ status: true });
-        return;
-      }
-
       const userId = req.session.user._id;
       const user = await User.findById(userId);
       let pd = await Products.findById(id);
-      cart = await Cart.findOne({ userId: user._id });
-      let x = pd.stock;
+      if (pd.stock <= 0) {
+        return res
+          .status(404)
+          .json({ status: false, message: "no stock available" });
+      }
+      let cart = await Cart.findOne({ userId: user._id });
       let price = pd.Price - pd.discount;
-      console.log(price);
-      if (cart === null && pd.stock > 0) {
+      if (cart) {
+        const exist = cart.items.find((a) => a.productId.toString() === id);
+        if (!exist) {
+          cart.items.push({ productId: id, quantity: 1, price: price });
+          cart.total++;
+        } else {
+          if (exist?.quantity >= 2) {
+            return res.status(403).json({ message: "product limit reached" });
+          }
+          exist.quantity++;
+        }
+      } else {
         cart = await Cart.create({
           userId: user._id,
           items: [{ productId: id, quantity: 1, price: price }],
           total: 1,
         });
-      } else if (pd.stock > 0) {
-        const exist = cart.items.find((a) => a.productId.toString() === id);
-
-        if (exist) {
-          if (exist.quantity < 2 && pd.stock - (exist.quantity + 1) >= 0)
-            exist.quantity++;
-        } else {
-          cart.items.push({ productId: id, quantity: 1, price: price });
-          cart.total++;
-        }
-        await cart.save();
       }
+      await cart.save();
       req.session.cartCount = cart.total;
       res.locals.cartCount = cart.total;
-      res.json({ count: cart.total });
+      res.status(200).json({ count: cart.total, messag: "added to the cart" });
     } catch (e) {
-      res.json({ msg: "There are no more stock left" });
       console.error(e);
     }
   },
@@ -88,20 +82,37 @@ module.exports = {
     }
   },
   deleteFromCart: async (req, res) => {
-    let id = req.params.id;
-    let cart = await Cart.findOne({
-      items: { $elemMatch: { _id: id } },
-    });
+    try {
+      console.log("deleting from cart");
+      let id = req.params.id;
+      let cart = await Cart.findOne({
+        items: { $elemMatch: { _id: id } },
+      }).populate("items.productId");
+      let pdIndex = cart.items.findIndex((a) => a._id.toString() === id);
+      cart.items.splice(pdIndex, 1);
+      cart.total--;
+      cart.coupon = null;
+      await cart.save();
 
-    let pdIndex = cart.items.findIndex((a) => a._id.toString() === id);
+      let totalPrice = 0;
+      let discount = 0;
+      cart.items.forEach((item, index) => {
+        totalPrice += Number(item.productId.Price) * Number(item.quantity);
+        discount += Number(item.productId.discount) * Number(item.quantity);
+      });
 
-    cart.items.splice(pdIndex, 1);
-    cart.total--;
-    cart.coupon = null;
-    await cart.save();
-    req.session.cartCount = cart.total;
-    res.locals.cartCount = cart.total;
-    res.redirect("/user/cart");
+      req.session.cartCount = cart.total;
+      res.locals.cartCount = cart.total;
+      return res.status(200).json({
+        status: true,
+        message: "item deletion successful",
+        totalPrice,
+        discount,
+        count: cart.total,
+      });
+    } catch (err) {
+      console.log(err);
+    }
   },
   changeQuantity: async (req, res) => {
     try {
@@ -110,37 +121,35 @@ module.exports = {
       let cart = await Cart.findOne({
         items: { $elemMatch: { _id: id } },
       }).populate("items.productId");
+
       let pdIndex = cart.items.findIndex((a) => a._id.toString() === id);
-      let msg = false;
-      cartQuantity = value;
       cart.coupon = null;
+
+      const product = await Products.findById(cart.items[pdIndex].productId);
       if (action === "increment" && cart.items[pdIndex].quantity < 2) {
-        if (
-          cart.items[pdIndex].productId.stock -
-            (cart.items[pdIndex].quantity + 1) >=
-          0
-        )
-          cart.items[pdIndex].quantity++;
-        else msg = true;
-        await cart.save();
-      } else if (action === "decrement" && cartQuantity > 1) {
+        if (product.stock <= 0) {
+          return res
+            .status(404)
+            .json({ status: false, message: "no stock available" });
+        }
+        cart.items[pdIndex].quantity++;
+      } else if (action === "decrement" && value > 1) {
         cart.items[pdIndex].quantity--;
-        await cart.save();
       }
+      await cart.save();
       let price = cart.items[pdIndex].price;
-      let totalPrice = 0,
-        discount = 0;
+      let totalPrice = 0;
+      let discount = 0;
       cart.items.forEach((item, index) => {
         totalPrice += Number(item.productId.Price) * Number(item.quantity);
         discount += Number(item.productId.discount) * Number(item.quantity);
       });
-      res.json({
+      return res.status(200).json({
         quantity: cart.items[pdIndex].quantity,
         count: cart.total,
         price,
         totalPrice,
         discount,
-        msg,
       });
     } catch (e) {
       console.error(e);

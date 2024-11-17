@@ -1,29 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
+<%- include('../essentials/userHeader') %>
 
-<head>
-    <meta charset="utf-8">
-    <title>MultiShop - Online Shop Website Template</title>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="Free HTML Templates" name="keywords">
-    <meta content="Free HTML Templates" name="description">
+
+
     <script src="https://cdn.jsdelivr.net/npm/js-image-zoom/js-image-zoom.min.js"></script>
-    <!-- Favicon -->
-    <link href="img/favicon.ico" rel="icon">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <!-- Google Web Fonts -->
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">  
-
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
-
-    <!-- Libraries Stylesheet -->
-    
-
-    <!-- Customized Bootstrap Stylesheet -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <link rel="stylesheet" href="/css/style.css">
     
 </head>
 
@@ -57,61 +36,67 @@
                 <i class="bi bi-search"></i>
               </a>
             </li><!-- End Search Icon-->
-            
-            <li class="nav-item dropdown mx-3">
+
+            <% if(isUser){ %>
+                <li class="nav-item dropdown mx-3">
                 <div class="d-flex align-items-center gap-2 text-dark">
-                  <!-- <h6 class="text text-dark">cart</h6> -->
-                  <a href="/user/cart">
-                  <div class="nav-link nav-icon">
-                    <i class="bi bi-cart fs-3 text-white "></i>
-                      <span class="badge bg-danger badge-number fs-7 rounded-circle fw-bold " id="cartCount">
-                        <%= cartCount  %>
-                      </span>
-                  </div>
-                  </a>
-                  <a href="/user/wishlist">
+                <!-- <h6 class="text text-dark">cart</h6> -->
+                <a href="/user/cart">
                     <div class="nav-link nav-icon">
-                      <i class="bi bi-heart fs-3 text-white"></i> 
-                      <span class="badge bg-danger badge-number fs-7 rounded-circle" id="wishCount">
-                      
-                        <%= wishList %>
-                        
-                      </span>
+                        <i class="bi bi-cart fs-3 text-white "></i>
+                        <span class="badge bg-danger badge-number fs-7 rounded-circle fw-bold " id="cartCount">
+                            <%= cartCount %>
+                        </span>
                     </div>
-                  </a>
+                </a>
+                <a href="/user/wishlist">
+                    <div class="nav-link nav-icon">
+                        <i class="bi bi-heart fs-3 text-white"></i>
+                        <span class="badge bg-danger badge-number fs-7 rounded-circle" id="wishCount">
+
+                            <%= wishList %>
+
+                        </span>
+                    </div>
+                </a>
                 </div>
-            </li>
-            <!-- End Notification Nav -->
-            <li class="nav-item dropdown pe-3">
-    
-              <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                </li>
+                <!-- End Notification Nav -->
+                <li class="nav-item dropdown pe-3">
+
+                <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                 <img src="/img/user.png" alt="Profile" class="rounded-circle">
                 <span class="d-none d-md-block dropdown-toggle ps-2 text-white "></span>
-                
-              </a><!-- End Profile Iamge Icon -->
-    
-              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+
+                </a><!-- End Profile Iamge Icon -->
+
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                 <li class="dropdown-header">
-                  <h6><%= locals.name %></h6>
-                  <span>Web Designer</span>
+                    <h6>
+                        <%= locals.name %>
+                    </h6>
+                    <span>Web Designer</span>
                 </li>
-            
-    
+
+
                 <li>
-                  <a class="dropdown-item d-flex align-items-center" href="/user/userprofile/address">
-                    <i class="bi bi-person"></i>
-                    <span>My Profile</span>
-                  </a>
+                    <a class="dropdown-item d-flex align-items-center" href="/user/userprofile/address">
+                        <i class="bi bi-person"></i>
+                        <span>My Profile</span>
+                    </a>
                 </li>
-                <li >
-                  <a class="dropdown-item d-flex align-items-center" href="/user/logout">
-                    <i class="bi bi-box-arrow-right text-danger"></i>
-                    <span class="text-danger">Sign Out</span>
-                  </a>
+                <li>
+                    <a class="dropdown-item d-flex align-items-center" href="/user/logout">
+                        <i class="bi bi-box-arrow-right text-danger"></i>
+                        <span class="text-danger">Sign Out</span>
+                    </a>
                 </li>
-    
-              </ul><!-- End Profile Dropdown Items -->
-            </li><!-- End Profile Nav -->
+
+                </ul><!-- End Profile Dropdown Items -->
+                </li><!-- End Profile Nav -->
+            <% }else{ %>
+                <div>Hello</div>
+            <% } %>
     
           </ul>
         </nav><!-- End Icons Navigation -->
@@ -208,9 +193,18 @@
                         </form>
                     </div>
                     <div class="d-flex align-items-center mb-4 pt-2">
-                      
-                        <button data-path="<%= pd._id %>" class="btn btn-primary px-3 rounded-pill addtocart"><i class="fa fa-shopping-cart mr-1"></i> Add To cart
-                        </button>
+                        <% if(isUser) { %> 
+                            <button data-path="<%= pd._id %>" class="btn btn-primary px-3 rounded-pill addtocart">
+                                <i class="fa fa-shopping-cart mr-1"></i> Add To cart
+                            </button>
+                        <% }else{ %>
+                            <a href="/user/login">
+                                <button class="btn btn-primary px-3 rounded-pill">
+                                    <i class="fa fa-shopping-cart mr-1"></i> Add To cart
+                                </button>
+                            </a>
+                        <% } %>
+                        
                     </div>
                     <div class="d-flex pt-2">
                         <strong class="text-dark mr-2">Share on:</strong>
@@ -391,9 +385,6 @@
                     &copy; <a class="text-primary" href="#">Domain</a>. All Rights Reserved.
                 </p>
             </div>
-            <div class="col-md-6 px-xl-0 text-center text-md-right">
-                <img class="img-fluid" src="img/payments.png" alt="">
-            </div>
         </div>
     </div>
     <!-- Footer End -->
@@ -402,21 +393,15 @@
 
     <!-- Back to Top -->
     <a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
-    <!-- JavaScript Libraries -->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+
     
-    <!-- <script src="https://cdn.jsdelivr.net/npm/js-image-zoom@0.7.0/js-image-zoom.min.js"></script> -->
+   
 
     <script src="https://cdn.jsdelivr.net/npm/js-image-zoom/js-image-zoom.min.js"></script>
     <!-- Template Javascript -->
-    <script src="/js/main.js"></script>
- 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-    <!-- <script src="https://unpkg.com/js-image-zoom@0.4.1/js-image-zoom.js" type="application/javascript"></script> -->
-    <script src="/js/cartCount.js"></script>
+
+    <script type="module" src="/js/cartCount.js" defer></script>
 
     <script>
         var options1 = {
@@ -436,6 +421,5 @@
         // new ImageZoom(document.getElementById("zoom3"), options1);
     
     </script>
-</body>
 
-</html>
+<%- include('../essentials/userFooter') %>

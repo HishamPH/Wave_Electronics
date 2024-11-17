@@ -242,7 +242,7 @@ module.exports = {
       let q = 0;
       if (cart !== null) q = cart.total ?? 0;
       let status = true;
-      res.render("user/orders", { orders, q });
+      res.render("user/orders", { activePage: "orders", orders, q });
     } catch (e) {
       console.error(e);
       console.log("this is the catch for getUserOrders");
@@ -312,6 +312,7 @@ module.exports = {
       let coupon = 0;
       if (order.coupon) coupon = order.coupon.discount;
       res.render("user/orderdetail", {
+        activePage: "orders",
         pd,
         address,
         q,
