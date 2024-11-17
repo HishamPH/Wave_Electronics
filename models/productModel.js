@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const { Schema, ObjectId } = mongoose;
 
-const variantSchema = new Schema(
+const colorVariant = new Schema(
   {
     variant: {
       type: String,
@@ -18,7 +18,7 @@ const variantSchema = new Schema(
       },
     },
     price: {
-      type: Number, // Price specific to this variant
+      type: Number,
       required: true,
       validate: {
         validator: function (value) {
@@ -28,7 +28,7 @@ const variantSchema = new Schema(
       },
     },
     images: {
-      type: [String], // Array of image filenames/URLs for this variant
+      type: [String],
       required: true,
     },
     default: {
@@ -41,69 +41,81 @@ const variantSchema = new Schema(
   }
 );
 
-const ProductsSchema = new mongoose.Schema({
-  ProductName: { type: String, required: true },
-  Price: {
-    type: Number,
-    required: true,
-    validate: {
-      validator: function (value) {
-        return value > 0;
+const storageVariant = new Schema(
+  {
+    variant: {
+      type: String,
+      required: true,
+    },
+    stock: {
+      type: Number,
+      required: true,
+      validate: {
+        validator: function (value) {
+          return value >= 0;
+        },
+        message: "Quantity Can't be less than 0",
       },
-      message: "Price must be a positive number.",
+    },
+    price: {
+      type: Number,
+      required: true,
+      validate: {
+        validator: function (value) {
+          return value > 0;
+        },
+        message: "Price must be a positive number.",
+      },
+    },
+    default: {
+      type: Boolean,
+      required: true,
     },
   },
-  Description: { type: String, required: true },
-  images: { type: Array },
-  stock: {
-    type: Number,
-    validate: {
-      validator: function (value) {
-        return value >= 0;
-      },
-      message: "Quantity Can't be less than 0",
+  {
+    timestamps: true,
+  }
+);
+
+const ProductsSchema = new mongoose.Schema(
+  {
+    productName: { type: String, required: true },
+    description: { type: String, required: true },
+    category: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: "Category",
     },
-  },
-  Category: { type: Schema.Types.ObjectId, required: true, ref: "Categories" },
-  discount: {
-    type: Number,
-    validate: {
-      validator: function (value) {
-        return value >= 0 && value <= this.Price;
-      },
-      message: "Discount amount must be less than the Price.",
+    status: { type: Boolean, default: true },
+    spec1: { type: String },
+    spec2: { type: String },
+    spec3: { type: String },
+    offer: {
+      type: Schema.Types.ObjectId,
+      ref: "Offer",
     },
+    basePrice: { type: Number, required: true },
+    discount: { type: Number },
+    offerPrice: {
+      type: Number,
+    },
+    color: {
+      type: [colorVariant],
+      required: true,
+    },
+    storage: {
+      type: [storageVariant],
+      required: true,
+    },
+    rating: { type: Number },
+    reviews: { type: Array },
+    defaultPrice: { type: Number },
   },
-  Display: { type: Boolean, reqired: true, default: true },
-  Status: { type: String },
-  spec1: { type: String },
-  spec2: { type: String },
-  spec3: { type: String },
-  rating: { type: Number },
-  reviews: { type: Array },
-  offer: {
-    type: Schema.Types.ObjectId,
-    ref: "Offer",
-  },
-  offerPrice: {
-    type: Number,
-  },
-  color: {
-    type: [variantSchema],
-  },
-  storage: {
-    type: [variantSchema],
-  },
-  // reviews:[{
-  //   userId:{type:Schema.Types.ObjectId,ref:'User'},
-  //   review:[{type:String}]
-  // }],
-  // color:{type:String,default:'black'},
-  // storage:{type:Number,default:128}
-});
+  {
+    timestamps: true,
+  }
+);
 
 ProductsSchema.index({ ProductName: "text" });
-
 const Products = mongoose.model("Products", ProductsSchema);
-
 module.exports = Products;

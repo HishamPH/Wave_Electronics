@@ -22,9 +22,7 @@ module.exports = {
     try {
       const userId = req.session.user._id;
       const user = await User.findById(userId);
-      let pd = await Products.find({ Display: true })
-        .populate("offer")
-        .limit(8);
+      let pd = await Products.find({ status: true }).populate("offer").limit(8);
       let cat = await Category.find();
       let wish = user.Wishlist;
       let wishlist = [];
@@ -32,7 +30,10 @@ module.exports = {
         wishlist.push(item.product.toString());
       });
       let q = req.session.cartCount || 0;
-
+      pd.forEach((item) => {
+        item.defaultColor = item.color.find((variant) => variant.default);
+        item.defaultStorage = item.storage.find((variant) => variant.default);
+      });
       res.render("user/homepage", {
         message: req.session.name,
         pd,
@@ -227,10 +228,10 @@ module.exports = {
 
   getDetailPage: async (req, res) => {
     let id = req.params.id;
-    let pd = await Products.findById(id);
-    if (pd.stock === 0) pd.Status = "Out of Stock";
-    await pd.save();
-    res.render("user/productdetail", { pd });
+    let pd = await Products.findById(id).select("-__v");
+    const defaultColor = pd.color.find((variant) => variant.default);
+    const defaultStorage = pd.storage.find((variant) => variant.default);
+    res.render("user/productdetail", { pd, defaultColor, defaultStorage });
   },
 
   review: async (req, res) => {

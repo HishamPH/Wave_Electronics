@@ -363,3 +363,125 @@
   
   
     </aside><!-- End Sidebar-->
+
+
+
+    <!---  ================== Original edit product ============================================= -->
+
+
+    <%- include('../essentials/adminHeader') %>
+      <%- include('../essentials/adminLayout') %>
+    
+        <main id="main" class="main">
+    
+          <div class="pagetitle">
+            <h1>Products</h1>
+            <nav>
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/admin/panel">Home</a></li>
+                <li class="breadcrumb-item"><a href="/admin/products">products</a></li>
+                <li class="breadcrumb-item active">edit product</li>
+              </ol>
+            </nav>
+    
+    
+          </div><!-- End Page Title -->
+          <div class="d-flex"></div>
+          <div class="col-md-12 d-flex justify-content-center">
+    
+    
+            <form action="/admin/editproduct/<%= pd._id  %>" method="post" enctype="multipart/form-data"
+              class="card p-3 bg-light mb-3 text-dark">
+    
+              <div class="form-group">
+                <label for="category">Category:</label>
+                <input type="text" name="Category" class="form-control bg-light" id="category"
+                  value="<%= pd.Category.Name %>" disabled />
+              </div>
+              <div class="form-group">
+                <label for="productName">Product Name:</label>
+                <input type="text" name="ProductName" class="form-control bg-light" id="productName"
+                  value="<%= pd.ProductName  %>" required />
+              </div>
+    
+              <br>
+              <div class="form-group">
+                <label for="productDescription">Product Description:</label>
+                <textarea class="form-control bg-light" name="Description" id="productDescription" rows="4"
+                  placeholder="Enter product description" required><%= pd.Description  %></textarea>
+              </div>
+              <br>
+              <div class="form-group">
+                <label for="Specification1">Product Specification:</label>
+                <textarea class="form-control bg-light" name="spec1" id="Specification1"
+                  placeholder="Enter product Specification" required><%= pd.spec1  %></textarea>
+    
+              </div>
+              <br>
+    
+              <div class=""> <!-- Added bg-light and text-center classes -->
+                <h3>Media</h3>
+                <div class="form-group my-2">
+                  <label for="image1">Image 1:</label>
+                  <input type="file" name="image1" class="form-control imageInput" id="image1" accept="image/*" />
+                  <img src="/images/<%= pd.images[0]  %>" alt="Image 1" class="img-fluid imagePreview"
+                    style="max-height: 50px;width: auto;" id="imagePreview1">
+                </div>
+                <div class="form-group my-2">
+                  <label for="image2">Image 2:</label>
+                  <input type="file" name="image2" class="form-control imageInput" id="image2" accept="image/*" />
+                  <img src="/images/<%= pd.images[1]  %>" alt="Image 2" class="img-fluid imagePreview"
+                    style="max-height: 50px;width: auto; " id="imagePreview2">
+                </div>
+                <div class="form-group my-2">
+                  <label for="image3">Image 3:</label>
+                  <input type="file" name="image3" class="form-control imageInput" id="image3" accept="image/*" />
+                  <img src="/images/<%= pd.images[2]  %>" alt="Image 3" class="img-fluid imagePreview"
+                    style="max-height: 50px;width: auto; " id="imagePreview3">
+                </div>
+              </div>
+    
+    
+              <div class="">
+                <h2>Pricing</h2>
+                <div class="form-group">
+                  <label for="basePrice">Base Price:</label>
+                  <input type="number" name="Price" class="form-control bg-light" id="basePrice"
+                    placeholder="Enter base price" value="<%= pd.Price  %>" required />
+                </div>
+                <br>
+                <div class="form-group">
+                  <label for="discountAmount">Discount Amount:</label>
+                  <input type="number" name="discount" class="form-control bg-light" id="discountAmount"
+                    placeholder="Enter discount amount" value="<%= pd.discount  %>" required />
+                </div>
+              </div>
+    
+              <div class="">
+                <h2>Stock</h2>
+    
+                <div class="form-group">
+                  <label for="quantity">Quantity:</label>
+                  <input type="number" name="stock" class="form-control bg-light" id="quantity" placeholder="Enter quantity"
+                    value="<%= pd.stock  %>" required />
+                </div>
+              </div>
+              <div class="d-flex justify-content-center mb-3">
+                <button type="submit" class="btn btn-primary mt-3 mb-0">Edit Product</button>
+              </div>
+    
+          </div>
+    
+          <!-- ======= Footer ======= -->
+    
+    
+    
+          <script src="/js/imagePreview.js" defer></script>
+    
+          <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+              class="bi bi-arrow-up-short"></i></a>
+    
+    
+          <!-- Template Main JS File -->
+    
+          <%- include('../essentials/adminFooter') %>

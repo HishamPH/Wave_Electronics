@@ -24,7 +24,6 @@
               <th>Serial No</th>
               <th>Product Name</th>
               <th>Category</th>
-              <th>Price</th>
               <th>Available Quantity</th>
               <th>Status</th>
               <th style="width: 160px;">Action</th>
@@ -34,11 +33,10 @@
         <% pd.forEach((row,index) => { %>
             <tr class="align-middle text-center ">
                 <td><%= index+1 %></td>
-                <td><%= row.ProductName %></td>
-                <td><%= row.Category.Name %></td>
-                <td><%= row.Price %></td>
-                <td><%= row.stock %></td>
-                <td><%= row.Status %></td>
+                <td><%= row.productName %></td>
+                <td><%= row.category.name %></td>
+                <td><%= row.status %></td>
+                <td><%= row.status %></td>
                 <td>
                   <a href="/admin/editproduct/<%= row._id%>">
                     <button class="btn btn-secondary rounded-pill ">
@@ -46,7 +44,7 @@
                     </button>
                   </a>                                    
                   <a href="/admin/products/block/<%= row._id%>">
-                    <% if(row.Display){ %>
+                    <% if(row.status){ %>
                     <button class="btn btn-success rounded-pill ">active
                     </button>
                     <% }else{ %>

@@ -1,17 +1,44 @@
+const Products = require("../models/productModel");
 const User = require("../models/userModel");
 
 module.exports = {
   wishlist: async (req, res) => {
     try {
       const id = req.params.id;
+      const { color, storage } = req.body;
       const userId = req.session.user._id;
       const user = await User.findById(userId).populate("Wishlist.product");
+      const pd = await Products.findById(id);
+      let currentColor;
+      let currentStorage;
+      if (color) {
+        currentColor = pd.color.find(
+          (variant) => variant.variant == color.variant
+        );
+      } else {
+        currentColor = pd.color.find((variant) => variant.default);
+      }
+      if (storage) {
+        currentStorage = pd.storage.find(
+          (variant) => variant.variant == storage.variant
+        );
+      } else {
+        currentStorage = pd.storage.find((variant) => variant.default);
+      }
       const index = user.Wishlist.findIndex(
-        (a) => a.product._id.toString() === id
+        (item) =>
+          item.product._id.toString() === id &&
+          item.color === currentColor.variant &&
+          item.storage === currentStorage.variant
       );
       let status = true;
       if (index == -1) {
-        user.Wishlist.push({ product: id });
+        user.Wishlist.push({
+          product: id,
+          color: currentColor.variant,
+          storage: currentStorage.variant,
+          image: currentColor.images[0],
+        });
       } else {
         user.Wishlist.splice(index, 1);
         status = false;

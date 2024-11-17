@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const { Schema, ObjectId } = mongoose;
 
 const CartSchema = new mongoose.Schema({
-  userId: { type: Schema.Types.ObjectId, ref:"User"},
+  userId: { type: Schema.Types.ObjectId, ref: "User" },
   items: [
     {
       productId: {
@@ -14,16 +14,19 @@ const CartSchema = new mongoose.Schema({
         type: Number,
         //max:2
       },
-      price:{type:Number}
+      price: { type: Number },
+      color: { type: String },
+      image: { type: String },
+      storage: { type: String },
     },
   ],
   total: {
     type: Number,
   },
-  coupon:{
+  coupon: {
     type: Schema.Types.ObjectId,
     ref: "Coupon",
-  }
+  },
 });
 
 const Cart = mongoose.model("Cart", CartSchema);

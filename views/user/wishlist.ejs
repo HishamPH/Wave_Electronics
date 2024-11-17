@@ -21,11 +21,11 @@
                 <div class="col-12 d-flex justify-content-between mt-3 ">
                   <div class="d-flex ">
                     <div style="width: 120px; height: 120px;">
-                      <img src="/images/<%= item.product.images[0]  %>" alt="" class="img-fluid ">
+                      <img src="/images/<%= item.image  %>" alt="" class="img-fluid ">
                       </div>
                       <div class="ms-4 mt-3 ">
-                      <p><%= item.product.ProductName %></p>
-                      <h5>₹<%= item.product.Price  %></h5>
+                      <p><%= item.product.productName %></p>
+                      <h5>₹<%= item.product.defaultPrice  %></h5>
                       </div>
                   </div>
                   <a href="/user/wishlist/delete/<%= item._id  %>">

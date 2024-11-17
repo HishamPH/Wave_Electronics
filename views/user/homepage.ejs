@@ -161,17 +161,17 @@
                 </span>
                 
               <% } %>
-              <img src="/images/<%= row.images[0]  %>" class="card-img-top card-img-auto" alt="Product Image" style="object-fit: cover;">
+              <img src="/images/<%= row.defaultColor.images[0]  %>" class="card-img-top card-img-auto" alt="Product Image" style="object-fit: cover;">
               <div class="card-body bg-white" style="height: 220px;">
                 <a href="/user/detail/<%= row._id %>">
-                    <div class="card-title m-0 text-truncate fw-bold "><%= row.ProductName  %></div>
-                    <p class="card-text fw-bold text-dark mb-2 ">₹<%= row.Price.toLocaleString('hi')  %></p>
+                    <div class="card-title m-0 text-truncate fw-bold "><%= row.productName  %></div>
+                    <p class="card-text fw-bold text-dark mb-2 ">₹<%= row.defaultPrice.toLocaleString('hi')  %></p>
                     <p class="card-text text-black " style="height: 48px;"><%= row.spec1 %></p>
                     
                 </a>
                 <div class="d-flex justify-content-between mt-3" style="bottom:0px;">
                   <button data-path="<%= row._id %>" class="btn btn-dark rounded-pill addtocart">Add to cart</button>
-                  <% if(wishlist.includes(row._id.toString())){ %>
+                  <% if(wishlist?.includes(row._id.toString())){ %>
                     <button data-path="<%= row._id %>" class="btn rounded-circle  shadow-sm text-danger wishlist"><img src="/img/heart.png" class="img-fluid heart-image" alt=""></button>
                   <% }else{ %>
                     <button data-path="<%= row._id %>" class="btn rounded-circle  shadow-sm text-danger wishlist"><img src="/img/heart-white.png" class="img-fluid heart-image" alt=""></button>

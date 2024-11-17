@@ -28,7 +28,7 @@
               <hr>
               <div class="justify-content-between my-3 row gy-3">
                 <% cat.forEach((row,index)=>{ %>
-                <div class="col-9"><%=row.Name %></div>
+                <div class="col-9"><%=row.categoryName %></div>
                 <div class="col-3 d-flex justify-content-between">
                   <a href="/admin/editcategory/<%= row._id %>">
                     <button  class="btn btn-primary rounded-pill ">EDIT</button>

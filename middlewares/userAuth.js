@@ -14,11 +14,11 @@ const userAuth = async (req, res, next) => {
       const { name, Wishlist } = user;
       const { _id, email } = decoded;
       req.session.user = { _id, email, name };
-      req.session.cartCount = cart.total || 0;
+      req.session.cartCount = cart?.total || 0;
       req.session.wishList = Wishlist.length || 0;
       req.session.isUser = true;
       res.locals.name = name || "";
-      res.locals.cartCount = cart.total || 0;
+      res.locals.cartCount = cart?.total || 0;
       res.locals.wishList = Wishlist.length || 0;
       res.locals.isUser = true;
     }
@@ -31,23 +31,26 @@ const userAuth = async (req, res, next) => {
         res.redirect("/user/logout");
         return;
       }
-
       const decoded = jwt.verify(
         refreshToken,
         process.env.REFRESH_TOKEN_SECRET
       );
       const { _id, email } = decoded;
       if (!req.session.user) {
-        console.log("there is no session so no party");
+        console.log(
+          "there is no session so no in refresh side of the part party"
+        );
         const user = await User.findById(_id).select("-password -__v");
         const cart = await Cart.findOne({ userId: _id }).select("total");
         const { name, Wishlist } = user;
         req.session.user = { _id, email, name };
-        req.session.cartCount = cart.total || 0;
+        req.session.cartCount = cart?.total || 0;
         req.session.wishList = Wishlist.length || 0;
+        req.session.isUser = true;
         res.locals.name = name || "";
-        res.locals.cartCount = cart.total || 0;
+        res.locals.cartCount = cart?.total || 0;
         res.locals.wishList = Wishlist.length || 0;
+        res.locals.isUser = true;
       }
       const newAccessToken = await loginAccessToken({ _id, email });
       res.cookie("accessToken", newAccessToken, {

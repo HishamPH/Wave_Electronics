@@ -9,21 +9,58 @@ const Coupon = require("../models/couponModel");
 module.exports = {
   addToCart: async (req, res) => {
     try {
-      let id = req.params.id;
+      console.log("adding to the cart ");
+      const id = req.params.id;
+      const { color, storage } = req.body;
       const userId = req.session.user._id;
       const user = await User.findById(userId);
-      let pd = await Products.findById(id);
-      if (pd.stock <= 0) {
-        return res
-          .status(404)
-          .json({ status: false, message: "no stock available" });
+      const pd = await Products.findById(id);
+      let currentColor;
+      let currentStorage;
+      if (color) {
+        currentColor = pd.color.find(
+          (variant) => variant.variant == color.variant
+        );
+      } else {
+        currentColor = pd.color.find((variant) => variant.default);
+      }
+      if (storage) {
+        currentStorage = pd.storage.find(
+          (variant) => variant.variant == storage.variant
+        );
+      } else {
+        currentStorage = pd.storage.find((variant) => variant.default);
+      }
+      if (currentColor.stock <= 0) {
+        return res.status(404).json({
+          status: false,
+          message: "no stock for this color available",
+        });
+      }
+      if (currentStorage.stock <= 0) {
+        return res.status(404).json({
+          status: false,
+          message: "no stock for this storage available",
+        });
       }
       let cart = await Cart.findOne({ userId: user._id });
-      let price = pd.Price - pd.discount;
+      let price = pd.defaultPrice;
       if (cart) {
-        const exist = cart.items.find((a) => a.productId.toString() === id);
+        const exist = cart.items.find(
+          (item) =>
+            item.productId.toString() === id &&
+            item.color === currentColor.variant &&
+            item.storage === currentStorage.variant
+        );
         if (!exist) {
-          cart.items.push({ productId: id, quantity: 1, price: price });
+          cart.items.push({
+            productId: id,
+            quantity: 1,
+            price: price,
+            color: currentColor.variant,
+            storage: currentStorage.variant,
+            image: currentColor.images[0],
+          });
           cart.total++;
         } else {
           if (exist?.quantity >= 2) {
@@ -34,7 +71,16 @@ module.exports = {
       } else {
         cart = await Cart.create({
           userId: user._id,
-          items: [{ productId: id, quantity: 1, price: price }],
+          items: [
+            {
+              productId: id,
+              quantity: 1,
+              price: price,
+              color: currentColor.variant,
+              storage: currentStorage.variant,
+              image: currentColor.images[0],
+            },
+          ],
           total: 1,
         });
       }
@@ -55,17 +101,17 @@ module.exports = {
     );
     let coupons = await Coupon.find();
 
-    if (cart && cart.items.length) {
+    if (cart?.items.length) {
       let items = cart.items;
       cart.total = cart.items.length;
-      req.session.cartQuantity = cart.total;
       console.log(cart.total);
       cart.coupon = null;
       await cart.save();
       let totalPrice = 0,
         discount = 0;
       cart.items.forEach((item, index) => {
-        totalPrice += Number(item.productId.Price) * Number(item.quantity);
+        totalPrice +=
+          Number(item.productId.defaultPrice) * Number(item.quantity);
         discount += Number(item.productId.discount) * Number(item.quantity);
       });
       req.session.totalPrice = totalPrice - discount;
@@ -141,7 +187,8 @@ module.exports = {
       let totalPrice = 0;
       let discount = 0;
       cart.items.forEach((item, index) => {
-        totalPrice += Number(item.productId.Price) * Number(item.quantity);
+        totalPrice +=
+          Number(item.productId.defaultPrice) * Number(item.quantity);
         discount += Number(item.productId.discount) * Number(item.quantity);
       });
       return res.status(200).json({
@@ -171,7 +218,6 @@ module.exports = {
       }
       let items = cart.items;
       cart.total = cart.items.length;
-      req.session.cartQuantity = cart.total;
       await cart.save();
       let totalPrice = 0,
         discount = 0;

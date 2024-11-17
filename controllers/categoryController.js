@@ -1,18 +1,26 @@
 const Category = require("../models/categoryModel");
-const { rawListeners } = require("../models/userModel");
 
 module.exports = {
   category: async (req, res) => {
     const cat = await Category.find();
-
     res.render("admin/category", { activePage: "category", cat });
   },
   addCategory: (req, res) => {
     res.render("admin/addcategory", { activePage: "category" });
   },
   postAddCategory: async (req, res) => {
-    const userData = await Category.create(req.body);
-    res.redirect("/admin/category");
+    try {
+      const { categoryName } = req.body;
+      console.log(categoryName);
+      if (!categoryName || categoryName.trim() === "") {
+        return;
+      }
+      const userData = await Category.create({ categoryName });
+      console.log(userData);
+      res.redirect("/admin/category");
+    } catch (error) {
+      console.log(error);
+    }
   },
   deleteCategory: async (req, res) => {
     let id = req.params.id;
@@ -28,7 +36,7 @@ module.exports = {
     let id = req.params.id;
     await Category.findByIdAndUpdate(id, [
       {
-        $set: { Name: req.body.Name },
+        $set: { categoryName: req.body.Name },
       },
     ]);
     res.redirect("/admin/category");

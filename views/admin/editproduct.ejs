@@ -1,117 +1,461 @@
 <%- include('../essentials/adminHeader') %>
-  <%- include('../essentials/adminLayout') %>
-  
-  <main id="main" class="main">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+
+    <link href="https://cdn.jsdelivr.net/npm/mdb-ui-kit@8.0.0/css/mdb.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.css"
+        integrity="sha256-I2efVSznNJn4F94itdzdnh5aHlDNnXfjS70xv2WoUYY=" crossorigin="anonymous">
+
+
+    
+
+
+    <%- include('../essentials/adminLayout') %>
+
+
+    <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1>Products</h1>
-      <nav>
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/admin/panel">Home</a></li>
-          <li class="breadcrumb-item"><a href="/admin/products">products</a></li>
-          <li class="breadcrumb-item active">edit product</li>
-        </ol>
-      </nav>
-      
-      
+        <h1>Products</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/admin/panel">Home</a></li>
+                <li class="breadcrumb-item"><a href="/admin/products">products</a></li>
+                <li class="breadcrumb-item active">add product</li>
+            </ol>
+        </nav>
+
+
     </div><!-- End Page Title -->
     <div class="d-flex"></div>
     <div class="col-md-12 d-flex justify-content-center">
-      
 
-      <form action="/admin/editproduct/<%= pd._id  %>" method="post" enctype="multipart/form-data"
-          class="card p-3 bg-light mb-3 text-dark">
-        
-          <div class="form-group">
-            <label for="category">Category:</label>
-            <input type="text" name="Category" class="form-control bg-light" id="category" value="<%= pd.Category.Name %>" disabled/>
-          </div>
-          <div class="form-group">
-              <label for="productName">Product Name:</label>
-              <input type="text" name="ProductName" class="form-control bg-light" id="productName"  value="<%= pd.ProductName  %>" required />
-          </div>
-          
-          <br>
-          <div class="form-group">
-              <label for="productDescription">Product Description:</label>
-              <textarea class="form-control bg-light" name="Description" id="productDescription"
-                  rows="4" placeholder="Enter product description" required><%= pd.Description  %></textarea>
-          </div>
-          <br>
-          <div class="form-group">
-              <label for="Specification1">Product Specification:</label>
-              <textarea class="form-control bg-light" name="spec1"
-                  id="Specification1" placeholder="Enter product Specification"
-                  required><%= pd.spec1  %></textarea>
+    <form class="card p-4 bg-white mb-3 text-dark shadow-md" id="editProduct" data-product-id="<%= pd._id %>">
+        <h2 class="text-center mb-4">Edit Product</h2>
 
-          </div>
-          <br>
+        <!-- Categories -->
+        <div class="row mb-4">
+            <div class="col-md-6 offset-md-3">
+                <div class="form-outline bg-muted shadow-sm" data-mdb-input-init>
+                    <input type="text" name="category" id="category" class="form-control" value="<%= pd.category.categoryName %>">
+                    <label class="form-label" for="category">Category</label> 
+                </div>
+            </div>
+        </div>
 
-          <div class=""> <!-- Added bg-light and text-center classes -->
-              <h3>Media</h3>
-              <div class="form-group my-2">
-                  <label for="image1">Image 1:</label>
-                  <input type="file" name="image1" class="form-control imageInput" id="image1"
-                      accept="image/*" />
-                  <img src="/images/<%= pd.images[0]  %>" alt="Image 1" class="img-fluid imagePreview"
-                      style="max-height: 50px;width: auto;" id="imagePreview1">
-              </div>
-              <div class="form-group my-2">
-                  <label for="image2">Image 2:</label>
-                  <input type="file" name="image2" class="form-control imageInput" id="image2"
-                      accept="image/*" />
-                  <img src="/images/<%= pd.images[1]  %>" alt="Image 2" class="img-fluid imagePreview"
-                      style="max-height: 50px;width: auto; " id="imagePreview2">
-              </div>
-              <div class="form-group my-2">
-                  <label for="image3">Image 3:</label>
-                  <input type="file" name="image3" class="form-control imageInput" id="image3"
-                      accept="image/*" />
-                  <img src="/images/<%= pd.images[2]  %>" alt="Image 3" class="img-fluid imagePreview"
-                      style="max-height: 50px;width: auto; " id="imagePreview3">
-              </div>
-          </div>
+        <!-- Product Name and Description -->
+        <div class="row mb-4">
+            <div class="col-md-6 mb-4 mb-md-0">
+                <div class="form-outline bg-muted shadow-sm" data-mdb-input-init>
+                    <input type="text" name="productName" id="productName" class="form-control" value="<%= pd.productName %>" required/>
+                    <label class="form-label" for="productName">Product Name</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-outline bg-light shadow-sm" data-mdb-input-init>
+                    <textarea class="form-control" name="description" id="productDescription"
+                        rows="3" required><%= pd.description %></textarea>
+                    <label class="form-label" for="productDescription">Product Description</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Specifications -->
+        <div class="row mb-4">
+            <h4 class="mb-3"><i class="fas fa-list me-2"></i>Specifications</h4>
+            <div class="col-md-4 mb-4 mb-md-0">
+                <div class="form-outline bg-light" data-mdb-input-init>
+                    <textarea class="form-control" name="spec1" id="Specification1" rows="3" required><%= pd.spec1 %></textarea>
+                    <label class="form-label" for="Specification1">Specification 1</label>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4 mb-md-0">
+                <div class="form-outline bg-light" data-mdb-input-init>
+                    <textarea class="form-control" name="spec2" id="Specification2" rows="3" required><%= pd.spec2 %></textarea>
+                    <label class="form-label" for="Specification2">Specification 2</label>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-outline bg-light" data-mdb-input-init>
+                    <textarea class="form-control" name="spec3" id="Specification3" rows="3" required><%= pd.spec3 %></textarea>
+                    <label class="form-label" for="Specification3">Specification 3</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Images -->
 
 
-          <div class="">
-              <h2>Pricing</h2>
-              <div class="form-group">
-                  <label for="basePrice">Base Price:</label>
-                  <input type="number" name="Price" class="form-control bg-light" id="basePrice"
-                      placeholder="Enter base price" value="<%= pd.Price  %>" required />
-              </div>
-              <br>
-              <div class="form-group">
-                  <label for="discountAmount">Discount Amount:</label>
-                  <input type="number" name="discount" class="form-control bg-light"
-                      id="discountAmount" placeholder="Enter discount amount" value="<%= pd.discount  %>" required />
-              </div>
-          </div>
+        <!-- Pricing and Stock -->
+        <div class="row mb-4">
+            <h4 class="mb-3"><i class="fas fa-tag me-2"></i>Pricing and Stock</h4>
+            <div class="col-md-4 mb-4 mb-md-0">
+                <div class="form-outline bg-light" data-mdb-input-init>
+                    <input type="number" name="basePrice" id="basePrice" class="form-control" value="<%= pd.basePrice %>" required/>
+                    <label class="form-label" for="basePrice" >Base Price</label>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4 mb-md-0">
+                <div class="form-outline bg-light" data-mdb-input-init>
+                    <input type="number" name="discount" id="discountAmount" class="form-control" required value="<%= pd.discount %>" />
+                    <label class="form-label" for="discountAmount">Discount Percentage</label>
+                </div>
+            </div>
+        </div>
 
-          <div class="">
-              <h2>Stock</h2>
 
-              <div class="form-group">
-                  <label for="quantity">Quantity:</label>
-                  <input type="number" name="stock" class="form-control bg-light"
-                      id="quantity" placeholder="Enter quantity" value="<%= pd.stock  %>" required />
-              </div>
-          </div>
-          <div class="d-flex justify-content-center mb-3">
-            <button type="submit" class="btn btn-primary mt-3 mb-0">Edit Product</button>
-          </div>
+
+
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title mb-4">Product Variants</h5>
+
+                <!-- Variant Buttons -->
+                <div class="mb-4">
+                    <!-- Color Variant Button -->
+                    <button type="button" class="btn btn-primary me-2" data-mdb-toggle="modal"
+                        data-mdb-target="#colorModal" data-mdb-ripple-init data-mdb-modal-init>
+                        Add Color Variant
+                    </button>
+
+                    <!-- Storage Variant Button -->
+                    <button type="button" class="btn btn-primary" data-mdb-toggle="modal"
+                        data-mdb-target="#storageModal" data-mdb-ripple-init data-mdb-modal-init>
+                        Add Storage Variant
+                    </button>
+                </div>
+
+                <!-- Variants Display Area -->
+                <div class="row">
+                    <!-- Color Variants -->
+                    <div class="col-md-6">
+                        <h6>Color Variants</h6>
+                        <div id="colorVariants" class="variant-container mb-3">
+
+       
+                            <!-- Color variants will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Storage Variants -->
+                    <div class="col-md-6">
+                        <h6>Storage Variants</h6>
+                        <div id="storageVariants" class="variant-container mb-3">
+                    
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hidden inputs to store selected variants -->
+                <input type="hidden" name="selectedColorVariant" id="selectedColorVariant">
+                <input type="hidden" name="selectedStorageVariant" id="selectedStorageVariant">
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary btn-lg" data-mdb-ripple-init>
+                <i class="fas fa-save me-2"></i>Edit Product
+            </button>
+        </div>
+    </form>
 
     </div>
-    
-    <!-- ======= Footer ======= -->
-    
+        <!-- </main> -->
+<div id="initial-data" data-color='<%= JSON.stringify(pd.color) %>'
+    data-storage='<%= JSON.stringify(pd.storage) %>'></div>
 
-    
+
+
+    </main>
+
+            <!-- ======= Footer ======= -->
+
+
+            <!--Add Color Variant Modal -->
+    <div class="modal fade" id="colorModal" tabindex="-1" aria-labelledby="colorModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Color Variant</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="colorForm">
+                        <div class="mb-3">
+                            <label class="form-label">Color Name</label>
+                            <input type="text" class="form-control" id="colorName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Price Adjustment</label>
+                            <input type="number" class="form-control" id="colorPrice" value="0">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Stock Adjustment</label>
+                            <input type="number" class="form-control" id="colorStock" value="0">
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="colorDefault">
+                            <label class="form-check-label">Set as Default</label>
+                        </div>
+
+                        <div class="row mb-4">
+                            <h4 class="mb-3"><i class="fas fa-images me-2"></i>Product Images</h4>
+                            <div class="col-md-4 mb-4 mb-md-0">
+                                <div class="card p-2 bg-light" style="width: fit-content;">
+                                    <label for="image1" class="square-input" id="imageLabel1">
+                                        <input type="file" name="image1" class="form-control d-none imageInput"
+                                            id="image1" accept="image/*" required
+                                            onchange="openCropper(this, 'imagePreview1')" />
+                                        <img src="" alt="Image Preview" class="img-fluid imagePreview"
+                                            id="imagePreview1" style="display: none;" />
+                                        <span class="placeholder-text" id="placeholder1">Click to upload</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4 mb-md-0">
+                                <div class="card p-2 bg-light" style="width: fit-content;">
+                                    <label for="image2" class="square-input" id="imageLabel2">
+                                        <input type="file" name="image2" class="form-control d-none imageInput"
+                                            id="image2" accept="image/*" required
+                                            onchange="openCropper(this, 'imagePreview2')" />
+                                        <img src="" alt="Image Preview" class="img-fluid imagePreview"
+                                            id="imagePreview2" style="display: none;" />
+                                        <span class="placeholder-text" id="placeholder2">Click to upload</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4 mb-md-0">
+                                <div class="card p-2 bg-light" style="width: fit-content;">
+                                    <label for="image3" class="square-input" id="imageLabel3">
+                                        <input type="file" name="image3" class="form-control d-none imageInput"
+                                            id="image3" accept="image/*" required
+                                            onchange="openCropper(this, 'imagePreview3')" />
+                                        <img src="" alt="Image Preview" class="img-fluid imagePreview"
+                                            id="imagePreview3" style="display: none;" />
+                                        <span class="placeholder-text" id="placeholder3">Click to upload</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div id="croppingSection" style="display: none;">
+                    <h5>Crop Image</h5>
+                    <div class="cropper-container">
+                        <img id="cropperImage" src="" alt="Cropper Image" class="img-fluid" />
+                    </div>
+                    <button type="button" class="btn btn-secondary mt-3"
+                        onclick="cancelCropping()">Cancel</button>
+                    <button type="button" class="btn btn-primary mt-3" onclick="cropImage()">Crop and
+                        Save</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="addColorVariant">Add Variant</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--add Storage Variant Modal -->
+    <div class="modal fade" id="storageModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Storage Variant</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="storageForm">
+                        <div class="mb-3">
+                            <label class="form-label">Storage Size</label>
+                            <input type="text" class="form-control" id="storageName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Price Adjustment</label>
+                            <input type="number" class="form-control" id="storagePrice" value="0">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Stock Adjustment</label>
+                            <input type="number" class="form-control" id="storageStock" value="0">
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="storageDefault">
+                            <label class="form-check-label">Set as Default</label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="addStorageVariant">Add Variant</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ======= modal start ======= -->
+
+<div class="modal fade" id="editColorModal" tabindex="-1" aria-labelledby="colorModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Color Variant</h5>
+                <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editColorForm">
+                    <div class="mb-3">
+                        <label class="form-label">Color Name</label>
+                        <input type="text" class="form-control" id="editColorName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Price Adjustment</label>
+                        <input type="number" class="form-control" id="editColorPrice" value="0">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Stock Adjustment</label>
+                        <input type="number" class="form-control" id="editColorStock" value="0">
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="editColorDefault">
+                        <label class="form-check-label">Set as Default</label>
+                    </div>
+
+                    <div class="row mb-4">
+                        <h4 class="mb-3"><i class="fas fa-images me-2"></i>Product Images</h4>
+                        <div class="col-md-4 mb-4 mb-md-0">
+                            <div class="card p-2 bg-light" style="width: fit-content;">
+                                <label for="image4" class="square-input" id="imageLabel4">
+                                    <input type="file" name="image4" class="form-control d-none imageInput" id="image4"
+                                        accept="image/*" required onchange="openCropper(this, 'imagePreview4')" />
+                                    <img src="" alt="Image Preview" class="img-fluid imagePreview" id="imagePreview4"
+                                        style="display: none;" />
+                                    <span class="placeholder-text" id="placeholder4">Click to upload</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4 mb-md-0">
+                            <div class="card p-2 bg-light" style="width: fit-content;">
+                                <label for="image5" class="square-input" id="imageLabel5">
+                                    <input type="file" name="image5" class="form-control d-none imageInput" id="image5"
+                                        accept="image/*" required onchange="openCropper(this, 'imagePreview5')" />
+                                    <img src="" alt="Image Preview" class="img-fluid imagePreview" id="imagePreview5"
+                                        style="display: none;" />
+                                    <span class="placeholder-text" id="placeholder5">Click to upload</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4 mb-md-0">
+                            <div class="card p-2 bg-light" style="width: fit-content;">
+                                <label for="image6" class="square-input" id="imageLabel6">
+                                    <input type="file" name="image6" class="form-control d-none imageInput" id="image6"
+                                        accept="image/*" required onchange="openCropper(this, 'imagePreview6')" />
+                                    <img src="" alt="Image Preview" class="img-fluid imagePreview" id="imagePreview6"
+                                        style="display: none;" />
+                                    <span class="placeholder-text" id="placeholder6">Click to upload</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div id="editCroppingSection" style="display: none;">
+                <h5>Crop Image</h5>
+                <div class="cropper-container">
+                    <img id="editCropperImage" src="" alt="Cropper Image" class="img-fluid" />
+                </div>
+                <button type="button" class="btn btn-secondary mt-3" onclick="cancelCropping()">Cancel</button>
+                <button type="button" class="btn btn-primary mt-3" onclick="cropImage()">Crop and
+                    Save</button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="editColorVariant">Edit Variant</button>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- ======= modal end ======= -->
+
+
+
+
+
+            <div class="modal fade" id="editStorageModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Edit Storage Variant</h5>
+                            <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="editStorageForm">
+                                <div class="mb-3">
+                                    <label class="form-label">Storage Size</label>
+                                    <input type="text" class="form-control" id="editStorageName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Price Adjustment</label>
+                                    <input type="number" class="form-control" id="editStoragePrice" value="0">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Stock Adjustment</label>
+                                    <input type="number" class="form-control" id="editStorageStock" value="0">
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="editStorageDefault">
+                                    <label class="form-check-label">Set as Default</label>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="editStorageVariant">Edit Variant</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+
+
 <script src="/js/imagePreview.js" defer></script>
 
-  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+<!-- Template Main JS File -->
+<script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js"
+    integrity="sha256-YpCj+lgbF8z0aSzz7GF6dK5l3ojZFAxy1JKum0dwfvs=" crossorigin="anonymous"></script>
+<script type="text/javascript"
+    src="https://cdn.jsdelivr.net/npm/mdb-ui-kit@8.0.0/js/mdb.umd.min.js"></script>
 
- 
-  <!-- Template Main JS File -->
- 
 <%- include('../essentials/adminFooter') %>
+
+
+
+
+
+
+
+<%// pd.storage?.forEach((variant,index)=>{ %>
+    <!-- <div class="variant-item">
+        <div class="form-check mb-0">
+            <input class="form-check-input" type="radio" name="storageVariant" id="storage<%=//index %>"
+                <%=//variant.default ? "checked" : "" %> onchange="updateStorageDefault(<%=// index %>)">
+                <label class="form-check-label" for="storage<%= //index  %>">
+                    <%=// variant.variant %>
+                </label>
+        </div>
+        <i class="fas fa-times delete-variant deleteStorage" data-index="<%= //index%>"></i>
+    </div> -->
+    <%// }) %>

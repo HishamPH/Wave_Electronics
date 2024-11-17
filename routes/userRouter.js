@@ -8,6 +8,7 @@ const walletController = require("../controllers/walletController");
 const wishlistController = require("../controllers/wishlistController");
 
 const userAuth = require("../middlewares/userAuth");
+const productController = require("../controllers/productController");
 
 //======================= LOGIN ===========================
 
@@ -68,9 +69,22 @@ router.get(
   userController.deleteAddress
 );
 
+//====================== PRODUCTS ======================
+
+router.post(
+  "/product/change-color/:id",
+  userAuth,
+  productController.changeColor
+);
+router.post(
+  "/product/change-storage/:id",
+  userAuth,
+  productController.changeStorage
+);
+
 //====================== CART ===========================
 
-router.get("/addtocart/:id", userAuth, cartController.addToCart);
+router.post("/addtocart/:id", userAuth, cartController.addToCart);
 
 router.get("/cart", userAuth, cartController.getCart);
 

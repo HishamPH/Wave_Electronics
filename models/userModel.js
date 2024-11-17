@@ -23,7 +23,11 @@ const userschema = new mongoose.Schema({
       product: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Products",
+        required: true,
       },
+      color: { type: String, required: true },
+      storage: { type: String, required: true },
+      image: { type: String, required: true },
     },
   ],
 });
