@@ -14,7 +14,10 @@ module.exports = {
       res.redirect("/user/homepage");
       return;
     }
-    let pd = await Products.find({ Display: true }).populate("offer").limit(8);
+    let pd = await Products.find({ status: true }).populate("offer").limit(8);
+    pd.forEach((item) => {
+      item.defaultVariant = item.variant.find((variant) => variant.default);
+    });
     res.render("user/landpage", { pd });
   },
 
@@ -31,8 +34,7 @@ module.exports = {
       });
       let q = req.session.cartCount || 0;
       pd.forEach((item) => {
-        item.defaultColor = item.color.find((variant) => variant.default);
-        item.defaultStorage = item.storage.find((variant) => variant.default);
+        item.defaultVariant = item.variant.find((variant) => variant.default);
       });
       res.render("user/homepage", {
         message: req.session.name,
@@ -229,9 +231,16 @@ module.exports = {
   getDetailPage: async (req, res) => {
     let id = req.params.id;
     let pd = await Products.findById(id).select("-__v");
-    const defaultColor = pd.color.find((variant) => variant.default);
-    const defaultStorage = pd.storage.find((variant) => variant.default);
-    res.render("user/productdetail", { pd, defaultColor, defaultStorage });
+    const defaultVariant = pd.variant.find((variant) => variant.default);
+    const colorSet = new Set();
+    const storageSet = new Set();
+    pd.variant.forEach((item) => {
+      colorSet.add(item.color);
+      storageSet.add(item.storage);
+    });
+    const color = [...colorSet];
+    const storage = [...storageSet];
+    res.render("user/productdetail", { pd, defaultVariant, storage, color });
   },
 
   review: async (req, res) => {

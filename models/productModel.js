@@ -1,9 +1,13 @@
 const mongoose = require("mongoose");
 const { Schema, ObjectId } = mongoose;
 
-const colorVariant = new Schema(
+const variantSchema = new Schema(
   {
-    variant: {
+    color: {
+      type: String,
+      required: true,
+    },
+    storage: {
       type: String,
       required: true,
     },
@@ -41,42 +45,6 @@ const colorVariant = new Schema(
   }
 );
 
-const storageVariant = new Schema(
-  {
-    variant: {
-      type: String,
-      required: true,
-    },
-    stock: {
-      type: Number,
-      required: true,
-      validate: {
-        validator: function (value) {
-          return value >= 0;
-        },
-        message: "Quantity Can't be less than 0",
-      },
-    },
-    price: {
-      type: Number,
-      required: true,
-      validate: {
-        validator: function (value) {
-          return value > 0;
-        },
-        message: "Price must be a positive number.",
-      },
-    },
-    default: {
-      type: Boolean,
-      required: true,
-    },
-  },
-  {
-    timestamps: true,
-  }
-);
-
 const ProductsSchema = new mongoose.Schema(
   {
     productName: { type: String, required: true },
@@ -99,14 +67,7 @@ const ProductsSchema = new mongoose.Schema(
     offerPrice: {
       type: Number,
     },
-    color: {
-      type: [colorVariant],
-      required: true,
-    },
-    storage: {
-      type: [storageVariant],
-      required: true,
-    },
+    variant: [variantSchema],
     rating: { type: Number },
     reviews: { type: Array },
     defaultPrice: { type: Number },

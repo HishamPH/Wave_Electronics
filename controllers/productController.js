@@ -22,34 +22,29 @@ module.exports = {
         spec2,
         spec3,
         discount,
-        color,
-        storage,
+        variant,
       } = req.body;
+
       const files = req.files;
-      mapFilesToVariants(color, files);
+      mapFilesToVariants(variant, files);
       const cat = await Category.findOne({ categoryName: category });
       const categoryOffer = await Offer.findOne({ category: cat._id });
 
-      const defaultColor = color.find((variant) => variant.default);
-      const defaultStorage = storage.find((variant) => variant.default);
-      defaultPrice =
-        Number(basePrice) +
-        Number(defaultColor?.price || 0) +
-        Number(defaultStorage?.price || 0);
+      const defaultVariant = variant.find((item) => item.default);
+      defaultPrice = Number(basePrice) + Number(defaultVariant?.price || 0);
 
       const product = await Product.create({
         productName,
         description,
-        basePrice,
+        category: cat._id || null,
         spec1,
         spec2,
         spec3,
-        category: cat._id || null,
         offer: categoryOffer?._id || null,
-        offerPrice: 1000,
-        color: color,
-        storage: storage,
+        basePrice,
         discount,
+        offerPrice: 1000,
+        variant: variant,
         defaultPrice,
       });
 
@@ -85,21 +80,16 @@ module.exports = {
       spec2,
       spec3,
       discount,
-      color,
-      storage,
+      variant,
     } = req.body;
-    console.log(basePrice);
+
     const files = req.files;
-    mapFilesToVariants(color, files);
+    mapFilesToVariants(variant, files);
     const cat = await Category.findOne({ categoryName: category });
     const categoryOffer = await Offer.findOne({ category: cat._id });
 
-    const defaultColor = color.find((variant) => variant.default);
-    const defaultStorage = storage.find((variant) => variant.default);
-    defaultPrice =
-      Number(basePrice) +
-      Number(defaultColor?.price || 0) +
-      Number(defaultStorage?.price || 0);
+    const defaultVariant = variant.find((item) => item.default);
+    defaultPrice = Number(basePrice) + Number(defaultVariant?.price || 0);
 
     await Product.findByIdAndUpdate(id, [
       {
@@ -113,10 +103,8 @@ module.exports = {
           category: cat._id || null,
           offer: categoryOffer?._id || null,
           offerPrice: 1000,
-          color: color,
-          storage: storage,
+          variant: variant,
           discount,
-
           defaultPrice,
         },
       },
@@ -168,8 +156,6 @@ function mapFilesToVariants(variants, files) {
         }
       }
     });
-
-    // Remove the imageNames field (optional)
     delete variant.imageNames;
   });
 }

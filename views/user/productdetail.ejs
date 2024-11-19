@@ -72,7 +72,7 @@
                 <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                 <li class="dropdown-header">
                     <h6>
-                        <%= locals.name %>
+                        <%= name %>
                     </h6>
                     <span>Web Designer</span>
                 </li>
@@ -114,13 +114,13 @@
                 <div id="product-carousel" class="carousel slide" data-ride="carousel">
                     <div class="carousel-inner bg-light shadow-sm ">
                         <div id="img-container zoom1" class="carousel-item">
-                            <img class="w-100 h-100" src="/images/<%= defaultColor.images[0]  %>" alt="Image">
+                            <img class="w-100 h-100" src="/images/<%= defaultVariant.images[0]  %>" alt="Image">
                         </div>
                         <div id="img-container zoom2" class="carousel-item active">
-                            <img class="w-100 h-100" src="/images/<%= defaultColor.images[1]  %>" alt="Image">
+                            <img class="w-100 h-100" src="/images/<%= defaultVariant.images[1]  %>" alt="Image">
                         </div>
                         <div id="img-container zoom3" class="carousel-item">
-                            <img class="w-100 h-100" src="/images/<%= defaultColor.images[2]  %>" alt="Image">
+                            <img class="w-100 h-100" src="/images/<%= defaultVariant.images[2]  %>" alt="Image">
                         </div>
                     </div>
                     <a class="carousel-control-prev bg-black" href="#product-carousel" data-slide="prev">
@@ -164,7 +164,7 @@
                         <%= pd.Description %>
                     </p>
             
-                    <% if(defaultColor.stock===0) { %>
+                    <% if(defaultVariant.stock===0) { %>
                         <p class="mb-4 text-danger">Out of stock</p>
                     <% } else { %>
                     <p class="mb-4 text-success">In Stock</p>
@@ -173,12 +173,12 @@
                     <div class="d-flex mb-4">
                         <strong class="text-dark mr-3">Colors:</strong>
                         <div class="btn-group" role="group" aria-label="Color selection">
-                            <% pd.color.forEach(function(color) { %>
-                                <input type="radio" class="btn-check" name="color" id="color-<%= color.variant %>"
+                            <% color.forEach(function(color) { %>
+                                <input type="radio" class="btn-check" name="color" id="color-<%= color %>"
                                     autocomplete="off" <%=color.default ? 'checked' : '' %>>
-                                <label class="btn btn-outline-primary <%= color.default ? 'active' : '' %>"
-                                    for="color-<%= color.variant %>">
-                                    <%= color.variant%>
+                                <label class="btn btn-outline-primary <%= color ? 'active' : '' %>"
+                                    for="color-<%= color %>">
+                                    <%= color %>
                                 </label>
                                 <% }); %>
                         </div>
@@ -187,12 +187,12 @@
                     <div class="d-flex mb-4">
                         <strong class="text-dark mr-3">Storage:</strong>
                         <div class="btn-group" role="group" aria-label="Storage selection">
-                            <% pd.storage.forEach(function(storage) { %>
-                                <input type="radio" class="btn-check" name="storage" id="storage-<%= storage.variant %>"
-                                    autocomplete="off" <%=storage.default ? 'checked' : '' %>>
-                                <label class="btn btn-outline-primary <%= storage.default ? 'active' : '' %>"
-                                    for="storage-<%= storage.variant %>">
-                                    <%= storage.variant %>
+                            <% storage.forEach(function(storage) { %>
+                                <input type="radio" class="btn-check m-3" name="storage" id="storage-<%= storage %>"
+                                    autocomplete="off" <%=storage ? 'checked' : '' %>>
+                                <label class="btn btn-outline-primary <%= storage ? 'active' : '' %>"
+                                    for="storage-<%= storage %>">
+                                    <%= storage %>
                                 </label>
                                 <% }); %>
                         </div>
@@ -325,7 +325,7 @@
     </div>
     <!-- Shop Detail End -->
     
-    <div id="initial-data" data-color='<%= JSON.stringify(defaultColor) %>' data-storage='<%= JSON.stringify(defaultStorage) %>'>
+    <div id="initial-data" data-variant='<%= JSON.stringify(defaultVariant) %>'>
     </div>
 
 

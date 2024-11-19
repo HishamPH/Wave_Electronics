@@ -3,12 +3,12 @@
 </head>
 <body>
   <!-- Topbar Start -->
-  <header id="header" class="header fixed-top d-flex align-items-center bg-light" style="height: 125px;">
+  <header id="header" class="header fixed-top d-flex align-items-center bg-black" style="height: 100px;">
 
       <div class="d-flex align-items-center justify-content-between">
         <div class="col-lg-4  d-flex align-items-center">
           <a href="/user/homepage" class="text-decoration-none">
-            <span class="h1 text-uppercase text-warning bg-dark px-2">WAVE</span>
+            <span class="h1 text-uppercase text-warning bg-black px-2">WAVE</span>
             <span class="h1 text-uppercase text-dark bg-warning px-2 ml-n1">ELECTRONICS</span>
           </a>
           <!-- <i class="bi bi-list toggle-sidebar-btn"></i> -->
@@ -16,34 +16,19 @@
         
       </div><!-- End Logo -->
   
-      <div class="search-bar">
-        <form class="search-form d-flex align-items-center" method="POST" action="#">
-          <input type="text" name="query" placeholder="Search" title="Enter search keyword">
-          <button type="submit" title="Search"><i class="bi bi-search"></i></button>
-        </form>
-      </div><!-- End Search Bar -->
+     
   
       <nav class="header-nav ms-auto">
         <ul class="d-flex align-items-center">
-  
-          <li class="nav-item d-block d-lg-none">
-            <a class="nav-link nav-icon search-bar-toggle " href="#">
-              <i class="bi bi-search"></i>
-            </a>
-          </li><!-- End Search Icon-->
-  
-        
-  
-    
-  
           <li class="nav-item dropdown pe-3">
   
-            <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-              <img src="/img/user.png" alt="Profile" class="rounded-circle">
-              <span class="d-none d-md-block dropdown-toggle ps-2"><%= name  %></span>
-            </a><!-- End Profile Iamge Icon -->
+            <div class="nav-link nav-profile d-flex align-items-center p-0 dropdown-toggle" style="pointer-events: auto; cursor: pointer; height: 80px;" href="#" data-bs-toggle="dropdown">
+              
+              <h5 class="d-none d-md-block pe-2 text-white mt-2"><%= name  %></h5>
+              <img src="/img/user.png" alt="Profile" class="rounded-circle" style="height: 50px;width: 50px;">
+            </div><!-- End Profile Iamge Icon -->
   
-            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+            <ul class="dropdown-menu dropdown-menu-arrow profile">
               <li class="dropdown-header">
                 <h6><%= name %></h6>
                 <span>Web Designer</span>

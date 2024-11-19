@@ -75,7 +75,7 @@ $(document).ready(function () {
   async function updateQuantity(id) {
     try {
       console.log(id);
-      const res = await axios.get(`/user/addtocart/${id}`);
+      const res = await axios.post(`/user/addtocart/${id}`);
       console.log(res);
       $("#cartCount").text(res.data.count);
       Success("added to cart");

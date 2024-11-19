@@ -161,7 +161,7 @@
                 </span>
                 
               <% } %>
-              <img src="/images/<%= row.defaultColor.images[0]  %>" class="card-img-top card-img-auto" alt="Product Image" style="object-fit: cover;">
+              <img src="/images/<%= row.defaultVariant.images[0]  %>" class="card-img-top card-img-auto" alt="Product Image" style="object-fit: cover;">
               <div class="card-body bg-white" style="height: 220px;">
                 <a href="/user/detail/<%= row._id %>">
                     <div class="card-title m-0 text-truncate fw-bold "><%= row.productName  %></div>
@@ -171,11 +171,12 @@
                 </a>
                 <div class="d-flex justify-content-between mt-3" style="bottom:0px;">
                   <button data-path="<%= row._id %>" class="btn btn-dark rounded-pill addtocart">Add to cart</button>
-                  <% if(wishlist?.includes(row._id.toString())){ %>
-                    <button data-path="<%= row._id %>" class="btn rounded-circle  shadow-sm text-danger wishlist"><img src="/img/heart.png" class="img-fluid heart-image" alt=""></button>
-                  <% }else{ %>
-                    <button data-path="<%= row._id %>" class="btn rounded-circle  shadow-sm text-danger wishlist"><img src="/img/heart-white.png" class="img-fluid heart-image" alt=""></button>
-                  <% } %>
+                  <button data-path="<%= row._id %>"
+                    class="btn d-flex justify-content-center align-items-center rounded-circle wishlist shadow-sm"
+                    style="height: 50px; width: 50px;background-color: #dadada;">
+                    <img src="/img/heart<%= wishlist.includes(row._id.toString()) ? '':'-white'  %>.png"
+                      style="width: 30px; height: 30px;" alt="heart">
+                  </button>
                 </div>
                 
                 

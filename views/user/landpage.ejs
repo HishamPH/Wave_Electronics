@@ -10,8 +10,8 @@
         <div class="d-flex align-items-center justify-content-between">
           <div class="col-lg-4  d-flex align-items-center">
             <a href="/" class="text-decoration-none">
-              <span class="h2 text-uppercase text-warning bg-dark px-2">WAVE</span>
-              <span class="h2 text-uppercase text-dark bg-warning px-2 ml-n1">ELECTRONICS</span>
+              <span class="h2 text-uppercase text-warning bg-black px-2">WAVE</span>
+              <span class="h2 text-uppercase text-black bg-warning px-2 ml-n1">ELECTRONICS</span>
             </a>
             
           </div>
@@ -79,23 +79,19 @@
                 </span>
                 
               <% } %>
-              <img src="/images/<%= row.images[0]  %>" class="card-img-top card-img-auto" alt="Product Image" style="object-fit: cover;">
-              <div class="card-body bg-white" style="height: 220px;">
+              <img src="/images/<%= row.defaultVariant.images[0]  %>" class="card-img-top card-img-auto" alt="Product Image" style="object-fit: cover;">
+              <div class="card-body bg-white p-3">
                 <a href="/user/detail-guest/<%= row._id %>">
-                    <div class="card-title m-0 text-truncate fw-bold "><%= row.ProductName  %></div>
-                    <p class="card-text fw-bold text-dark mb-2 ">₹<%= row.Price.toLocaleString('hi')  %></p>
-                    <p class="card-text text-black " style="height: 48px;"><%= row.spec1 %></p>
+                    <div class="card-title m-0 p-0 text-truncate fw-bold "><%= row.productName  %></div>
+                    <p class="card-text m-0 fw-bold text-dark">₹<%= row.defaultPrice.toLocaleString('hi')  %></p>
+                    <p class="card-text text-black "><%= row.spec1 %></p>
                     
                 </a>
-                <div class="d-flex justify-content-between mt-3" style="bottom:0px;">
-                  <button data-path="<%= row._id %>" class="btn btn-dark rounded-pill addtocart">Add to cart</button>
+                <div class="d-flex justify-content-between">
                   
-                  <button data-path="<%= row._id %>" class="btn rounded-circle  shadow-sm text-danger"><img src="/img/heart-white.png" class="img-fluid heart-image" style="width: 10px;" alt=""></button>
-                  
+                    <a href="/user/login" class="text-white"><button class="btn py-3 btn-dark rounded-pill text-white" data-mdb-ripple-init>Add to cart</button></a>
+                 
                 </div>
-                
-                
-                
               </div>
             </div>
           </div>
@@ -106,7 +102,7 @@
    
 
     <!-- Footer Start -->
-    <div class="container-fluid bg-dark text-secondary mt-5 pt-5 position-relative " style="top: 100px;">
+    <div class="container-fluid bg-black text-secondary mt-5 pt-5 position-relative " style="top: 100px;">
         <div class="row px-xl-5 pt-5">
             <div class="col-lg-4 col-md-12 mb-5 pr-3 pr-xl-5">
                 <h5 class="text-secondary text-uppercase mb-4">Get In Touch</h5>

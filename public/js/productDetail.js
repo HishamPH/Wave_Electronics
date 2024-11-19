@@ -2,9 +2,8 @@ import { Success, Failed } from "./toast.js";
 
 $(document).ready(function () {
   const initialData = $("#initial-data");
-  let color = initialData.data("color");
-  let storage = initialData.data("storage");
-  console.log(color, storage);
+  let variant = initialData.data("variant");
+  console.log(variant);
   $(".addtocart").click(function () {
     let id = $(this).data("path");
     updateQuantity(id);
@@ -14,7 +13,7 @@ $(document).ready(function () {
     try {
       const res = await axios.post(
         `/user/addtocart/${id}`,
-        { color: color, storage: storage },
+        { variant },
         {
           headers: {
             "Content-Type": "application/json",

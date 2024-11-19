@@ -26,22 +26,22 @@
     <div class="login-form">
         <h2>Sign Up</h2>
         <form action="/user/signup" method="post" id="add-form" onsubmit="return validateForm()">
-            <div class="form-group">
+            <div class="form-group mb-2">
               <label for="name">Username:</label>
               <input type="text" name="name" class="input-text" placeholder="Enter your username" required oninput="validateName(this)">
-              <small class="text-muted" id="nameError"></small>
+              <small class="text-danger" id="nameError"></small>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-2">
               <label for="email">Email</label>
               <input type="email" name="email" class="input-text" placeholder="Enter email" required oninput="validateEmail(this)">
-              <small class="text-muted" id="emailError"></small>
+              <small class="text-danger" id="emailError"></small>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-2">
               <label for="phone">Phone</label>
               <input type="tel" name="phone" class="input-text" placeholder="Enter Phone" pattern="[0-9]{10}" required oninput="validatePhone(this)">
-              <small class="text-muted" id="phoneError"></small>
+              <small class="text-danger" id="phoneError"></small>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-4">
               <label for="password">Password:</label>
               <input type="password" name="password" class="input-text" placeholder="Enter your password" required minlength="8" oninput="validatePassword(this)">
             </div>
@@ -53,9 +53,9 @@
             <%}%>
 
             
-            <button type="submit" class="btn btn-primary login-btn">Sign Up</button>
-            <div class="register-link">
-                <p class="text-black mt-1 ">Already have an account? &nbsp;&nbsp;<a href="/user/login">Sign In</a></p>
+            <button type="submit" class="btn btn-primary rounded-0 login-btn" data-mdb-ripple-init>Sign Up</button>
+            <div class="register-link mt-4 mb-2">
+                <p class="text-black mb-2">Already have an account? &nbsp;&nbsp;<a href="/user/login">Sign In</a></p>
             </div>
         </form>
     </div>
