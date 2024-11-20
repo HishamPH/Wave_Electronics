@@ -14,7 +14,6 @@ var instance = new Razorpay({
   key_id: RAZORPAY_KEY_ID,
   key_secret: RAZORPAY_KEY_SECRET,
 });
-
 module.exports = {
   placeOrder: async (req, res) => {
     try {

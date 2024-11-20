@@ -31,16 +31,15 @@ router.get("/users/:id", adminAuth, adminController.blockUser);
 
 //===================== Category =====================
 
-router.get("/category", adminAuth, categoryController.category);
-router.get("/addcategory", adminAuth, categoryController.addCategory);
-router.post("/addcategory", adminAuth, categoryController.postAddCategory);
-router
-  .route("/editcategory/:id")
-  .all(adminAuth)
-  .get(categoryController.getEditCategory)
-  .post(categoryController.postEditCategory);
-router.get(
-  "/category/delete/:id",
+router.get("/category", adminAuth, categoryController.getCategories);
+router.post("/add-category", adminAuth, categoryController.postAddCategory);
+router.post(
+  "/edit-category/:id",
+  adminAuth,
+  categoryController.postEditCategory
+);
+router.delete(
+  "/delete-category/:id",
   adminAuth,
   categoryController.deleteCategory
 );
@@ -88,7 +87,7 @@ router.post(
 router.get("/coupons", adminAuth, couponController.getCoupon);
 router.post("/coupons/addcoupon", adminAuth, couponController.addCoupon);
 router.post("/coupons/edit/:id", adminAuth, couponController.editCoupon);
-router.get("/coupons/delete/:id", adminAuth, couponController.deleteCoupon);
+router.delete("/coupons/delete/:id", adminAuth, couponController.deleteCoupon);
 
 //=========================== OFFERS =======================
 

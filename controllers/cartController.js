@@ -11,36 +11,23 @@ module.exports = {
     try {
       console.log("adding to the cart ");
       const id = req.params.id;
-      const { color, storage } = req.body;
+      const { variant } = req.body;
       const userId = req.session.user._id;
       const user = await User.findById(userId);
       const pd = await Products.findById(id);
-      let currentColor;
-      let currentStorage;
-      if (color) {
-        currentColor = pd.color.find(
-          (variant) => variant.variant == color.variant
+      let currentVariant;
+      if (variant) {
+        currentVariant = pd.variant.find(
+          (item) =>
+            item.color == variant.color && item.storage == variant.storage
         );
       } else {
-        currentColor = pd.color.find((variant) => variant.default);
+        currentVariant = pd.variant.find((variant) => variant.default);
       }
-      if (storage) {
-        currentStorage = pd.storage.find(
-          (variant) => variant.variant == storage.variant
-        );
-      } else {
-        currentStorage = pd.storage.find((variant) => variant.default);
-      }
-      if (currentColor.stock <= 0) {
+      if (currentVariant.stock <= 0) {
         return res.status(404).json({
           status: false,
-          message: "no stock for this color available",
-        });
-      }
-      if (currentStorage.stock <= 0) {
-        return res.status(404).json({
-          status: false,
-          message: "no stock for this storage available",
+          message: "no stock for this combination available",
         });
       }
       let cart = await Cart.findOne({ userId: user._id });
@@ -49,17 +36,17 @@ module.exports = {
         const exist = cart.items.find(
           (item) =>
             item.productId.toString() === id &&
-            item.color === currentColor.variant &&
-            item.storage === currentStorage.variant
+            item.color === currentVariant.color &&
+            item.storage === currentVariant.storage
         );
         if (!exist) {
           cart.items.push({
             productId: id,
             quantity: 1,
             price: price,
-            color: currentColor.variant,
-            storage: currentStorage.variant,
-            image: currentColor.images[0],
+            color: currentVariant.color,
+            storage: currentVariant.storage,
+            image: currentVariant.images[0],
           });
           cart.total++;
         } else {
@@ -76,9 +63,9 @@ module.exports = {
               productId: id,
               quantity: 1,
               price: price,
-              color: currentColor.variant,
-              storage: currentStorage.variant,
-              image: currentColor.images[0],
+              color: currentVariant.color,
+              storage: currentVariant.storage,
+              image: currentVariant.images[0],
             },
           ],
           total: 1,
@@ -210,6 +197,10 @@ module.exports = {
       let cart = await Cart.findOne({ userId: user._id }).populate(
         "items.productId"
       );
+      const coupons = await Coupon.find({
+        start: { $gt: Date.now() },
+        end: { $lt: Date.now() },
+      });
       //let adIndex = user.Address.findIndex(item => item.main === true);
       let address = user.Address ?? null;
       if (address == null || address.length == 0) {

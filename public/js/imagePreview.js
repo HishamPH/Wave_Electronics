@@ -1,3 +1,5 @@
+//const { Success, Failed } = require("./toast.js");
+
 $(document).ready(() => {});
 
 let cropper;
@@ -101,7 +103,6 @@ $(document).ready(function () {
   updateVariantsDisplay();
   $("#addVariant").click(function () {
     try {
-      console.log("hellllooooo");
       const image1 = $("#image1")[0].files[0];
       const image2 = $("#image2")[0].files[0];
       const image3 = $("#image3")[0].files[0];
@@ -126,7 +127,7 @@ $(document).ready(function () {
         console.log(variants);
         updateVariantsDisplay();
         const modal = $("#variantModal");
-        const modalInstance = mdb.Modal.getInstance(modal[0]);
+        const modalInstance = mdb.Modal.getInstance(modal);
         modalInstance.hide();
         $("#variantForm")[0].reset();
         $(".imagePreview").each(function () {
@@ -171,8 +172,6 @@ $(document).ready(function () {
         hiddenFileInput.name = `variant[${index}][images][${imageIndex}]`;
         hiddenFileInput.className = "d-none";
         document.body.append(hiddenFileInput);
-
-        // Assign the file object (assuming it's already in the `variant.images` array)
         const dataTransfer = new DataTransfer();
         if (image && image instanceof File) {
           console.log(
@@ -203,14 +202,14 @@ $(document).ready(function () {
     updateHiddenInputs();
   };
 
-  //let modal = null;
+  // let modal = null;
 
   $("#variants").on("click", ".editVariant", function (e) {
     const id = $(this).data("index");
     const variant = variants[id];
 
     const modalElement = $("#editVariantModal");
-    const modal = new mdb.Modal(modalElement);
+    modal = new mdb.Modal(modalElement);
     // Populate modal fields
     $("#editVariantColor").val(variant.color);
     $("#editVariantStorage").val(variant.storage);
@@ -254,9 +253,9 @@ $(document).ready(function () {
       });
   });
 
-  // $("#editVariantModal").on("hidden.mdb.modal", function () {
-  //   $("#editVariant").off("click"); // Remove any lingering event listeners
-  // });
+  $("#editVariantModal").on("hidden.mdb.modal", function () {
+    $("#editVariant").off("click"); // Remove any lingering event listeners
+  });
 
   $("#variants").on("click", ".deleteVariant", function (e) {
     const id = $(this).data("index");

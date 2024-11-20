@@ -20,26 +20,15 @@
             <div class="container mt-3 ">
               <div class="d-flex justify-content-between">
                   <h1 class="icons">Categories</h1>
-                  <a href="/admin/addcategory">
-                      <button class="btn btn-success">ADD CATEGORY</button>
-                  </a>
+                  <button type="button" class="btn btn-primary" id="addCategoryButton"
+                    data-mdb-ripple-init>
+                    Add Category
+                  </button>
               </div>
               
               <hr>
-              <div class="justify-content-between my-3 row gy-3">
-                <% cat.forEach((row,index)=>{ %>
-                <div class="col-9"><%=row.categoryName %></div>
-                <div class="col-3 d-flex justify-content-between">
-                  <a href="/admin/editcategory/<%= row._id %>">
-                    <button  class="btn btn-primary rounded-pill ">EDIT</button>
-                  </a>
-                  
-                  <a href="/admin/category/delete/<%= row._id %>">
-                    <button  class="btn btn-danger  rounded-pill">REMOVE</button>
-                  </a>
-                  
-                </div>
-                <% }) %>
+              <div class="justify-content-between my-3 row gy-3" id="categoryContainer">
+                
              
                 
               </div>
@@ -54,12 +43,69 @@
     </div>
   </main>
 
+
+
+
+  <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Category</h5>
+          <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="categoryForm">
+            <div class="mb-3">
+              <label class="form-label">Category</label>
+              <input type="text" class="form-control" id="categoryName" name="categoryName" required>
+            </div>
+          </form>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary addCategory" id="addCategory">submit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <div class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Category</h5>
+          <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="editCategoryForm">
+            <div class="mb-3">
+              <label class="form-label">Category</label>
+              <input type="text" class="form-control" id="editCategoryName" name="categoryName" required>
+            </div>
+          </form>
+        </div>
+  
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="editCategorySubmit">submit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
     <!-- ======= Footer ======= -->
  <!-- End Footer -->
 
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
- 
+ <script defer>
+    const cat = `<%- JSON.stringify(cat) %>`;
+ </script>
+ <script type="module" src="/js/admin/category.js" defer></script>
   <!-- JS File -->
  
 <%- include('../essentials/adminFooter') %>

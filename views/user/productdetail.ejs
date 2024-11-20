@@ -138,7 +138,11 @@
             <div class="col-lg-7 h-auto mb-30 shadow-sm bg-white">
                 <div class="h-100 bg-white p-3">
                     <h3>
-                        <%= pd.productName %>
+                    <%=pd.productName%>
+                        (<%=defaultVariant.color %>,
+                    
+                        
+                        <%=defaultVariant.storage %>)
                     </h3>
                     <div class="d-flex mb-3">
                         <div class="text-primary mr-2">
@@ -172,11 +176,11 @@
             
                     <div class="d-flex mb-4">
                         <strong class="text-dark mr-3">Colors:</strong>
-                        <div class="btn-group" role="group" aria-label="Color selection">
+                        <div class="btn-group shadow-none" role="group" aria-label="Color selection">
                             <% color.forEach(function(color) { %>
-                                <input type="radio" class="btn-check" name="color" id="color-<%= color %>"
-                                    autocomplete="off" <%=color.default ? 'checked' : '' %>>
-                                <label class="btn btn-outline-primary <%= color ? 'active' : '' %>"
+                                <input type="radio" class="btn-check color" name="color" id="color-<%= color %>"
+                                    autocomplete="off" <%=color ==defaultVariant.color ? 'checked' : '' %>>
+                                <label class="btn me-3 rounded-0 <%= color == defaultVariant.color ? 'active btn-outline-primary' : 'btn-outline-muted' %> "
                                     for="color-<%= color %>">
                                     <%= color %>
                                 </label>
@@ -186,11 +190,11 @@
             
                     <div class="d-flex mb-4">
                         <strong class="text-dark mr-3">Storage:</strong>
-                        <div class="btn-group" role="group" aria-label="Storage selection">
+                        <div class="btn-group shadow-none" role="group" aria-label="Storage selection">
                             <% storage.forEach(function(storage) { %>
-                                <input type="radio" class="btn-check m-3" name="storage" id="storage-<%= storage %>"
-                                    autocomplete="off" <%=storage ? 'checked' : '' %>>
-                                <label class="btn btn-outline-primary <%= storage ? 'active' : '' %>"
+                                <input type="radio" class="btn-check storage" name="storage" id="storage-<%= storage %>"
+                                    autocomplete="off" <%=storage ===defaultVariant.storage ? 'checked' : '' %>>
+                                <label class="btn me-3 rounded-0 <%= storage == defaultVariant.storage ? 'active btn-outline-primary' : 'btn-outline-muted' %>"
                                     for="storage-<%= storage %>">
                                     <%= storage %>
                                 </label>
@@ -236,9 +240,9 @@
             <div class="col">
                 <div class="bg-light p-30">
                     <div class="nav nav-tabs mb-4">
-                        <a class="nav-item nav-link text-dark active" data-toggle="tab" href="#tab-pane-1">Description</a>
-                        <a class="nav-item nav-link text-dark" data-toggle="tab" href="#tab-pane-2">Information</a>
-                        <a class="nav-item nav-link text-dark" data-toggle="tab" href="#tab-pane-3">Reviews (0)</a>
+                        <a class="nav-item nav-link text-dark active" data-mdb-toggle="tab" href="#tab-pane-1" data-mdb-tab-init>Description</a>
+                        <a class="nav-item nav-link text-dark" data-mdb-toggle="tab" href="#tab-pane-2" data-mdb-tab-init>Information</a>
+                        <a class="nav-item nav-link text-dark" data-mdb-toggle="tab" href="#tab-pane-3" data-mdb-tab-init>Reviews (0)</a>
                     </div>
                     <div class="tab-content">
                         <div class="tab-pane fade show active" id="tab-pane-1">

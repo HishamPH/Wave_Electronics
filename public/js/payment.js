@@ -1,4 +1,31 @@
+const { Success, Failed } = require("./toast.js");
+
 $(document).ready(function () {
+  $("#applyCoupon").click(function () {
+    const code = $("#couponInput").val();
+    const toatalPrice = Number($("#total-price").val());
+
+    console.log(code);
+    applyCoupon(code);
+  });
+
+  async function applyCoupon(code) {
+    try {
+      const res = await axios.post(
+        `/user/checkout/apply-coupon`,
+        { code },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    } catch (err) {
+      Failed(err.response ? err.response.data.message : err.message);
+      console.log(err.message);
+    }
+  }
+
   $("#paymentway").submit(function (e) {
     e.preventDefault();
     let id = $(this).data("path");
@@ -34,7 +61,7 @@ $(document).ready(function () {
   });
   function continuePayment(id, amount, orderId) {
     var options = {
-      key: "your?key", //give your razorpay key here
+      key: "rzp_test_3nb0fP5EBtY0f3",
       amount: amount * 100,
       currency: "INR",
       name: "Wave Electronics",
@@ -82,7 +109,7 @@ function continuePaymentSuccess(id, res, status) {
 
 function paymentConfirm(or, order) {
   var options = {
-    key: "your?key", //give your razorpay key here
+    key: "rzp_test_3nb0fP5EBtY0f3",
     amount: or.amount,
     currency: "INR",
     name: "Wave Electronics",

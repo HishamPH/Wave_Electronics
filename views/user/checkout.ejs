@@ -2,6 +2,56 @@
 
 
     <script src="https://cdn.jsdelivr.net/npm/js-image-zoom/js-image-zoom.min.js"></script>
+  <style>
+    .coupon-card {
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      width: 200px;
+    }
+  
+    .coupon-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 300%;
+      background: linear-gradient(to bottom right,
+          rgba(255, 255, 255, 0.3) 0%,
+          rgba(255, 255, 255, 0.1) 50%,
+          transparent 100%);
+      transform: rotate(45deg);
+      animation: lustre 5s infinite linear;
+    }
+  
+    @keyframes lustre {
+      0% {
+        top: -50%;
+        left: -50%;
+      }
+  
+      100% {
+        top: 150%;
+        left: 150%;
+      }
+    }
+  
+    .coupon-card.expired {
+      background-color: #b0504e;
+      /* Light red */
+    }
+  
+    .coupon-card.active {
+      background-color: #10bd10;
+      /* Light green */
+    }
+  
+    .coupon-card.unavailable {
+      background-color: #D3D3D3;
+      /* Light gray */
+    }
+  </style>
     
 </head>
 
@@ -97,10 +147,10 @@
                     </h5>
                     <p class="mb-0 py-0"><%= row.street %>,<%= row.city %>,<%= row.state  %></p>
                     <div class="d-flex justify-content-between mt-3 mb-2">
-                      <button type="button" class="btn btn-primary mb-2 " data-bs-toggle="modal" data-bs-target="#edit_<%= row._id %>" style="font-weight: bold;">
-                        Edit address
+                      <button type="button" class="btn btn-primary me-2" data-mdb-toggle="modal" data-mdb-target="#edit_<%= row._id %>"
+                        data-mdb-ripple-init data-mdb-modal-init>
+                        Edit
                       </button>
-                      
                         
                       
                       <a href="/user/checkout/address/delete/<%= row._id  %>">
@@ -130,83 +180,116 @@
           
         </div><!-- End Recent Sales -->
         <div class="col-12 col-lg-4">
-            <div class="card info-card sales-card">
-                <div class="card-body">
-                    <h5 class="text-secondary fw-bold mt-3">
-                      PRICE DETAILS
-                    </h5>
-                    <hr>
-                    <div class="d-flex justify-content-between m-3 ">
-                      <div class="">
-                        price(<%= total %> items)
-                      </div>
-                      <div class="" id="items-price">
-                        ₹ <%= totalPrice.toLocaleString('hi') %>
-                      </div>
-                    </div>
-                    <div class="d-flex justify-content-between m-3 ">
-                      <div class="">
-                        Discount
-                      </div>
-                      <div class="text-success " id="discount">
-                        – ₹<%=discount.toLocaleString('hi') %>
-                      </div>
-                    </div>
-                    <div class="d-flex justify-content-between m-3 ">
-                      <div class="">
-                        Delivery charges
-                      </div>
-                      <div class="" id="delivery-charge">
-                        <span class="text-secondary text-decoration-line-through ">₹200</span>
-                        <span class="text-success">Free</span>
-                      </div>
-                    </div>
-                    <hr>
-                    <div class="d-flex justify-content-between m-3 ">
-                      <div class="">
-                        Total amount
-                      </div>
-                      <div class="fw-bold" id="total-price">
-                        ₹ <%= fullPrice.toLocaleString('hi') %>
-                      </div>
-                    </div>
-                </div>
-            </div>
-            <div class="card">
-              <div class="card-body ">
-                <h5 class="text-secondary fw-bold mt-3 mb-3">
-                  PAYMENT METHODS
-                </h5>
-                <form id="paymentway" data-path="<%= cart._id%>">
-                  <div class="d-flex flex-column ">
-                    <div>
-                      <input type="radio" id="razorpay" name="method" value="card">
-                      <label for="razorpay">Razorpay</label>
+            
+              <div class="card">
+                <div class="card-body m-0">
+                  <div class="d-flex justify-content-between">
+                    <div class="h5 text-secondary fw-bold">
+                      Coupon
                     </div>
                     <div>
-                      <input type="radio" id="wallet" name="method" value="wallet">
-                      <label for="wallet">Wallet</label>
-                    </div>
-                    <div>
-                      <% if(fullPrice>10000){ %>
-                      <input type="radio" id="cod" name="method" value="COD" disabled>
-                      <label for="cod">Cash on Delivery<span class="text-danger">(COD not available for orders above 10000)</span></label>
-                      <%} else{ %>
-                        <input type="radio" id="cod" name="method" value="COD">
-                        <label for="cod">Cash on Delivery</label>
-                      <% } %>
+                      
+                      <button type="button" class="btn btn-danger me-2" data-mdb-toggle="modal" data-mdb-target="#couponModal"
+                        data-mdb-ripple-init data-mdb-modal-init>
+                        show coupons
+                      </button>
                     </div>
                     
                   </div>
-                  
-                  <div class="d-flex justify-content-center mb-2">
-                    <button type="submit" class="btn btn-primary mt-3 mb-0 payment">
-                      PLACE ORDER
-                    </button>
+                  <div class="container mt-4">
+                    <div class="row g-3 align-items-center">
+                      <!-- Button -->
+                      <div class="col-auto">
+                        <button id="applyCoupon" class="btn btn-primary" type="button">Apply</button>
+                      </div>
+                      <!-- Input -->
+                      <div class="col">
+                        <input type="text" id="couponInput" class="form-control" placeholder="Enter coupon code" aria-label="Coupon Code">
+                      </div>
+                    </div>
                   </div>
-                </form>
+                  
+                </div>
               </div>
-            </div>
+              <div class="card mt-3">
+                <div class="card-body">
+                  <h5 class="text-secondary fw-bold mt-3">
+                    PRICE DETAILS
+                  </h5>
+                  <hr>
+                  <div class="d-flex justify-content-between m-3 ">
+                    <div class="">
+                      price(<%= total %> items)
+                    </div>
+                    <div class="" id="items-price">
+                      ₹ <%= totalPrice.toLocaleString('hi') %>
+                    </div>
+                  </div>
+                  <div class="d-flex justify-content-between m-3 ">
+                    <div class="">
+                      Discount
+                    </div>
+                    <div class="text-success " id="discount">
+                      – ₹<%=discount.toLocaleString('hi') %>
+                    </div>
+                  </div>
+                  <div class="d-flex justify-content-between m-3 ">
+                    <div class="">
+                      Delivery charges
+                    </div>
+                    <div class="" id="delivery-charge">
+                      <span class="text-secondary text-decoration-line-through ">₹200</span>
+                      <span class="text-success">Free</span>
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="d-flex justify-content-between m-3 ">
+                    <div class="">
+                      Total amount
+                    </div>
+                    <div class="fw-bold" id="total-price">
+                      ₹ <%= fullPrice.toLocaleString('hi') %>
+                    </div>
+                  </div>
+                
+                  <h5 class="text-secondary fw-bold mt-3 mb-3">
+                    PAYMENT METHODS
+                  </h5>
+                  <form id="paymentway" data-path="<%= cart._id%>">
+                    <div class="d-flex flex-column ">
+                      <div>
+                        <input type="radio" id="razorpay" name="method" value="card">
+                        <label for="razorpay">Razorpay</label>
+                      </div>
+                      <div>
+                        <input type="radio" id="wallet" name="method" value="wallet">
+                        <label for="wallet">Wallet</label>
+                      </div>
+                      <div>
+                        <% if(fullPrice>10000){ %>
+                          <input type="radio" id="cod" name="method" value="COD" disabled>
+                          <label for="cod">Cash on Delivery<span class="text-danger">(COD not available for orders above
+                              10000)</span></label>
+                          <%} else{ %>
+                            <input type="radio" id="cod" name="method" value="COD">
+                            <label for="cod">Cash on Delivery</label>
+                            <% } %>
+                      </div>
+                
+                    </div>
+                
+                    <div class="d-flex justify-content-center mb-2">
+                      <button type="submit" class="btn btn-primary mt-3 mb-0 payment">
+                        PLACE ORDER
+                      </button>
+                    </div>
+                  </form>
+                
+                </div>
+              </div>
+                
+          
+            
         </div>
       </div>
   </section>
@@ -216,9 +299,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="exampleModalLongTitle">Edit the address</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
+            <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
           </div>
           <div class="modal-body">
                                
@@ -266,8 +347,60 @@
 
 
   <% }) %>
-  
-  
+ 
+
+  <div class="modal fade" id="couponModal" tabindex="-1" aria-labelledby="couponModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Coupons available</h5>
+          <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" style="height: 600px; overflow-y: auto;">
+          <div class="container">
+            <div class="row">
+              <div class="col-lg-4 col-sm-6 col-12">
+                <div class="card coupon-card h-100 active">
+                  <div class="card-body p-0">
+                    <h5 class="card-title">10% Off</h5>
+                    <p class="card-text">Get 10% off your next purchase</p>
+                    <p class="card-text m-0">
+                      <small class="text-muted">Expires: 2023-12-31</small>
+                    </p>
+                  </div>
+                  
+                </div>
+              </div>
+              <div class="col-lg-4 col-sm-6 col-12">
+                <div class="card coupon-card h-100 expired">
+                  <div class="card-body p-0">
+                    <h5 class="card-title">Free Shipping</h5>
+                    <p class="card-text">Free shipping on orders over $50</p>
+                    <p class="card-text">
+                      <small class="text-muted">Expires: 2023-06-30</small>
+                    </p>
+                  </div>
+                
+                </div>
+              </div>
+              <div class="col-lg-4 col-sm-6 col-12">
+                <div class="card coupon-card h-100 unavailable">
+                  <div class="card-body p-0">
+                    <h5 class="card-title">Buy One Get One Free</h5>
+                    <p class="card-text">Buy one item, get another free</p>
+                    <p class="card-text">
+                      <small class="text-muted">Expires: 2024-01-01</small>
+                    </p>
+                  </div>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Back to Top -->
   <a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>

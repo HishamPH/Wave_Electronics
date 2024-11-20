@@ -11,19 +11,25 @@ module.exports = {
     }
   },
   addCoupon: async (req, res) => {
-    let { code, count, discount, minPurchase, maxPurchase, start, expire } =
-      req.body;
+    let {
+      code,
+      count,
+      discount,
+      minPurchase,
+      maxPurchase,
+      startDate,
+      endDate,
+    } = req.body;
     try {
       let coupon = new Coupon({
-        couponCount: count,
-        code: code,
-        discount: discount,
-        minPurchase: minPurchase,
-        maxPurchase: maxPurchase,
-        start: start,
-        expire: expire,
+        count,
+        code,
+        discount,
+        min: minPurchase,
+        max: maxPurchase,
+        start: startDate,
+        end: endDate,
       });
-
       await coupon.save();
 
       res.redirect("/admin/coupons");
@@ -51,7 +57,8 @@ module.exports = {
     console.log("hello");
     let id = req.params.id;
     let coupon = await Coupon.findByIdAndDelete(id);
-    console.log(coupon);
-    res.redirect("/admin/coupons");
+    res
+      .status(200)
+      .json({ status: true, message: "coupon deleted successfully" });
   },
 };

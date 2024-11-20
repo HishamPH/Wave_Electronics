@@ -1,44 +1,64 @@
 const Category = require("../models/categoryModel");
 
 module.exports = {
-  category: async (req, res) => {
+  getCategories: async (req, res) => {
     const cat = await Category.find();
     res.render("admin/category", { activePage: "category", cat });
-  },
-  addCategory: (req, res) => {
-    res.render("admin/addcategory", { activePage: "category" });
   },
   postAddCategory: async (req, res) => {
     try {
       const { categoryName } = req.body;
-      console.log(categoryName);
+
       if (!categoryName || categoryName.trim() === "") {
         return;
       }
-      const userData = await Category.create({ categoryName });
-      console.log(userData);
-      res.redirect("/admin/category");
+      const category = await Category.create({ categoryName });
+
+      res.status(200).json({
+        status: true,
+        category,
+        message: "category addedd successfully",
+      });
     } catch (error) {
       console.log(error);
+      res.status(401).json({ status: false, message: "Internal server error" });
     }
   },
   deleteCategory: async (req, res) => {
-    let id = req.params.id;
-    await Category.findByIdAndDelete(id);
-    res.redirect("/admin/category");
-  },
-  getEditCategory: async (req, res) => {
-    let id = req.params.id;
-    let cat = await Category.findById(id);
-    res.render("admin/editcategory", { activePage: "category", cat });
+    try {
+      let id = req.params.id;
+      await Category.findByIdAndDelete(id);
+      res
+        .status(200)
+        .json({ status: true, message: "category deleted successfully" });
+    } catch (error) {
+      console.log(error);
+      res.status(401).json({ status: false, message: "Internal server error" });
+    }
   },
   postEditCategory: async (req, res) => {
-    let id = req.params.id;
-    await Category.findByIdAndUpdate(id, [
-      {
-        $set: { categoryName: req.body.Name },
-      },
-    ]);
-    res.redirect("/admin/category");
+    try {
+      const id = req.params.id;
+      const { categoryName } = req.body;
+      const category = await Category.findByIdAndUpdate(
+        id,
+        [
+          {
+            $set: { categoryName: categoryName },
+          },
+        ],
+        {
+          new: true,
+        }
+      );
+      res.status(200).json({
+        status: true,
+        category,
+        message: "category updated successfully",
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(401).json({ status: false, message: "Internal server error" });
+    }
   },
 };
