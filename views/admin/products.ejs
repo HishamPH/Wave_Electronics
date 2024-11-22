@@ -38,20 +38,23 @@
                 <td><%= row.status %></td>
                 <td><%= row.status %></td>
                 <td>
-                  <a href="/admin/editproduct/<%= row._id%>">
-                    <button class="btn btn-secondary rounded-pill ">
-                      edit
-                    </button>
-                  </a>                                    
-                  <a href="/admin/products/block/<%= row._id%>">
-                    <% if(row.status){ %>
-                    <button class="btn btn-success rounded-pill ">active
-                    </button>
-                    <% }else{ %>
-                    <button class="btn btn-danger rounded-pill ">blocked
-                    </button>
-                    <% } %>
-                  </a>                                      
+                  <div class="d-flex">
+<a href="/admin/editproduct/<%= row._id%>">
+  <button class="btn btn-secondary rounded-pill ">
+    edit
+  </button>
+</a>
+<a href="/admin/products/block/<%= row._id%>">
+  <% if(row.status){ %>
+    <button class="btn btn-success rounded-pill ">active
+    </button>
+    <% }else{ %>
+      <button class="btn btn-danger rounded-pill ">blocked
+      </button>
+      <% } %>
+</a>
+                  </div>
+                                               
                 </td>
             </tr>
         <% }) %>

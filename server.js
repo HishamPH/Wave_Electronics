@@ -1,19 +1,20 @@
 const express = require("express");
 const session = require("express-session");
-require("dotenv").config();
 const bodyParser = require("body-parser");
 const { v4: uuidv4 } = require("uuid");
 const nocache = require("nocache");
 const PORT = 3000;
 const app = express();
-
 const cookieParser = require("cookie-parser");
+const cors = require("cors");
+const { config } = require("dotenv");
+const { EventEmitter } = require("events");
 
 const adminRouter = require("./routes/adminRouter");
 const userRouter = require("./routes/userRouter");
 const guestRouter = require("./routes/guestRouter");
 
-const cors = require("cors");
+config();
 
 const createServer = async () => {
   try {
@@ -38,22 +39,30 @@ const createServer = async () => {
 
     app.use((req, res, next) => {
       res.locals.isUser = req.session.isUser || false;
-      res.locals.message = req.session.message;
-      res.locals.name = req.session.user?.name;
+      res.locals.message = req.session.message || null;
+      res.locals.name = req.session.user?.name || null;
       res.locals.cartCount = req.session.cartCount || 0;
       res.locals.wishList = req.session.wishList || 0;
-      res.locals.adminname = req.session.admin?.name;
+      res.locals.adminname = req.session.admin?.name || null;
       delete req.session.message;
       next();
     });
+
+    EventEmitter.defaultMaxListeners = 20;
 
     // app.use(express.static('views'))
     app.use("/", guestRouter);
     app.use("/user", userRouter);
     app.use("/admin", adminRouter);
 
+    app.use((err, req, res, next) => {
+      console.error(err?.message);
+      res.status(500).json({ status: false, message: err.message });
+    });
+
     return app;
   } catch (error) {
+    console.log("main server error occured");
     console.log(error);
   }
 };

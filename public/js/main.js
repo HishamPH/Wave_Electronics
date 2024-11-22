@@ -169,3 +169,21 @@
     }, 200);
   }
 })();
+
+$(document).ready(function () {
+  const links = $("a"); // jQuery selector for all anchor tags
+  const loadingOverlay = $("#loadingOverlay");
+
+  links.on("click", function (event) {
+    event.preventDefault(); // Prevent default navigation to see the loader effect
+    loadingOverlay.removeClass("d-none");
+    //loadingOverlay.css("display", "flex"); // Show the loader
+
+    const href = $(this).attr("href"); // Get the link's href
+
+    // Optional: Delay navigation slightly for better effect
+    setTimeout(() => {
+      window.location.href = href;
+    }, 50); // Adjust delay as needed
+  });
+});

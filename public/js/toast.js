@@ -8,7 +8,7 @@ export const Success = (message) => {
     position: "right", // `left`, `center` or `right`
     stopOnFocus: true, // Prevents dismissing of toast on hover
     style: {
-      background: "#00FF00",
+      background: "#6B8E23",
     },
   }).showToast();
 };

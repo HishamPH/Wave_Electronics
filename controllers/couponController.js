@@ -10,7 +10,7 @@ module.exports = {
       res.json({ message: "some king of server error" });
     }
   },
-  addCoupon: async (req, res) => {
+  addCoupon: async (req, res, next) => {
     let {
       code,
       count,
@@ -31,24 +31,45 @@ module.exports = {
         end: endDate,
       });
       await coupon.save();
-
-      res.redirect("/admin/coupons");
-    } catch (e) {
-      console.error(e);
+      res
+        .status(200)
+        .json({ status: true, message: "coupon addedd successfully" });
+    } catch (error) {
+      next(error);
+    }
+  },
+  couponStatus: async (req, res, next) => {
+    try {
+      const id = req.params.id;
+      const coupon = await Coupon.findByIdAndUpdate(id, [
+        {
+          $set: { status: { $not: "$status" } },
+        },
+      ]);
+      res.status(200).json({ status: true, message: "coupon status updated" });
+    } catch (error) {
+      next(error);
     }
   },
   editCoupon: async (req, res) => {
     let id = req.params.id;
-    let { code, count, discount, minPurchase, maxPurchase, start, expire } =
-      req.body;
+    let {
+      code,
+      count,
+      discount,
+      minPurchase,
+      maxPurchase,
+      startDate,
+      endDate,
+    } = req.body;
     let coupon = await Coupon.findByIdAndUpdate(id, {
       code: code,
       couponCount: count,
       discount: discount,
       minPurchase: minPurchase,
       maxPurchase: maxPurchase,
-      start: start,
-      expire: expire,
+      start: startDate,
+      expire: endDate,
     });
 
     res.redirect("/admin/coupons");

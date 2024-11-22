@@ -85,7 +85,12 @@ router.post(
 //========================== COUPONS =======================
 
 router.get("/coupons", adminAuth, couponController.getCoupon);
-router.post("/coupons/addcoupon", adminAuth, couponController.addCoupon);
+router.post("/coupons/add-coupon", adminAuth, couponController.addCoupon);
+router.put(
+  "/coupons/coupon-status/:id",
+  adminAuth,
+  couponController.couponStatus
+);
 router.post("/coupons/edit/:id", adminAuth, couponController.editCoupon);
 router.delete("/coupons/delete/:id", adminAuth, couponController.deleteCoupon);
 

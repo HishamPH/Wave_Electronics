@@ -309,7 +309,7 @@ module.exports = {
   logoutAdmin: async (req, res) => {
     try {
       console.log("admin logout");
-      req.session.admin = null;
+      req.session.destroy();
       res.clearCookie("adminAccessToken");
       res.clearCookie("adminRefreshToken");
       res.redirect("/admin");

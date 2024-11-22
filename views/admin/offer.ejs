@@ -16,7 +16,7 @@
       
     </div><!-- End Page Title -->
     <div class="d-flex justify-content-end ">
-      <button type="button" class="btn btn-primary mb-3 " data-bs-toggle="modal" data-bs-target="#offerModal" style="font-weight: bold;">
+      <button type="button" class="btn btn-primary mb-3 " data-mdb-toggle="modal" data-mdb-target="#offerModal" data-mdb-ripple-init data-mdb-modal-init>
         Add Offer
       </button>
     </div>
@@ -24,7 +24,7 @@
     <table class="table table-bordered table-hover mt-3">
       <thead class="table-dark">
           <tr class="text-center ">
-              <th style="width: 70px;">Sl no.</th>
+             
               <th>Offertype</th>
               <th>discount</th>
               <th>start date</th>
@@ -36,9 +36,7 @@
       <tbody class="align-middle text-center ">
         <% offer.forEach((row,index)=>{ %>
         <tr>
-          <td>
-            <%=  index+1 %>
-          </td>
+         
           <td>
             <%= row.category.Name %>
           </td>
@@ -51,7 +49,7 @@
             <%= row.status %>
           </td>
           <td>
-            <button type="button" class="btn btn-secondary  mb-3 rounded-pill" data-bs-toggle="modal" data-bs-target="#offerEditModal" style="font-weight: bold;">
+            <button type="button" class="btn btn-secondary  mb-3 rounded-pill" data-mdb-toggle="modal" data-mdb-target="#offerEditModal" data-mdb-ripple-init data-mdb-modal-init>
               Edit
             </button>
           </td>
@@ -67,9 +65,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="exampleModalLongTitle">Edit offer</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
+            <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
           </div>
           <div class="modal-body">
                                
@@ -79,7 +75,7 @@
                 <select class="" id="category" name="category" value="<%= row.category.Name %>">
                   <option disabled><%= row.category.Name %></option>
                   <%cat.forEach((x) => {%>
-                      <option><%=x.Name%></option>
+                      <option><%=x.categoryName%></option>
                   <%})%>
                 </select>
               </div>
@@ -117,9 +113,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="exampleModalLongTitle">Create new offer</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
+          <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
           </div>
           <div class="modal-body">
                                
@@ -128,7 +122,7 @@
                 <select class="" id="category" name="category" required>
                   <option disabled>Select a category</option>
                   <%cat.forEach((x) => {%>
-                      <option><%=x.Name%></option>
+                      <option><%=x.categoryName%></option>
                   <%})%>
                 </select>
               </div>
@@ -164,7 +158,7 @@
 
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
- 
+  <script type="module" src="/js/admin/offer.js" defer></script>
   <!-- Template Main JS File -->
  
 <%- include('../essentials/adminFooter') %>

@@ -4,15 +4,19 @@ const Category = require("../models/categoryModel");
 
 module.exports = {
   getOffer: async (req, res) => {
-    let cat = await Category.find();
-    let offer = await Offer.find().populate("category");
-    res.render("admin/offer", { activePage: "offers", cat, offer });
+    try {
+      let cat = await Category.find();
+      let offer = await Offer.find().populate("category");
+      res.render("admin/offer", { activePage: "offers", cat, offer });
+    } catch (error) {
+      next(error);
+    }
   },
   addOffer: async (req, res) => {
     try {
       let { category, discount, start, expire } = req.body;
       console.log(category);
-      let cat = await Category.findOne({ Name: category });
+      let cat = await Category.findOne({ categoryName: category });
       console.log(cat);
       let offer = new Offer({
         category: cat._id,
@@ -25,20 +29,24 @@ module.exports = {
 
       res.redirect("/admin/offers");
     } catch (e) {
-      console.error(e);
+      next(error);
     }
   },
   editOffer: async (req, res) => {
-    let id = req.params.id;
-    let { category, discount, start, expire } = req.body;
-    let cat = await Category.findOne({ Name: category });
-    let offer = await Offer.findByIdAndUpdate(id, {
-      category: cat._id,
-      discount: discount,
-      startDate: start,
-      endDate: expire,
-    });
+    try {
+      let id = req.params.id;
+      let { category, discount, start, expire } = req.body;
+      let cat = await Category.findOne({ categoryName: category });
+      let offer = await Offer.findByIdAndUpdate(id, {
+        category: cat._id,
+        discount: discount,
+        startDate: start,
+        endDate: expire,
+      });
 
-    res.redirect("/admin/offers");
+      res.redirect("/admin/offers");
+    } catch (error) {
+      next(error);
+    }
   },
 };

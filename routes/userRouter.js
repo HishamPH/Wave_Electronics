@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 
+const authController = require("../controllers/authController");
+
 const userController = require("../controllers/userController");
 const cartController = require("../controllers/cartController");
 const orderController = require("../controllers/orderController");
@@ -10,12 +12,14 @@ const wishlistController = require("../controllers/wishlistController");
 const userAuth = require("../middlewares/userAuth");
 const productController = require("../controllers/productController");
 
+const guestController = require("../controllers/guestController");
+
 //======================= LOGIN ===========================
 
 router
   .route("/login")
-  .get(userController.getLogin)
-  .post(userController.postLogin);
+  .get(authController.getLogin)
+  .post(authController.postLogin);
 
 router.get("/homepage", userAuth, userController.getHomePage);
 
@@ -25,19 +29,19 @@ router.get("/homepage/:id", userAuth, userController.categorySort);
 
 router
   .route("/signup")
-  .get(userController.getaddUser)
-  .post(userController.postAddUser);
+  .get(authController.getaddUser)
+  .post(authController.postAddUser);
 
 router
   .route("/emailverification")
-  .get(userController.getEmailVerification)
-  .post(userController.postEmailVerification);
+  .get(authController.getEmailVerification)
+  .post(authController.postEmailVerification);
 
-router.route("/resendotp").get(userController.resendOTP);
+router.route("/resendotp").get(authController.resendOTP);
 
 //================== PRODUCT DETAILS =====================
 
-router.get("/detail-guest/:id", userController.getDetailPage);
+router.get("/detail-guest/:id", guestController.getGuestDetailPage);
 
 router.get("/detail/:id", userAuth, userController.getDetailPage);
 
@@ -71,24 +75,13 @@ router.get(
 
 //====================== PRODUCTS ======================
 
-router.post(
-  "/product/change-color/:id",
-  userAuth,
-  productController.changeColor
-);
-router.post(
-  "/product/change-storage/:id",
-  userAuth,
-  productController.changeStorage
-);
+router.post("/product/change-variant/:id", productController.changeVariant);
 
 //====================== CART ===========================
 
 router.post("/addtocart/:id", userAuth, cartController.addToCart);
 
 router.get("/cart", userAuth, cartController.getCart);
-
-router.post("/cart/coupon/:id", userAuth, cartController.applyCoupon);
 
 router.post(
   "/cart/update-quantity/:id",
@@ -97,6 +90,10 @@ router.post(
 );
 
 router.delete("/cart/delete/:id", userAuth, cartController.deleteFromCart);
+
+//=====================  COUPON ========================
+
+router.post("/checkout/apply-coupon", userAuth, cartController.applyCoupon);
 
 //====================== Wish List ======================
 

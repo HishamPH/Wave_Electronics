@@ -5,6 +5,7 @@ const Products = require("../models/productModel");
 const Cart = require("../models/cartModel");
 
 const Coupon = require("../models/couponModel");
+const Offer = require("../models/offerModel");
 
 module.exports = {
   addToCart: async (req, res) => {
@@ -14,7 +15,7 @@ module.exports = {
       const { variant } = req.body;
       const userId = req.session.user._id;
       const user = await User.findById(userId);
-      const pd = await Products.findById(id);
+      const pd = await Products.findById(id).populate("offer");
       let currentVariant;
       if (variant) {
         currentVariant = pd.variant.find(
@@ -31,7 +32,15 @@ module.exports = {
         });
       }
       let cart = await Cart.findOne({ userId: user._id });
-      let price = pd.defaultPrice;
+      //let price = pd.defaultPrice;
+      const fullPrice =
+        Number(pd.basePrice) + Number(currentVariant.price || 0);
+      console.log(fullPrice);
+      const offer = parseInt((pd.basePrice * pd?.offer?.percentage) / 100) || 0;
+
+      const discount = parseInt((pd.basePrice * pd.discount) / 100);
+      const totalDiscount = Number(offer + discount);
+      const totalPrice = fullPrice - totalDiscount;
       if (cart) {
         const exist = cart.items.find(
           (item) =>
@@ -43,7 +52,7 @@ module.exports = {
           cart.items.push({
             productId: id,
             quantity: 1,
-            price: price,
+            price: totalPrice,
             color: currentVariant.color,
             storage: currentVariant.storage,
             image: currentVariant.images[0],
@@ -62,7 +71,7 @@ module.exports = {
             {
               productId: id,
               quantity: 1,
-              price: price,
+              price: totalPrice,
               color: currentVariant.color,
               storage: currentVariant.storage,
               image: currentVariant.images[0],
@@ -94,20 +103,37 @@ module.exports = {
       console.log(cart.total);
       cart.coupon = null;
       await cart.save();
-      let totalPrice = 0,
-        discount = 0;
-      cart.items.forEach((item, index) => {
-        totalPrice +=
-          Number(item.productId.defaultPrice) * Number(item.quantity);
-        discount += Number(item.productId.discount) * Number(item.quantity);
-      });
-      req.session.totalPrice = totalPrice - discount;
+      let totalPrice = 0;
+      let totalDiscount = 0;
+      for (const item of cart.items) {
+        let currentVariant = item.productId.variant.find(
+          (variant) =>
+            variant.color == item.color && variant.storage == item.storage
+        );
+        const fullPrice =
+          Number(item.productId.basePrice) + Number(currentVariant.price || 0);
+
+        const currOffer = await Offer.findById(item.productId.offer);
+        // console.log(currOffer);
+
+        const offer =
+          parseInt((item.productId.basePrice * currOffer?.percentage) / 100) ||
+          0;
+        const discount = parseInt(
+          (item.productId.basePrice * item.productId.discount) / 100
+        );
+        const fullDiscount = Number(offer + discount);
+
+        totalPrice += fullPrice * item.quantity;
+        totalDiscount += fullDiscount * item.quantity;
+      }
+      req.session.totalPrice = totalPrice - totalDiscount;
       res.render("user/cart", {
         items,
         msg: false,
         totalPrice,
         total: cart.total,
-        discount,
+        totalDiscount,
         coupons,
       });
     } else {
@@ -128,19 +154,37 @@ module.exports = {
       await cart.save();
 
       let totalPrice = 0;
-      let discount = 0;
-      cart.items.forEach((item, index) => {
-        totalPrice += Number(item.productId.Price) * Number(item.quantity);
-        discount += Number(item.productId.discount) * Number(item.quantity);
-      });
+      let totalDiscount = 0;
+      for (const item of cart.items) {
+        let currentVariant = item.productId.variant.find(
+          (variant) =>
+            variant.color == item.color && variant.storage == item.storage
+        );
+        const fullPrice =
+          Number(item.productId.basePrice) + Number(currentVariant.price || 0);
 
+        const currOffer = await Offer.findById(item.productId.offer);
+        // console.log(currOffer);
+
+        const offer =
+          parseInt((item.productId.basePrice * currOffer?.percentage) / 100) ||
+          0;
+        const discount = parseInt(
+          (item.productId.basePrice * item.productId.discount) / 100
+        );
+        const fullDiscount = Number(offer + discount);
+
+        totalPrice += fullPrice * item.quantity;
+        totalDiscount += fullDiscount * item.quantity;
+      }
+      req.session.totalPrice = totalPrice - totalDiscount;
       req.session.cartCount = cart.total;
       res.locals.cartCount = cart.total;
       return res.status(200).json({
         status: true,
         message: "item deletion successful",
         totalPrice,
-        discount,
+        totalDiscount,
         count: cart.total,
       });
     } catch (err) {
@@ -170,20 +214,41 @@ module.exports = {
         cart.items[pdIndex].quantity--;
       }
       await cart.save();
-      let price = cart.items[pdIndex].price;
+      let price;
       let totalPrice = 0;
-      let discount = 0;
-      cart.items.forEach((item, index) => {
-        totalPrice +=
-          Number(item.productId.defaultPrice) * Number(item.quantity);
-        discount += Number(item.productId.discount) * Number(item.quantity);
-      });
+      let totalDiscount = 0;
+      for (const item of cart.items) {
+        let currentVariant = item.productId.variant.find(
+          (variant) =>
+            variant.color == item.color && variant.storage == item.storage
+        );
+        const fullPrice =
+          Number(item.productId.basePrice) + Number(currentVariant.price || 0);
+
+        const currOffer = await Offer.findById(item.productId.offer);
+        // console.log(currOffer);
+
+        const offer =
+          parseInt((item.productId.basePrice * currOffer?.percentage) / 100) ||
+          0;
+        const discount = parseInt(
+          (item.productId.basePrice * item.productId.discount) / 100
+        );
+        const fullDiscount = Number(offer + discount);
+
+        totalPrice += fullPrice * item.quantity;
+        totalDiscount += fullDiscount * item.quantity;
+        if (cart.items[pdIndex] == item) {
+          price = fullPrice - fullDiscount;
+        }
+      }
+      req.session.totalPrice = totalPrice - totalDiscount;
       return res.status(200).json({
         quantity: cart.items[pdIndex].quantity,
         count: cart.total,
         price,
         totalPrice,
-        discount,
+        totalDiscount,
       });
     } catch (e) {
       console.error(e);
@@ -198,32 +263,55 @@ module.exports = {
         "items.productId"
       );
       const coupons = await Coupon.find({
-        start: { $gt: Date.now() },
-        end: { $lt: Date.now() },
+        start: { $lt: Date.now() },
+        end: { $gt: Date.now() },
+        count: { $gt: 0 },
+        status: true,
       });
-      //let adIndex = user.Address.findIndex(item => item.main === true);
-      let address = user.Address ?? null;
-      if (address == null || address.length == 0) {
+      let adIndex = user.Address.findIndex((item) => item.main === true);
+      let address = user.Address[adIndex];
+      if (!address) {
         res.redirect("/user/userprofile/address");
         return;
       }
       let items = cart.items;
       cart.total = cart.items.length;
+      cart.coupon = null;
       await cart.save();
-      let totalPrice = 0,
-        discount = 0;
-      cart.items.forEach((item) => {
-        totalPrice += Number(item.productId.Price) * Number(item.quantity);
-        discount += Number(item.productId.discount) * Number(item.quantity);
-      });
+      let totalPrice = 0;
+      let totalDiscount = 0;
+      for (const item of cart.items) {
+        let currentVariant = item.productId.variant.find(
+          (variant) =>
+            variant.color == item.color && variant.storage == item.storage
+        );
+        const fullPrice =
+          Number(item.productId.basePrice) + Number(currentVariant.price || 0);
+
+        const currOffer = await Offer.findById(item.productId.offer);
+        // console.log(currOffer);
+
+        const offer =
+          parseInt((item.productId.basePrice * currOffer?.percentage) / 100) ||
+          0;
+        const discount = parseInt(
+          (item.productId.basePrice * item.productId.discount) / 100
+        );
+        const fullDiscount = Number(offer + discount);
+
+        totalPrice += fullPrice * item.quantity;
+        totalDiscount += fullDiscount * item.quantity;
+      }
+      req.session.totalPrice = totalPrice - totalDiscount;
       req.session.checkout = true;
-      let fullPrice = req.session.totalPrice ?? totalPrice - discount;
+      let fullPrice = totalPrice - totalDiscount;
       res.render("user/checkout", {
+        coupons,
         cart,
         items,
         totalPrice,
         total: cart.total,
-        discount,
+        totalDiscount,
         address,
         fullPrice,
       });
@@ -306,59 +394,64 @@ module.exports = {
     }
   },
   applyCoupon: async (req, res) => {
-    let id = req.params.id;
-
+    const { code, fullPrice } = req.body;
     const userId = req.session.user._id;
     const user = await User.findById(userId);
     let cart = await Cart.findOne({ userId: user._id }).populate(
       "items.productId"
     );
-    let price = 0;
-    let coupon = await Coupon.findById(id);
-    let ID = coupon._id;
-    console.log(cart.coupon);
-    console.log(coupon._id);
-    cart.items.forEach((item) => {
-      price += item.quantity * (item.productId.Price - item.productId.discount);
-      // item.price = Math.floor(item.price - (item.price * (discount/100)));
+    const now = new Date();
+    let coupon = await Coupon.findOne({
+      code: code,
+      start: { $lt: now },
+      end: { $gt: now },
+      count: { $gt: 0 },
+      status: true,
     });
-    if (coupon && cart.coupon == null) {
-      console.log("hello");
-      let limit;
-      if (price < coupon.minPurchase) {
-        console.log("price too low");
-
-        res.json({ limit: "min" });
-      } else if (price > coupon.maxPurchase) {
-        console.log("price too high");
-        res.json({ limit: "max" });
-      } else {
-        let discount = coupon.discount;
-        let dis = price * (discount / 100);
-        let fullPrice = Math.floor(price - dis);
-        coupon.couponCount--;
-        req.session.totalPrice = fullPrice;
-        console.log(fullPrice);
-        cart.coupon = coupon._id;
-
-        await cart.save();
-        await coupon.save();
-        res.json({ applied: true, fullPrice, discount, ID });
-      }
-    } else if (!cart.coupon.equals(coupon._id) && cart.coupon != null) {
-      res.json({ exist: true });
-    } else if (cart.coupon.equals(coupon._id)) {
-      let fullPrice = Math.floor(price);
-      coupon.couponCount++;
-      req.session.totalPrice = fullPrice;
-      cart.coupon = null;
-      await cart.save();
-      res.json({ applied: false, ID, fullPrice });
+    if (!coupon) {
+      return res.status(401).json({
+        status: false,
+        message: "the coupon is not available right now",
+      });
     }
+    if (coupon.minPurchase > fullPrice) {
+      res.status(401).json({
+        status: false,
+        message: `didn't reach coupon minimun purchase`,
+      });
+    }
+    if (coupon.maxPurchase < fullPrice) {
+      res.status(401).json({
+        status: false,
+        message: `amount exceeded coupon limit`,
+      });
+    }
+    let ID = coupon._id;
+
+    const couponDiscount = coupon.discount;
+    console.log(couponDiscount, fullPrice);
+    const fullDiscount = fullPrice * (couponDiscount / 100);
+    const finalPrice = fullPrice - fullDiscount;
+    coupon.count--;
+    req.session.totalPrice = finalPrice;
+    cart.coupon = coupon._id;
+    console.log(finalPrice, fullPrice, fullDiscount);
+    await cart.save();
+    await coupon.save();
+    res.status(200).json({
+      status: true,
+      message: "coupon applied",
+      finalPrice,
+      couponDiscount,
+      ID,
+    });
   },
   removeCoupon: async (req, res) => {
     let id = req.params.id;
     let cart = await Cart.findById(id);
     cart.coupon = null;
+    res
+      .status(200)
+      .json({ status: true, message: "coupon removed successfully" });
   },
 };

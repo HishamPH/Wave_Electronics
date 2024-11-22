@@ -1,12 +1,8 @@
 const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const Products = require("../models/productModel");
-const OTP = require("../models/otpModel");
-const otpFunc = require("../utility/otpfunctions");
 const Cart = require("../models/cartModel");
 const Category = require("../models/categoryModel");
-const Wallet = require("../models/walletModel");
-const { loginAccessToken, loginRefreshToken } = require("../utility/jwtToken");
 
 module.exports = {
   getLandPage: async (req, res) => {
@@ -32,14 +28,12 @@ module.exports = {
       wish.forEach((item) => {
         wishlist.push(item.product.toString());
       });
-      let q = req.session.cartCount || 0;
       pd.forEach((item) => {
         item.defaultVariant = item.variant.find((variant) => variant.default);
       });
       res.render("user/homepage", {
         message: req.session.name,
         pd,
-        q,
         cat,
         wishlist,
       });
@@ -63,169 +57,6 @@ module.exports = {
     let message = req.session.name;
 
     res.render("user/homepage", { message, pd, cat, q, wishlist });
-  },
-
-  getLogin: (req, res) => {
-    res.render("user/user_login");
-  },
-
-  postLogin: async (req, res) => {
-    try {
-      let { username, password } = req.body;
-      let user = await User.findOne({ email: username });
-      let b;
-      let isValid = false;
-      if (user) {
-        b = user.status ?? false;
-        isValid = await bcrypt.compare(password, user.password);
-        if (!isValid) {
-          req.session.message = {
-            type: "success",
-            message: "incorrect Password",
-          };
-          res.redirect("/user/login");
-        }
-      }
-      if (!user) {
-        req.session.message = {
-          type: "success",
-          message: "incorrect Username or Password",
-        };
-        res.redirect("/user/login");
-      } else if (user.email == username && isValid) {
-        req.session.result = req.body;
-        req.session.name = user.name;
-        let cart = await Cart.findOne({ userId: user._id });
-        if (cart) req.session.cartCount = cart.total;
-        const { _id, name, email, phone, status, Address, Wishlist } = user;
-        const result = { _id, email };
-        const accessToken = await loginAccessToken(result);
-        const refreshToken = await loginRefreshToken(result);
-        if (accessToken && refreshToken) {
-          res.cookie("refreshToken", refreshToken, {
-            httpOnly: true,
-            maxAge: 30 * 24 * 60 * 60 * 1000,
-          });
-          res.cookie("accessToken", accessToken, {
-            httpOnly: true,
-            maxAge: 30 * 24 * 60 * 60 * 1000,
-          });
-        }
-        req.session.isUser = true;
-        res.locals.isUser = true;
-        res.redirect("/user/homepage");
-      } else if (!b) {
-        req.session.message = {
-          type: "success",
-          message: "This user isn't available right now",
-        };
-        console.log("heloo");
-        res.redirect("/user/login");
-      }
-    } catch (e) {
-      //res.redirect('/user/login')
-      console.error(e);
-    }
-  },
-
-  getaddUser: (req, res) => {
-    res.render("user/user_signup");
-  },
-
-  postAddUser: async (req, res) => {
-    email = req.body.email;
-    const data = await User.findOne({ email });
-    if (data != null) {
-      req.session.message = {
-        type: "success",
-        message: "email is already existing",
-      };
-      res.redirect("/user/signup");
-    }
-    if (data == null) {
-      req.session.result = req.body;
-      let otpval = otpFunc.generateOTP();
-      otpFunc.sendOTP(req, res, email, otpval);
-      console.log(req.body);
-      res.redirect("/user/emailverification");
-    }
-  },
-
-  getEmailVerification: async (req, res) => {
-    const Email = req.session.result.email;
-    setTimeout(() => {
-      OTP.deleteOne({ Email: Email })
-        .then(() => {
-          console.log("Document deleted successfully");
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    }, 60000);
-    res.render("user/emailverification");
-  },
-
-  postEmailVerification: async (req, res) => {
-    console.log(req.body);
-    let otp = req.body.otp;
-    console.log(otp.join(""));
-    const Email = req.session.result.email;
-    const matchedOTPrecord = await OTP.findOne({
-      Email: Email,
-    });
-    const { expiresAt } = matchedOTPrecord;
-    if (expiresAt) {
-      if (expiresAt < Date.now()) {
-        await OTP.deleteOne({ Email: Email });
-        throw new Error("The OTP code has expired. Please request a new one.");
-      }
-    } else {
-      console.log("ExpiresAt is not defined in the OTP record.");
-    }
-    if (Number(otp.join("")) == matchedOTPrecord.otp) {
-      req.session.OtpValid = true;
-      let { name, email, phone, password } = req.session.result;
-      let hash = await bcrypt.hash(password, 10);
-      let user = new User({
-        name,
-        email,
-        phone,
-        password: hash,
-      });
-      await user.save();
-      req.session.name = user.name;
-      await Wallet.create({ userId: user._id });
-      const { _id } = user;
-      const result = { _id, email };
-      const accessToken = await loginAccessToken(result);
-      const refreshToken = await loginRefreshToken(result);
-      if (accessToken && refreshToken) {
-        res.cookie("refreshToken", refreshToken, {
-          httpOnly: true,
-          maxAge: 30 * 24 * 60 * 60 * 1000,
-        });
-        res.cookie("accessToken", accessToken, {
-          httpOnly: true,
-          maxAge: 30 * 24 * 60 * 60 * 1000,
-        });
-      }
-      req.session.isUser = true;
-      res.locals.isUser = true;
-      res.redirect("/user/homepage");
-    } else {
-      console.log("Entered OTP does not match stored OTP.");
-      res.redirect("/user/emailverification");
-    }
-  },
-
-  resendOTP: async (req, res) => {
-    let email = req.session.result.email;
-    let a = await OTP.countDocuments();
-    if (!a) {
-      let otpval = otpFunc.generateOTP();
-      otpFunc.sendOTP(req, res, email, otpval);
-    }
-    res.redirect("/user/emailverification");
   },
 
   getDetailPage: async (req, res) => {
@@ -420,11 +251,15 @@ module.exports = {
     }
   },
 
-  getSearch: async (req, res) => {
+  getSearch: async (req, res, next) => {
     try {
+      console.log("helloe");
       const userId = req.session.user._id;
       const user = await User.findById(userId);
-      let product = await Products.find({ Display: true }).limit(8);
+      let product = await Products.find({ status: true })
+        .populate("offer")
+        .sort({ defaultPrice: 1 })
+        .limit(8);
       let cat = await Category.find();
       let wish = user.Wishlist;
       let wishlist = [];
@@ -433,21 +268,22 @@ module.exports = {
       });
       currentPage = 1;
       console.log(product.length);
-      let noOfDocs = await Products.find({ Display: true }).countDocuments();
-
+      let noOfDocs = await Products.find({ status: true }).countDocuments();
+      product.forEach((item) => {
+        item.defaultVariant = item.variant.find((variant) => variant.default);
+      });
       let totalPages = Math.ceil(noOfDocs / 8);
-      let q = req.session.cartCount || 0;
+      console.log(totalPages);
+      console.log(product[0].defaultVariant);
       res.render("user/searchresult", {
-        message: req.session.name,
         product,
-        q,
         cat,
         wishlist,
         currentPage,
         totalPages,
       });
     } catch (error) {
-      console.log(error);
+      next(error);
     }
   },
   searchProduct: async (req, res) => {
@@ -458,80 +294,72 @@ module.exports = {
     });
     res.json({ products, q });
   },
-  filterProducts: async (req, res) => {
-    const userId = req.session.user._id;
-    const user = await User.findById(userId);
-    let wish = user.Wishlist;
-    let wishlist = [];
-    wish.forEach((item) => {
-      wishlist.push(item.product.toString());
-    });
-    let filter = Object.keys(req.body);
-    let page = req.query.page;
-    let limit = 8;
-    console.log(req.query);
-    let search = req.query.name;
-    let sort;
-    let products = null;
-    if (req.query.order == "lth") {
-      sort = 1;
-      products = await Products.find({
-        Category: { $in: filter },
-        ProductName: { $regex: new RegExp(search, "i") },
-      })
-        .sort({ Price: sort })
-        .collation({ locale: "en", strength: 2 })
-        .populate("offer")
-        .skip((page - 1) * limit)
-        .limit(limit);
-    } else if (req.query.order == "htl") {
-      sort = -1;
-      products = await Products.find({
-        Category: { $in: filter },
-        ProductName: { $regex: new RegExp(search, "i") },
-      })
-        .sort({ Price: sort })
-        .collation({ locale: "en", strength: 2 })
-        .populate("offer")
-        .skip((page - 1) * limit)
-        .limit(limit);
-    } else if (req.query.order == "az") {
-      sort = 1;
-      products = await Products.find({
-        Category: { $in: filter },
-        ProductName: { $regex: new RegExp(search, "i") },
-      })
-        .sort({ ProductName: sort })
-        .collation({ locale: "en", strength: 2 })
-        .populate("offer")
-        .skip((page - 1) * limit)
-        .limit(limit);
-    } else if (req.query.order == "za") {
-      sort = -1;
-      products = await Products.find({
-        Category: { $in: filter },
-        ProductName: { $regex: new RegExp(search, "i") },
-      })
-        .sort({ ProductName: sort })
-        .collation({ locale: "en", strength: 2 })
-        .populate("offer")
-        .skip((page - 1) * limit)
-        .limit(limit);
+  filterProducts: async (req, res, next) => {
+    try {
+      const userId = req.session.user._id;
+      const { sort, query, page } = req.query;
+      const { filters } = req.body;
+      console.log(req.query, req.body);
+      const user = await User.findById(userId);
+      const wish = user.Wishlist;
+      let wishlist = [];
+      wish.forEach((item) => {
+        wishlist.push(item.product.toString());
+      });
+      const limit = 8;
+      let products = null;
+      let totalDocs = 0;
+      if (sort == "lth" || sort == "htl") {
+        totalDocs = await Products.countDocuments({
+          category: { $in: filters },
+          productName: { $regex: new RegExp(query, "i") },
+        });
+        let currentSort;
+        if (sort == "lth") currentSort = 1;
+        else currentSort = -1;
+        products = await Products.find({
+          category: { $in: filters },
+          productName: { $regex: new RegExp(query, "i") },
+        })
+          .sort({ defaultPrice: currentSort })
+          .collation({ locale: "en", strength: 2 })
+          .populate("offer")
+          .skip((page - 1) * limit)
+          .limit(limit);
+      } else if (sort == "az" || sort == "za") {
+        totalDocs = await Products.countDocuments({
+          category: { $in: filters },
+          productName: { $regex: new RegExp(query, "i") },
+        });
+        let currentSort;
+        if (sort == "lth") currentSort = 1;
+        else currentSort = -1;
+        products = await Products.find({
+          category: { $in: filters },
+          productName: { $regex: new RegExp(query, "i") },
+        })
+          .sort({ defaultPrice: currentSort })
+          .collation({ locale: "en", strength: 2 })
+          .populate("offer")
+          .skip((page - 1) * limit)
+          .limit(limit);
+      }
+      const totalPages = Math.ceil(totalDocs / limit);
+      res.json({ products, wishlist, currentPage: page, totalPages });
+    } catch (err) {
+      next(err);
     }
-
-    res.json({ products, wishlist, page });
   },
   logoutUser: async (req, res) => {
     try {
       console.log("user logout", new Date());
-      req.session.result = null;
-      req.session.user = null;
-      req.session.name = null;
+      req.session.destroy();
+      res.locals = null;
       res.clearCookie("accessToken");
       res.clearCookie("refreshToken");
       res.redirect("/");
     } catch (error) {
-      console.log(error);
+      next(error);
     }
   },
 };

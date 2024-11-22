@@ -1,11 +1,10 @@
 <%- include('../essentials/userHeader') %>
 
-<link href='http://fonts.googleapis.com/css?family=Oswald:400,300,700' rel='stylesheet' type='text/css'>
-
 
 </head>
 
-<body class="bg-white   ">
+<body class="bg-white">
+  <%- include('../essentials/loader') %>
     
     <header id="header" class="header fixed-top d-flex align-items-center bg-black " style="height: 90px;">
 
@@ -20,21 +19,17 @@
           
         </div><!-- End Logo -->
     
-        <div class="search-bar">
+        <!-- <div class="search-bar">
           <form class="search-form d-flex align-items-center" action="/user/getsearch" method="get">
             <input type="search" name="name" placeholder="Search" title="Enter search keyword" id="" onclick="this.form.submit()">
             <button type="submit" title="Search"><i class="bi bi-search"></i></button>
           </form>
-        </div><!-- End Search Bar -->
+        </div> -->
     
         <nav class="header-nav ms-auto">
           <ul class="d-flex align-items-center">
     
-            <li class="nav-item d-block d-lg-none">
-              <a class="nav-link nav-icon search-bar-toggle " href="/user/search">
-                <i class="bi bi-search"></i>
-              </a>
-            </li><!-- End Search Icon-->
+            
             
             <li class="nav-item dropdown mx-3">
                 <div class="d-flex align-items-center gap-2 text-dark">
@@ -43,7 +38,7 @@
                   <div class="nav-link nav-icon">
                     <i class="bi bi-cart fs-3 text-white "></i>
                       <span class="badge bg-danger badge-number fs-7 rounded-circle fw-bold " id="cartCount">
-                        <%= q  %>
+                        <%= cartCount %>
                       </span>
                   </div>
                   </a>
@@ -52,7 +47,7 @@
                       <i class="bi bi-heart fs-3 text-white"></i> 
                       <span class="badge bg-danger badge-number fs-7 rounded-circle" id="wishCount">
                       
-                        <%= wishlist.length  %>
+                        <%= wishList  %>
                         
                       </span>
                     </div>
@@ -62,11 +57,11 @@
             <!-- End Notification Nav -->
             <li class="nav-item dropdown pe-3">
     
-              <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+              <button class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                 <img src="/img/user.png" alt="Profile" class="rounded-circle">
                 <span class="d-none d-md-block dropdown-toggle ps-2 text-white "></span>
                 
-              </a><!-- End Profile Iamge Icon -->
+              </button><!-- End Profile Iamge Icon -->
     
               <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                 <li class="dropdown-header">
@@ -96,78 +91,85 @@
     
     </header>
 
-    <!-- <div class="container-fluid bg-dark  mb-30 position-relative " style="top: 125px;">
-      <div class="row px-xl-5 d-flex align-items-center">
-          <div class="col-lg-3  ">
-              <a class="btn d-flex align-items-center justify-content-between bg-warning w-100" data-bs-toggle="collapse" href="#navbar-vertical" style="height: 65px; padding: 0 30px;">
-                  <h6 class="text-dark m-0"><i class="fa fa-bars mr-2"></i>Categories</h6>
-                  <i class="fa fa-angle-down text-dark"></i>
-              </a>
-              <nav class="collapse position-absolute navbar navbar-vertical navbar-light align-items-start p-0 bg-light  " id="navbar-vertical" style="width: 300px; z-index: 999;">
-                  <div class="navbar-nav w-100 text-dark fw-bold ">
-                    <% //cat.forEach((row)=>{ %>
-                      <a href="/user/homepage/<%= //row._id %>" type="button" class="nav-item nav-link" ><%= //row.Name %> </a>
-
-                    <% //}) %>
-                      
-                      
-                      
-                  </div>
-              </nav>
-          </div>
-         
-          
-      </div>
-    </div> -->
+  
+    
    
 
     <!-- Banner start -->
-    <div class="container  position-relative" style="top:110px">
-       <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
-        
-        <div class="carousel-inner ">
-          <div class="carousel-item active">
-            <img src="/img/banner_1.jpg" class="d-block w-100 " alt="...">
-            <div class="carousel-caption d-none d-md-block">
-              <h2>Samsung Galaxy s23 Ultra</h2>
-              <p>Shop galaxy watch 5 with s23 and get upto benfits of ₹12,000</p>
-            </div>
-          </div>
-          
-          <div class="carousel-item">
-            <img src="/img/banner_3.jpg" class="d-block w-100 " alt="...">
-            <div class="carousel-caption d-none d-md-block">
-              <h2>Apple iPhone 15 pro max</h2>
-              <p>...</p>
-            </div>
-          </div>
+     <main class="bg-white" style="margin-top: 105px;">
+        <div class="d-sm-flex justify-content-center align-items-center">
+          <% cat.forEach((row)=>{ %>
+          <div class="bg-secondary rounded-pill px-3 py-1 text-black shadow-sm m-2"><%= row.categoryName %></div>
+
+          <% }) %>
         </div>
-       
-      </div>
-    </div>
-   
-
-
-    <div class="container mt-5 position-relative" style="top: 100px;">
       
-        <div class="row" id="searchResult">
+      <div class="mx-3">
+        <div class="d-flex flex-column justify-content-center rounded-pill search-container bg-white shadow-sm m-3  w-max">
+          <form action="/user/getsearch" method="post">
+            <div class="input-group">
+              <span class="input-group-text bg-black d-flex justify-content-center rounded-pill text-white"
+                style="width: 100px; height: 40px;">
+                <i class="fas fa-search"></i>
+              </span>
+              <input onclick="this.form.submit()" type="text" class="form-control border-2 rounded-pill px-4" id="search-input" placeholder="Search products..."
+                style="height: 40px;" />
+            </div>
+          </form>
           
-        <% pd.forEach((row,index)=>{%>
-          <div class="col-xl-3 col-lg-4 col-md-6 ">
-            <div class="card rounded-0 ">
-              <% if (row.offer) { %>
-                <span class="badge position-absolute  p-2  bg-danger w-auto rounded-0  " style="top: 15px; right: 15px;">
-                   - <%= row.offer.percentage %>%
-                </span>
-                
-              <% } %>
-              <img src="/images/<%= row.defaultVariant.images[0]  %>" class="card-img-top card-img-auto" alt="Product Image" style="object-fit: cover;">
+        </div>
+        <div id="carouselExampleSlidesOnly" class="carousel slide shadow-lg mx-5" data-bs-ride="carousel">
+
+          <div class="carousel-inner ">
+            <div class="carousel-item active">
+              <img src="/img/banner_1.jpg" class="d-block w-100 " alt="...">
+              <div class="carousel-caption d-none d-md-block">
+                <h2>Samsung Galaxy s23 Ultra</h2>
+                <p>Shop galaxy watch 5 with s23 and get upto benfits of ₹12,000</p>
+              </div>
+            </div>
+
+            <div class="carousel-item">
+              <img src="/img/banner_3.jpg" class="d-block w-100 " alt="...">
+              <div class="carousel-caption d-none d-md-block">
+                <h2>Apple iPhone 15 pro max</h2>
+                <p>...</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        
+      </div>
+
+
+
+<div class="container mx-3 mt-5">
+
+  <div class="row" id="searchResult">
+
+    <% pd.forEach((row,index)=>{%>
+      <div class="col-xl-3 col-lg-4 col-md-6 ">
+        <div class="card rounded-0 ">
+          <% if (row.offer) { %>
+            <span class="badge position-absolute  p-2  bg-danger w-auto rounded-0  " style="top: 15px; right: 15px;">
+              - <%= row.offer.percentage %>%
+            </span>
+
+            <% } %>
+              <img src="/images/<%= row.defaultVariant.images[0]  %>" class="card-img-top card-img-auto"
+                alt="Product Image" style="object-fit: cover;">
               <div class="card-body bg-white" style="height: 220px;">
                 <a href="/user/detail/<%= row._id %>">
-                    <div class="card-title m-0 text-truncate fw-bold "><%= row.productName  %></div>
-                    <p class="card-text fw-bold text-dark mb-2 ">₹<%= row.defaultPrice.toLocaleString('hi')  %></p>
-                    <p class="card-text text-black " style="height: 48px;"><%= row.spec1 %></p>
-                    
+                  <div class="card-title m-0 text-truncate fw-bold ">
+                    <%= row.productName %>
+                  </div>
+                  <p class="card-text fw-bold text-dark mb-2 ">₹<%= row.defaultPrice.toLocaleString('hi') %>
+                  </p>
+                  <p class="card-text text-black " style="height: 48px;">
+                    <%= row.spec1 %>
+                  </p>
+
                 </a>
                 <div class="d-flex justify-content-between mt-3" style="bottom:0px;">
                   <button data-path="<%= row._id %>" class="btn btn-dark rounded-pill addtocart">Add to cart</button>
@@ -178,83 +180,23 @@
                       style="width: 30px; height: 30px;" alt="heart">
                   </button>
                 </div>
-                
-                
-                
+
+
+
               </div>
-            </div>
-          </div>
-          <%});%>
-       
         </div>
-    </div>
+      </div>
+      <%});%>
+
+  </div>
+</div>
+     </main>
+    
  
     <!-- Footer Start -->
-    <div class="container-fluid bg-black text-secondary mt-5 pt-5 position-relative " style="top: 100px;">
-        <div class="row px-xl-5 pt-5">
-            <div class="col-lg-4 col-md-12 mb-5 pr-3 pr-xl-5">
-                <h5 class="text-secondary text-uppercase mb-4">Get In Touch</h5>
-                <p class="mb-4">No dolore ipsum accusam no lorem. Invidunt sed clita kasd clita et et dolor sed dolor. Rebum tempor no vero est magna amet no</p>
-                <p class="mb-2"><i class="fa fa-map-marker-alt text-primary mr-3"></i>123 Street, New York, USA</p>
-                <p class="mb-2"><i class="fa fa-envelope text-primary mr-3"></i>info@example.com</p>
-                <p class="mb-0"><i class="fa fa-phone-alt text-primary mr-3"></i>+012 345 67890</p>
-            </div>
-            <div class="col-lg-8 col-md-12">
-                <div class="row">
-                    <div class="col-md-4 mb-5">
-                        <h5 class="text-secondary text-uppercase mb-4">Quick Shop</h5>
-                        <div class="d-flex flex-column justify-content-start">
-                            <a class="text-secondary mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Home</a>
-                            <a class="text-secondary mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Our Shop</a>
-                            <a class="text-secondary mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Shop Detail</a>
-                            <a class="text-secondary mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Shopping Cart</a>
-                            <a class="text-secondary mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Checkout</a>
-                            <a class="text-secondary" href="#"><i class="fa fa-angle-right mr-2"></i>Contact Us</a>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-5">
-                        <h5 class="text-secondary text-uppercase mb-4">My Account</h5>
-                        <div class="d-flex flex-column justify-content-start">
-                            <a class="text-secondary mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Home</a>
-                            <a class="text-secondary mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Our Shop</a>
-                            <a class="text-secondary mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Shop Detail</a>
-                            <a class="text-secondary mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Shopping Cart</a>
-                            <a class="text-secondary mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Checkout</a>
-                            <a class="text-secondary" href="#"><i class="fa fa-angle-right mr-2"></i>Contact Us</a>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-5">
-                        <h5 class="text-secondary text-uppercase mb-4">Newsletter</h5>
-                        <p>Duo stet tempor ipsum sit amet magna ipsum tempor est</p>
-                        <form action="">
-                            <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Your Email Address">
-                                <div class="input-group-append">
-                                    <button class="btn btn-primary">Sign Up</button>
-                                </div>
-                            </div>
-                        </form>
-                        <h6 class="text-secondary text-uppercase mt-4 mb-3">Follow Us</h6>
-                        <div class="d-flex">
-                            <a class="btn btn-primary  me-2 rounded-circle w-auto  " href="#"><i class="fab fa-twitter "></i></a>
-                            <a class="btn btn-primary me-2 rounded-circle" href="#"><i class="fab fa-facebook-f"></i></a>
-                            <a class="btn btn-primary me-2 rounded-circle" href="#"><i class="fab fa-linkedin-in"></i></a>
-                            <a class="btn btn-primary rounded-circle" href="#"><i class="fab fa-instagram"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row border-top mx-xl-5 py-4" style="border-color: rgba(256, 256, 256, .1) !important;">
-            <div class="col-md-6 px-xl-0">
-                <p class="mb-md-0 text-center text-md-left text-secondary">
-                    &copy; <a class="text-primary" href="#">Domain</a>. All Rights Reserved.
-                </p>
-            </div>
-        </div>
-    </div>
+    <%- include('../essentials/footer') %>
 
-    <a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
+    <button href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></button>
 
     <script type=module src="/js/cartCount.js" defer></script>
     <!-- Footer End -->

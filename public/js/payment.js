@@ -1,25 +1,32 @@
-const { Success, Failed } = require("./toast.js");
+import { Success, Failed } from "./toast.js";
 
 $(document).ready(function () {
   $("#applyCoupon").click(function () {
     const code = $("#couponInput").val();
-    const toatalPrice = Number($("#total-price").val());
-
-    console.log(code);
-    applyCoupon(code);
+    const fullPrice = $("#total-price").data("final-price");
+    applyCoupon(code, fullPrice);
   });
 
-  async function applyCoupon(code) {
+  async function applyCoupon(code, fullPrice) {
     try {
       const res = await axios.post(
         `/user/checkout/apply-coupon`,
-        { code },
+        { code, fullPrice },
         {
           headers: {
             "Content-Type": "application/json",
           },
         }
       );
+      const { status, finalPrice, couponDiscount, ID, message } = res.data;
+      if (status) {
+        $("#couponname").text("Coupon");
+        $("#percent").text(`-${couponDiscount}%`);
+        $("#total-price").text(`₹ ${finalPrice.toLocaleString("hi")}`);
+        Success(message);
+      } else {
+        Failed("some error occured");
+      }
     } catch (err) {
       Failed(err.response ? err.response.data.message : err.message);
       console.log(err.message);

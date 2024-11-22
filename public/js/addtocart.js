@@ -38,7 +38,7 @@ $(document).ready(function () {
           },
         }
       );
-      const { quantity, price, totalPrice, discount } = res.data;
+      const { quantity, price, totalPrice, totalDiscount } = res.data;
       const decr = $(`#decr-${id}`);
       if (quantity > 1) {
         decr.prop("disabled", false);
@@ -50,11 +50,12 @@ $(document).ready(function () {
       $(`#it${id}`).text((quantity * price).toLocaleString("hi"));
       $("#items-price").text(`₹ ${totalPrice.toLocaleString("hi")}`);
       $("#total-price").text(
-        `₹ ${(totalPrice - discount).toLocaleString("hi")}`
+        `₹ ${(totalPrice - totalDiscount).toLocaleString("hi")}`
       );
-      $("#discount").text(`– ₹${discount.toLocaleString("hi")}`);
+      $("#discount").text(`– ₹${totalDiscount.toLocaleString("hi")}`);
       $("#couponname").text("");
       $("#percent").text("");
+      Success("quantity updated");
     } catch (err) {
       Failed(err.response ? err.response.data.message : err.message);
       console.log(err?.message);
@@ -126,23 +127,23 @@ $(document).ready(function () {
       });
       if (result.isConfirmed) {
         const res = await axios.delete(`/user/cart/delete/${productId}`);
-        const { status, message, totalPrice, discount, count } = res.data;
-
+        const { status, message, totalPrice, totalDiscount, count } = res.data;
         if (!count) {
           $("#empty-cart").removeClass("d-none");
           $("#cart-section").remove();
-
+          Success(message);
           return;
         }
+        console.log(totalPrice, totalDiscount);
         const row = $(`tr[data-product-id="${productId}"]`);
         if (row.length > 0) {
           row.remove();
           $("#items-count").text(`price(${count} items)`);
           $("#items-price").text(`₹ ${totalPrice.toLocaleString("hi")}`);
           $("#total-price").text(
-            `₹ ${(totalPrice - discount).toLocaleString("hi")}`
+            `₹ ${(totalPrice - totalDiscount).toLocaleString("hi")}`
           );
-          $("#discount").text(`– ₹${discount.toLocaleString("hi")}`);
+          $("#discount").text(`– ₹${totalDiscount.toLocaleString("hi")}`);
           Success(message);
         } else {
           console.error("Row with the given productId not found.");

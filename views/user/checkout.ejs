@@ -56,6 +56,7 @@
 </head>
 
 <body>
+  <%- include('../essentials/loader') %>
     <!-- Topbar Start -->
   <header id="header" class="header fixed-top d-flex align-items-center bg-light" style="height: 125px;">
 
@@ -92,14 +93,14 @@
   
           <li class="nav-item dropdown pe-3">
   
-            <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+            <button class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
               <img src="/img/user.png" alt="Profile" class="rounded-circle">
-              <span class="d-none d-md-block dropdown-toggle ps-2"><%= locals.name  %></span>
-            </a><!-- End Profile Iamge Icon -->
+              <span class="d-none d-md-block dropdown-toggle ps-2"><%= name  %></span>
+            </button><!-- End Profile Iamge Icon -->
   
             <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
               <li class="dropdown-header">
-                <h6>Hisham</h6>
+                <h6><%= name  %></h6>
                 <span>Web Designer</span>
               </li>
           
@@ -135,47 +136,30 @@
    
       <div class="row">
         <div class="col-lg-8 col-12">
-          <div class="row overflow-auto bg-white " style="height: 205px;">
+          
+          <div class="row overflow-auto bg-white " style="height: 250px; ">
             <% if(address){ %>
-              <% address.forEach((row,index)=>{%>
-              <!-- Sales Card -->
               <div class="col-xxl-6 col-md-12">
+                
                 <div class="card my-2 ">
+                  <h4 class="ms-3 mt-2 mb-0">Delivery Address</h4>
                   <div class="card-body">
                     <h5 class="card-title pb-0">
-                      <div style="font-weight: bold;"><%= row.name %></div>
+                      <div style="font-weight: bold;"><%= address.name %></div>
                     </h5>
-                    <p class="mb-0 py-0"><%= row.street %>,<%= row.city %>,<%= row.state  %></p>
+                    <p class="mb-0 py-0"><%= address.street %></p>
+                    <p class="m-0"><%= address.city %></p>
+                    <p class="m-0"><%= address.state %></p>
                     <div class="d-flex justify-content-between mt-3 mb-2">
-                      <button type="button" class="btn btn-primary me-2" data-mdb-toggle="modal" data-mdb-target="#edit_<%= row._id %>"
-                        data-mdb-ripple-init data-mdb-modal-init>
-                        Edit
-                      </button>
-                        
-                      
-                      <a href="/user/checkout/address/delete/<%= row._id  %>">
-                        <i class="bi bi-trash text-danger"></i>
-                      </a>
+                    
                       
                     </div>
-                    <form action="/user/checkout/address/change/<%= row._id %>" method="post">
-                    <% if(row.main){ %>
-                      <input id="radio" type="radio" name="main" checked value="<%= row.name %>" onchange="this.form.submit()">
-                    <% }else{%>
-                      <input id="radio" type="radio" name="main" value="<%= row.name %>" onchange="this.form.submit()">
-                    <% } %>
-                    <label for="radio">Set as default</label>
-                    
-                    </form>
+                  
                   </div>
                   
                 </div>
               </div>
-            <% }) %>
-           
-            <% } %>
-            
-
+            <% } %> 
           </div>
           
         </div><!-- End Recent Sales -->
@@ -229,10 +213,19 @@
                     <div class="">
                       Discount
                     </div>
+
+                    
+
                     <div class="text-success " id="discount">
-                      – ₹<%=discount.toLocaleString('hi') %>
+                      – ₹<%= totalDiscount.toLocaleString('hi') %>
                     </div>
                   </div>
+                  <div class="d-flex justify-content-between mx-3">
+                  
+                    <div class="mr-5" id="couponname"></div>
+                    <div class="text-success" id="percent"></div>
+              
+                </div>
                   <div class="d-flex justify-content-between m-3 ">
                     <div class="">
                       Delivery charges
@@ -247,7 +240,7 @@
                     <div class="">
                       Total amount
                     </div>
-                    <div class="fw-bold" id="total-price">
+                    <div class="fw-bold" id="total-price" data-final-price="<%= fullPrice %>">
                       ₹ <%= fullPrice.toLocaleString('hi') %>
                     </div>
                   </div>
@@ -258,7 +251,7 @@
                   <form id="paymentway" data-path="<%= cart._id%>">
                     <div class="d-flex flex-column ">
                       <div>
-                        <input type="radio" id="razorpay" name="method" value="card">
+                        <input type="radio" id="razorpay" name="method" value="card" checked>
                         <label for="razorpay">Razorpay</label>
                       </div>
                       <div>
@@ -293,60 +286,7 @@
         </div>
       </div>
   </section>
-  <% address.forEach((row)=>{ %>
-    <div class="modal fade" id="edit_<%= row._id %>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLongTitle">Edit the address</h5>
-            <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-                               
-            <form action="/user/userprofile/address/edit/<%= row._id  %>" method="post">
-              <div class="form-group">
-                <label for="name">Name:</label>
-                <input type="text" name="name" class="form-control bg-light" id="name"
-                    value="<%= row.name %> " required />
-              </div>
-              <div class="form-group">
-                <label for="street">street:</label>
-                <input type="text" name="street" class="form-control bg-light" id="street"
-                    value="<%= row.street %>" required />
-              </div>
-              <div class="form-group">
-                <label for="city">city:</label>
-                <input type="text" name="city" class="form-control bg-light" id="city"
-                    value="<%= row.city %>" required />
-              </div>
-              <div class="form-group">
-                <label for="pincode">pincode:</label>
-                <input type="number" name="pincode" class="form-control bg-light" id="pincode"
-                    value="<%= row.pincode %>" required />
-              </div>
-              <div class="form-group">
-                <label for="state">state:</label>
-                <input type="text" name="state" class="form-control bg-light" id="state"
-                    value="<%= row.state %>" required />
-              </div>
-              <div class="form-group">
-                <label for="mobile">mobile:</label>
-                <input type="number" name="mobile" class="form-control bg-light" id="mobile"
-                    value="<%= row.mobile %>" required />
-              </div>
-              <div class="d-flex justify-content-center mb-3">
-                <button type="submit" class="btn btn-primary mt-3 mb-0">Edit Address</button>
-              </div>
-            </form>
-           
-          </div>
-          
-        </div>
-      </div>
-    </div>
-
-
-  <% }) %>
+ 
  
 
   <div class="modal fade" id="couponModal" tabindex="-1" aria-labelledby="couponModalLabel" aria-hidden="true">
@@ -359,19 +299,23 @@
         <div class="modal-body" style="height: 600px; overflow-y: auto;">
           <div class="container">
             <div class="row">
-              <div class="col-lg-4 col-sm-6 col-12">
-                <div class="card coupon-card h-100 active">
-                  <div class="card-body p-0">
-                    <h5 class="card-title">10% Off</h5>
-                    <p class="card-text">Get 10% off your next purchase</p>
-                    <p class="card-text m-0">
-                      <small class="text-muted">Expires: 2023-12-31</small>
-                    </p>
+              <% coupons.forEach((coupon)=>{ %>
+                <div class="col-lg-4 col-sm-6 col-12">
+                  <div class="card coupon-card h-100 active">
+                    <div class="card-body p-0">
+                      <h5 class="card-title"><%= coupon.discount %>% Off</h5>
+                      <p class="card-text m-0">Get <%= coupon.discount %>% off your next purchase</p>
+                      <p class="card-text m-0">
+                        <small class="text-muted">Expires: <%= coupon?.end.toLocaleString().slice(0,10)  %></small>
+                      </p>
+                      <p class="fw-bold text-white">code : <%= coupon.code  %></p>
+                    </div>
+                    
                   </div>
-                  
                 </div>
-              </div>
-              <div class="col-lg-4 col-sm-6 col-12">
+              <% }) %>
+              
+              <!-- <div class="col-lg-4 col-sm-6 col-12">
                 <div class="card coupon-card h-100 expired">
                   <div class="card-body p-0">
                     <h5 class="card-title">Free Shipping</h5>
@@ -394,7 +338,7 @@
                   </div>
                   
                 </div>
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
@@ -403,9 +347,9 @@
   </div>
 
   <!-- Back to Top -->
-  <a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
+  <button href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></button>
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script> 
-    <script src="/js/payment.js" defer></script>
+    <script type="module" src="/js/payment.js" defer></script>
 
   <!-- JavaScript Libraries -->
   

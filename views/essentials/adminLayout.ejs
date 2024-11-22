@@ -1,6 +1,7 @@
 </head>
 
 <body>
+  <%- include('../essentials/loader') %>
 
   <!-- ======= Header ======= -->
   <header id="header" class="header fixed-top d-flex align-items-center">
@@ -18,7 +19,7 @@
 
         <li class="nav-item dropdown pe-3">
 
-          <a class="nav-link nav-profile  pe-0" href="#" data-bs-toggle="dropdown">  
+          <button class="nav-link nav-profile  pe-0" href="#" data-bs-toggle="dropdown">  
             <div class="d-flex align-items-center justify-content-between">
               <div class="align-items-center h5 mt-2">
                 <div class="d-none d-md-block">
@@ -31,7 +32,7 @@
             </div>
             
             
-          </a>
+          </button>
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
             <li class="dropdown-header">
               <h6><%= adminname %></h6>

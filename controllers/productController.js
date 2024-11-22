@@ -113,32 +113,32 @@ module.exports = {
       .status(200)
       .json({ status: true, message: "product edited successfully" });
   },
-  changeColor: async (req, res) => {
+  changeVariant: async (req, res, next) => {
     try {
       const id = req.params.id;
       const { color, storage } = req.body;
-      const pd = await Product.findById(id);
-      const currentColor = pd.color.find(
-        (variant) => variant.variant == color.variant
+      const pd = await Product.findById(id).populate("offer");
+      const currentVariant = pd.variant.find(
+        (variant) => variant.color == color && variant.storage == storage
       );
-      const currentStorage = pd.storage.find(
-        (variant) => variant.variant == storage.variant
-      );
-      defaultPrice =
-        Number(pd.basePrice) +
-        Number(currentColor?.price || 0) +
-        Number(currentStorage?.price || 0);
-      res.status(200).json({ defaultPrice, currentColor, currentStorage });
+      if (!currentVariant) {
+        return res.status(404).json({
+          status: false,
+          message: "the selected variant is not available",
+        });
+      }
+
+      const fullPrice =
+        Number(pd.basePrice) + Number(currentVariant.price || 0);
+      console.log(fullPrice);
+      const offer = parseInt((pd.basePrice * pd?.offer?.percentage) / 100) || 0;
+
+      const discount = parseInt((pd.basePrice * pd.discount) / 100);
+      const totalDiscount = Number(offer + discount);
+      res.status(200).json({ fullPrice, currentVariant, totalDiscount });
     } catch (error) {
-      console.log(error);
-      res
-        .status(401)
-        .json({ status: false, message: "some error occured in change color" });
+      next(error);
     }
-  },
-  changeStorage: async (req, res) => {
-    const id = req.params.id;
-    const { color } = req.body;
   },
 };
 

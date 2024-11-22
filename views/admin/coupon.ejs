@@ -46,17 +46,11 @@
           <td><%= row.start.toJSON().slice(0,10) %></td>
           <td><%= row.end.toJSON().slice(0,10) %></td>
           <td>
-            
-              <% if(row.status){ %>
-                <button class="btn btn-success rounded-pill ">active
-                </button>
-                <% }else{ %>
-                  <button class="btn btn-danger rounded-pill">blocked
-                  </button>
-                  <% } %>
+
+            <button class="btn rounded-pill deactivateCoupon <%= row.status ? "btn-success" :"btn-danger"  %>" data-coupon-id="<%= row._id %>"><%= row.status ? "active":"blocked"  %></button>
            
           </td>
-          <td>
+          <td class="d-flex">
             
               <button type="button" class="btn btn-secondary  mb-3 rounded-pill" data-mdb-toggle="modal" data-mdb-target="#couponEditModal<%= row._id%>" style="font-weight: bold;" data-mdb-ripple-init data-mdb-modal-init>
                 Edit
@@ -141,7 +135,7 @@
           </div>
           <div class="modal-body">
                                
-            <form action="/admin/coupons/addcoupon" method="post" id="addCoupon">
+            <form id="addCoupon">
               <div class="form-group">
                 <label for="code">code:</label>
                 <input type="text" name="code" class="form-control bg-light" id="code"

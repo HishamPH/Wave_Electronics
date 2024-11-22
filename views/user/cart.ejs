@@ -2,6 +2,7 @@
    
 </head>
 <body>
+  <%- include('../essentials/loader') %>
   <!-- Topbar Start -->
   <header id="header" class="header fixed-top d-flex align-items-center bg-black" style="height: 100px;">
 
@@ -88,28 +89,42 @@
                   <th>Product</th>
                   <th>Price</th>
                   <th style="width: 150px;">Quantity</th>
-                  <th>variant</th>
+                  <th>total</th>
                   <th>Remove</th>
                 </tr>
               </thead>
               <tbody class="table-group-divider ">
                 <% items.forEach((row,index)=>{ %>
-                <tr class="align-middle " data-product-id="<%= row._id %>">
+                <tr class="align-middle" data-product-id="<%= row._id %>">
                 <td>
-                  <img src="/images/<%=row.image%>" alt="" style="width: 100px;">
-                  <%= row.productId.productName%>
+                  <div class="d-flex align-items-center" style="max-width: 200px;">
+                    <img src="/images/<%=row.image%>" alt="" style="width: 70px;">
+                    <div class="d-flex flex-column height70px">
+                      <div class="overflow-hidden" style="width: 150px;">
+                        <div class="text-truncate"><%= row.productId.productName%></div>
+                        <div>
+                          <%= row.color %>
+                        </div>
+                        <div>
+                          <%= row.storage %> GB
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  
                 </td>
                 <td><%= row.price.toLocaleString('hi') %></td>
                 <td>
                   <div class="d-flex">
                     <div class="input-group-btn">
-                      <button class="btn btn-sm btn-dark btn-minus decrement rounded-circle " id="decr-<%= row._id  %>" <%= row.quantity < 2 ? 'disabled' : '' %>>
+                      <button class="btn btn-dark p-0 d-flex justify-content-center align-items-center decrement rounded-circle " id="decr-<%= row._id  %>" style="width: 35px; height: 35px;" <%= row.quantity < 2 ? 'disabled' : '' %>>
                         <i class="fa fa-minus"></i>
                       </button>
                     </div>
-                    <div class="form-control form-control-sm bg-secondary-subtle   border-0 text-center w-25 quantity mx-1 " id="pd-<%= row._id%>" data-quantity-id="<%= row._id %>"><%= row.quantity %></div>
+                    <div class=" bg-white fw-bold mt-1 text-center w-25 quantity mx-1 " id="pd-<%= row._id%>" data-quantity-id="<%= row._id %>"><%= row.quantity %></div>
                     <div class="input-group-btn">
-                      <button class="btn btn-sm btn-dark  rounded-circle   btn-plus increment" id="">
+                      <button class="btn d-flex p-0 justify-content-center align-items-center btn-dark  rounded-circle  increment" id="" style="width: 35px; height: 35px;">
                           <i class="fa fa-plus"></i>
                       </button>
                     </div> 
@@ -122,7 +137,9 @@
                   </div>
                 </td>
                 <td>
-                    <button id="delete" class="btn btn-sm btn-danger delete" data-delete="<%= row._id %>""><i class="bi bi-trash"></i></button>
+                  <button id="delete" class="btn btn-danger delete d-flex justify-content-center p-0 rounded-0" data-delete="<%= row._id %>" style="width: 35px; height: 35px;">
+                    <i class="fas fa-trash fa-lg mt-3"></i>
+                  </button>
                 </td>
                 </tr>
                 <% }) %>
@@ -135,41 +152,6 @@
       </div>
 
       <div class="col-12 col-lg-4">
-        <div class="card info-card sales-card mb-2">
-          <div class="card-body">
-            <div class="mt-3 ">
-              
-              <div class="overflow-auto mt-3 " style="height: 150px;">
-                <% coupons?.forEach((row)=>{ %>
-                <div class="coupon-card mt-2 " >
-    
-                  <div class="coupon-content">
-                    <p>Get  <span class="discount "><%= row.discount %>% </span> off</p>
-                    <p>Use code: <span class="code "><%= row.code %></span></p>
-                    <p>Valid until <span class="validity"><%= row.expire.toLocaleString('en-US',{dateStyle:'short'})%></span></p>
-                  </div>
-                  <div class="d-flex justify-content-center ">
-                    <button class="btn btn-success applyCoupon" id="applyCoupon<%= row._id  %>" data-path="<%= row._id  %>">
-                      Apply
-                    </button>
-                    <button class="d-none btn btn-danger applyCoupon" id="removeCoupon<%= row._id %>" data-path="<%= row._id %>">
-                      Remove
-                    </button>
-                  </div>
-                </div>
-
-                <% }) %>
-
-              </div>
-              
-              <div class="text text-success " id="applied">
-
-              </div>
-            </div>
-      
-            
-          </div>
-        </div>
         <div class="card info-card sales-card mb-2">
           <div class="card-body">
             
@@ -194,7 +176,7 @@
                 Discount
               </div>
               <div class="text-success " id="discount">
-                – ₹<%=discount.toLocaleString('hi') %>
+                – ₹<%= totalDiscount.toLocaleString('hi') %>
               </div>
             </div>
             <div class="d-flex justify-content-between m-3 ">
@@ -213,7 +195,7 @@
                 Total amount
               </div>
               <div class="fw-bold" id="total-price">
-                ₹ <%= (totalPrice-discount).toLocaleString('hi') %>
+                ₹ <%= (totalPrice-totalDiscount).toLocaleString('hi') %>
               </div>
             </div>
             
@@ -235,7 +217,7 @@
 
 
   <!-- Back to Top -->
-  <a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
+  <button href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></button>
 
   <script type="module" src="/js/addtocart.js" defer></script>
     <!-- JavaScript Libraries -->

@@ -1,72 +1,101 @@
-$(document).ready(function () {
-  $(".filter").on("change", function (e) {
-    e.preventDefault();
-    let filters = $("#filter").serialize();
-    let sort = $("#sort").serialize();
-    let q = $("#searchInput").serialize();
-    let page = $(".page-link.active").text();
+//import { Success, Failed } from "./toast.js";
 
-    filterProducts(filters, sort, q, page);
+const { Success, Failed } = require("./toast.js");
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+$(document).ready(function () {
+  let totalPages = Number(tp);
+  let currentPage = Number(cp);
+  let products = JSON.parse(pd);
+  let wishlist = JSON.parse(wish);
+
+  updateProducts(products, wishlist, totalPages, currentPage);
+  $("#search-input").on(
+    "input",
+    debounce(() => handleSearch(1), 300)
+  );
+
+  $("#search-addon").on("click", function () {
+    handleSearch();
+  });
+
+  async function handleSearch(currPage = 1) {
+    const loading = $("#loadingOverlay");
+    const query = $("#search-input").val().trim();
+    const sort = $(`input[name="order"]:checked`).val();
+    const checked = $(`#filter input[name="filter"][type="checkbox"]:checked`);
+    let filters = checked
+      .map(function () {
+        return $(this).val();
+      })
+      .get();
+    if (filters.length === 0) {
+      filters = $(`#filter input[name="filter"][type="checkbox"]`)
+        .map(function () {
+          return $(this).val();
+        })
+        .get();
+    }
+    const page = Number(currPage);
+    console.log(currPage);
+    try {
+      loading.removeClass("d-none");
+      const res = await axios.post(
+        "/user/filters",
+        { filters },
+        {
+          params: {
+            sort: sort,
+            query: query,
+            page: page,
+          },
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const { totalPages, currentPage, products, wishlist } = res.data;
+      console.log(res.data);
+      updateProducts(products, wishlist, totalPages, currentPage);
+    } catch (err) {
+      Failed(err.response ? err.response.data.message : err.message);
+      console.log(err.message);
+    } finally {
+      loading.addClass("d-none");
+    }
+    console.log("Searching for:", query);
+  }
+
+  $(".filter").on("change", function (e) {
+    handleSearch();
   });
 
   $(".page-link").click(function (e) {
     e.preventDefault();
-    let filters = $("#filter").serialize();
-    let sort = $("#sort").serialize();
-    let q = $("#searchInput").serialize();
     let page = $(this).text();
-    filterProducts(filters, sort, q, page);
+    handleSearch(page);
   });
-
-  // $('#searchInput').keyup(function(e){
-  //   e.preventDefault();
-
-  //   let q = $(this).val()
-  //   $.ajax({
-  //     url:'/user/search',
-  //     method:'get',
-  //     data:{q:q},
-  //     success:function(res){
-  //       updateProducts(res.products);
-
-  //     }
-  //   })
-  // })
 });
 
-function filterProducts(filters, sort, q, page) {
-  $.ajax({
-    url: `/user/filters?${sort}&${q}&page=${page}`,
-    method: "post",
-    data: filters,
-    success: function (res) {
-      $(".page-link").removeClass("active");
-      $(".page-link")
-        .filter(function () {
-          return $(this).text().trim() === res.page;
-        })
-        .addClass("active");
-      updateProducts(res.products, res.wishlist);
-    },
-    error: function (xhr, status, error) {
-      console.error("Error updating quantity:", error);
-    },
-  });
-}
-
-function updateProducts(products, wishlist) {
-  $("#searchResult").empty();
+function updateProducts(products, wishlist, totalPages, currentPage) {
+  const container = $("#searchResult");
+  container.empty();
+  const page = $("#pagination-buttons");
+  page.empty();
   if (products.length === 0) {
     const html = `<div class="d-flex justify-content-center align-items-center ">
           <div>
             No items found
           </div> 
         </div>`;
-    $("#searchResult").append(html);
+    container.append(html);
     return;
   }
 
   products.forEach((row) => {
+    row.defaultVariant = row.variant.find((variant) => variant.default);
     let wishImage = "heart-white";
     if (wishlist.includes(row._id.toString())) {
       wishImage = "heart";
@@ -83,14 +112,14 @@ function updateProducts(products, wishlist) {
            }
             
           <img src="/images/${
-            row.images[0]
+            row.defaultVariant.images[0]
           }" class="card-img-top card-img-auto" alt="Product Image" style="object-fit: cover;">
           <div class="card-body bg-white" style="height: 220px;">
             <a href="/user/detail/${row._id}">
                 <div class="card-title m-0 text-truncate fw-bold ">${
-                  row.ProductName
+                  row.productName
                 }</div>
-                <p class="card-text fw-bold text-dark mb-2 ">₹${row.Price.toLocaleString(
+                <p class="card-text fw-bold text-dark mb-2 ">₹${row.defaultPrice.toLocaleString(
                   "hi"
                 )}</p>
                 <p class="card-text text-black " style="height: 48px;">${
@@ -105,12 +134,28 @@ function updateProducts(products, wishlist) {
               
                 <button data-path="${
                   row._id
-                }" class="btn d-flex justify-content-center align-items-center rounded-circle wishlist" style="height: 50px; width: 50px;"><img src="/img/${wishImage}.png" style="width: 30px; height: 30px;" alt="heart"></button>
+                }" class="btn d-flex justify-content-center align-items-center rounded-circle wishlist" style="height: 50px; width: 50px;background-color:#dadada;"><img src="/img/${wishImage}.png" style="width: 30px; height: 30px;" alt="heart"></button>
             </div>
           </div>
         </div>
     </div>`;
-
-    $("#searchResult").append(html);
+    container.append(html);
   });
+
+  let pageHTML = "";
+  for (let i = 1; i <= totalPages; i++) {
+    pageHTML += `<li class="page-item ${i == currentPage ? "active" : ""}" >
+                <button class="page-link" name="page">${i}
+                </button>
+              </li>`;
+  }
+  page.html(pageHTML);
+}
+
+function debounce(func, delay) {
+  let timeout;
+  return function (...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(this, args), delay);
+  };
 }

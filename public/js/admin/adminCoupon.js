@@ -7,6 +7,24 @@ $(document).ready(function () {
     deleteCoupon(id);
   });
 
+  $(".deactivateCoupon").click(async function () {
+    try {
+      console.log("hello");
+      const id = $(this).data("coupon-id");
+      const res = await axios.put(`/admin/coupons/coupon-status/${id}`);
+      const { status, message } = res.data;
+      if (status) {
+        Success(message);
+      } else {
+        Failed(message);
+      }
+      window.location.reload();
+    } catch (err) {
+      Failed(err.response ? err.response.data.message : err.message);
+      console.log(err?.message);
+    }
+  });
+
   async function deleteCoupon(couponId) {
     try {
       const result = await Swal.fire({
@@ -33,5 +51,31 @@ $(document).ready(function () {
       console.log(err?.message);
     }
   }
+
+  $("#addCoupon").submit(async function (e) {
+    e.preventDefault();
+    try {
+      const formData = new FormData(this);
+      const data = {};
+      formData.forEach((value, key) => {
+        data[key] = value;
+      });
+      const res = await axios.post(`/admin/coupons/add-coupon`, data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const { status, message } = res.data;
+      if (status) {
+        Success(message);
+      } else {
+        Failed("could not add the coupon");
+      }
+      window.location.reload();
+    } catch (err) {
+      Failed(err.response ? err.response.data.message : err.message);
+      console.log(err?.message);
+    }
+  });
 });
 //href = "/admin/coupons/delete/<%= row._id%>";

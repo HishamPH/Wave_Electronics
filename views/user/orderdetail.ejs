@@ -15,6 +15,7 @@
     
   
   <main id="main" class="main" style="top:300px;">
+   
 
     <!-- <div class="pagetitle">
       <h1>Dashboard</h1>
@@ -94,9 +95,9 @@
             <div class="card-body ">
               <div class="col-12 d-flex justify-content-start  mt-3 ">
                 <div class="d-flex " style="width: 400px;">
-                  <img src="/images/<%= pd.productId.images[0] %>" style="width: 120px;" alt="">
+                  <img src="/images/<%= pd.image %>" style="width: 120px;" alt="">
                   <div class="mt-3 ms-2">
-                    <h6 id="pdname"><%= pd.productId.ProductName  %></h6>
+                    <h6 id="pdname"><%= pd.productId.productName  %></h6>
                     <p>₹<%= pd.price.toLocaleString('hi') %></p>
                     <p >quantity : <span id="pdq">
                       <%= pd.quantity  %>
@@ -253,13 +254,13 @@
   </div>
 
   <!-- Back to Top -->
-  <a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
+  <button href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></button>
 
 
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <!-- Template Javascript -->
-  <script src="/js/cartCount.js" defer></script>
-  <script src="/js/payment.js" defer></script>
+  <script type="module" src="/js/cartCount.js" defer></script>
+  <script type="module" src="/js/payment.js" defer></script>
 
 <%- include('../essentials/userFooter') %>
