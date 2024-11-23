@@ -106,7 +106,7 @@
       
       <div class="mx-3">
         <div class="d-flex flex-column justify-content-center rounded-pill search-container bg-white shadow-sm m-3  w-max">
-          <form action="/user/getsearch" method="post">
+          <form action="/user/getsearch">
             <div class="input-group">
               <span class="input-group-text bg-black d-flex justify-content-center rounded-pill text-white"
                 style="width: 100px; height: 40px;">
@@ -166,7 +166,7 @@
                   </div>
                   <p class="card-text fw-bold text-dark mb-2 ">₹<%= row.defaultPrice.toLocaleString('hi') %>
                   </p>
-                  <p class="card-text text-black " style="height: 48px;">
+                  <p class="card-text text-black text-truncate" style="height: 48px;">
                     <%= row.spec1 %>
                   </p>
 

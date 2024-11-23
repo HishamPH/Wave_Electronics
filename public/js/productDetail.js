@@ -20,7 +20,7 @@ $(document).ready(function () {
     const color = $(this).data("color");
     if (color == variant.color) return;
     try {
-      loadingOverlay.css("display", "flex");
+      loadingOverlay.removeClass("d-none");
       const res = await axios.post(
         `/user/product/change-variant/${productId}`,
         {
@@ -33,11 +33,12 @@ $(document).ready(function () {
           },
         }
       );
+      await delay(2000);
       console.log("hello");
       const { fullPrice, currentVariant, totalDiscount } = res.data;
       console.log(fullPrice, totalDiscount);
       variant = currentVariant;
-      $("#full-price").text(`₹${fullPrice}`);
+      $("#full-price").text(`₹${fullPrice.toLocaleString("hi")}`);
       $("#discount-price").text(
         `₹${(fullPrice - totalDiscount).toLocaleString("hi")}`
       );
@@ -48,7 +49,7 @@ $(document).ready(function () {
       Failed(err.response ? err.response.data.message : err.message);
       console.log(err.message);
     } finally {
-      loadingOverlay.css("display", "none");
+      loadingOverlay.addClass("d-none");
     }
   });
 

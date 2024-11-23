@@ -1,18 +1,10 @@
-//import { Success, Failed } from "./toast.js";
-
-const { Success, Failed } = require("./toast.js");
+import { Success, Failed } from "./toast.js";
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 $(document).ready(function () {
-  let totalPages = Number(tp);
-  let currentPage = Number(cp);
-  let products = JSON.parse(pd);
-  let wishlist = JSON.parse(wish);
-
-  updateProducts(products, wishlist, totalPages, currentPage);
   $("#search-input").on(
     "input",
-    debounce(() => handleSearch(1), 300)
+    debounce(() => handleSearch(1), 500)
   );
 
   $("#search-addon").on("click", function () {
@@ -37,9 +29,9 @@ $(document).ready(function () {
         .get();
     }
     const page = Number(currPage);
-    console.log(currPage);
     try {
       loading.removeClass("d-none");
+      await delay(2000);
       const res = await axios.post(
         "/user/filters",
         { filters },
@@ -59,11 +51,10 @@ $(document).ready(function () {
       const { totalPages, currentPage, products, wishlist } = res.data;
       console.log(res.data);
       updateProducts(products, wishlist, totalPages, currentPage);
+      loading.addClass("d-none");
     } catch (err) {
       Failed(err.response ? err.response.data.message : err.message);
       console.log(err.message);
-    } finally {
-      loading.addClass("d-none");
     }
     console.log("Searching for:", query);
   }
@@ -72,7 +63,7 @@ $(document).ready(function () {
     handleSearch();
   });
 
-  $(".page-link").click(function (e) {
+  $("#pagination-buttons").on("click", ".page-link", function (e) {
     e.preventDefault();
     let page = $(this).text();
     handleSearch(page);
@@ -122,7 +113,7 @@ function updateProducts(products, wishlist, totalPages, currentPage) {
                 <p class="card-text fw-bold text-dark mb-2 ">₹${row.defaultPrice.toLocaleString(
                   "hi"
                 )}</p>
-                <p class="card-text text-black " style="height: 48px;">${
+                <p class="card-text text-truncate text-black " style="height: 48px;">${
                   row.spec1
                 }</p>
                 
@@ -142,14 +133,12 @@ function updateProducts(products, wishlist, totalPages, currentPage) {
     container.append(html);
   });
 
-  let pageHTML = "";
   for (let i = 1; i <= totalPages; i++) {
-    pageHTML += `<li class="page-item ${i == currentPage ? "active" : ""}" >
-                <button class="page-link" name="page">${i}
-                </button>
-              </li>`;
+    const pageHTML = `<li class="page-item ${
+      i == currentPage ? "active" : ""
+    }" ><button class="page-link" name="page">${i}</button></li>`;
+    page.append(pageHTML);
   }
-  page.html(pageHTML);
 }
 
 function debounce(func, delay) {

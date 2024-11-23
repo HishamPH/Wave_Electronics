@@ -28,6 +28,7 @@ const ordersSchema = new mongoose.Schema({
       price: { type: Number },
       status: { type: String, default: "Order Placed" },
       confirmDate: { type: Date, default: null },
+      shippedDate: { type: Date, default: null },
       returnDate: { type: Date, default: null },
       deliveryDate: { type: Date, default: null },
       returnReason: { type: String },

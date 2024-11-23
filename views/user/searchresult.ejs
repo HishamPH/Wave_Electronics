@@ -1,28 +1,16 @@
 <%- include('../essentials/userHeader') %>
-
-
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
-
-<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
-
-<link href="https://cdn.jsdelivr.net/npm/mdb-ui-kit@8.0.0/css/mdb.min.css" rel="stylesheet" />
-
     
 </head>
 
 <body>
   <%- include('../essentials/loader') %>
-  <div id="spinner" class="d-flex justify-content-center align-items-center" >
-    <div class="spinner-border text-primary" role="status">
-      <span class="">Loading...</span>
-    </div>
-  </div>
+
     
   <header id="header" class="header fixed-top d-flex align-items-center bg-black " style="height: 95px;">
 
       <div class="d-flex align-items-center justify-content-between">
         <div class="col-lg-4  d-flex align-items-center">
-          <a href="/user/homepage" class="text-decoration-none">
+          <a href="/" class="text-decoration-none">
             <span class="h1 text-uppercase text-warning bg-dark px-2">WAVE</span>
             <span class="h1 text-uppercase text-dark bg-warning px-2 ml-n1">ELECTRONICS</span>
           </a>
@@ -81,7 +69,7 @@
   
             <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
               <li class="dropdown-header">
-                <h6><%= locals.name %></h6>
+                <h6><%= name %></h6>
                 <span>Web Designer</span>
               </li>
           
@@ -107,18 +95,8 @@
   
   </header>
 
-    <!-- Navbar Start -->
-   
-    <!-- Navbar End -->
-
- 
-
-
-    <!-- Featured Start -->
-  
     
-    <!-- Featured End -->
-  <div class="row mx-3" style="margin-top: 95px;">
+  <div class="row mx-3" style="margin-top: 85px;">
     <div class="container my-4">
       <div class="row justify-content-center">
         <div class="col-md-6">
@@ -134,7 +112,7 @@
         </div>
       </div>
     </div>
-    <div class="col-2  ">
+    <div class="col-xl-2 col-lg-3 col-md-4">
       <div class="card rounded-0 h-100 ">
         <div class="ms-3 mt-2  fs-5 fw-bolder"> 
           Filters
@@ -178,30 +156,58 @@
         </div>
       </div>
     </div>
-    <div class="col-10 ">
+    <div class="col-lg-10 col-lg-9  col-md-8">
       <div class="row h-100" id="searchResult">
-      
+        <% product.forEach((row)=>{ %>
+        
+        <div class="col-xl-3 col-lg-4 col-md-6 ">
+          <div class="card rounded-0 ">
+            <% if(row.offer){%>
+              <span class="badge position-absolute  p-2  bg-danger w-auto rounded-0  " style="top: 15px; right: 15px;">
+                - <%= row.offer.percentage %>%
+              </span>
+            <% } %>
+          
+            <img src="/images/<%= row.defaultVariant.images[0] %>" class="card-img-top card-img-auto" alt="Product Image" style="object-fit: cover;">
+            <div class="card-body bg-white" style="height: 220px;">
+              <a href="/user/detail/<%= row._id %>">
+                <div class="card-title m-0 text-truncate fw-bold "><%= row.productName %></div>
+                <p class="card-text fw-bold text-dark mb-2 ">₹$<%= row.defaultPrice.toLocaleString("hi") %></p>
+                <p class="card-text text-black text-truncate" style="height: 48px;"><%= row.spec1 %> </p>
+        
+              </a>
+              <div class="d-flex justify-content-between mt-3">
+                <button data-path="<%= row._id %>" class="btn btn-dark rounded-pill addtocart" data-mdb-ripple-init>
+                  Add to cart
+                </button>
+                <button data-path="<%=  row._id %>" class="btn d-flex justify-content-center align-items-center rounded-circle wishlist" style="height: 50px; width: 50px;background-color:#dadada;">
+                  <img src="/img/heart<%= wishlist.includes(row._id) ? "":"-white"  %>.png" style="width: 30px; height: 30px;" alt="heart"></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <% }) %>
       </div>
         <!-- Pagination controls -->
       <form id="pagination" class="mt-1">
         <nav aria-label="Product Pagination">
           <ul class="pagination justify-content-center" id="pagination-buttons">
-             
+            <% for (let i = 1; i <= totalPages; i++) { %>
+             <li class="page-item <%= i == currentPage ? " active" : "" %>">
+              <button class="page-link" name="page"><%= i %>
+              </button>
+              </li>
+
+              <% } %>
+              
           </ul>
         </nav>
       </form>
     </div>
+
   </div>
 
-  <!-- <nav aria-label="Page navigation example">
-    <ul class="pagination">
-      <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-      <li class="page-item"><a class="page-link" href="#">1</a></li>
-      <li class="page-item"><a class="page-link" href="#">2</a></li>
-      <li class="page-item"><a class="page-link" href="#">3</a></li>
-      <li class="page-item"><a class="page-link" href="#">Next</a></li>
-    </ul>
-  </nav> -->
     
    
    
@@ -210,14 +216,8 @@
   <button href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></button>
 
    <%- include('../essentials/footer') %>
-  <script defer> 
-    const pd = '<%- JSON.stringify(product) %>';
-    const wish = '<%- JSON.stringify(wishlist) %>';
-    const tp = '<%- JSON.stringify(totalPages) %>';
-    const cp = '<%- JSON.stringify(currentPage) %>'
-    console.log(tp)
-  </script>
-  <script src="/js/pagination.js" defer></script>
+ 
+  <script type="module" src="/js/pagination.js" defer></script>
   <!-- Template Javascript -->
   <script type="module" src="/js/cartCount.js" defer></script>
  

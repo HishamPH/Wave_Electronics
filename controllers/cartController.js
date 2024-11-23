@@ -267,6 +267,7 @@ module.exports = {
         end: { $gt: Date.now() },
         count: { $gt: 0 },
         status: true,
+        usedBy: { $nin: [userId] },
       });
       let adIndex = user.Address.findIndex((item) => item.main === true);
       let address = user.Address[adIndex];

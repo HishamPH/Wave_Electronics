@@ -257,18 +257,21 @@ module.exports = {
   },
   changeStatus: async (req, res) => {
     let id = req.params.id;
+    const { status } = req.body;
     let order = await Order.findOne({
       "items._id": id,
     });
     let index = order.items.findIndex((a) => a._id.toString() === id);
     order.items[index].status = req.body.status;
-    if (req.body.status === "delivered") {
+    if (status === "delivered") {
       console.log("DELIVERED");
       order.items[index].paymentStatus = "success";
       order.items[index].deliveryDate = new Date();
       order.paymentStatus = "success";
-    } else if (req.body.status === "confirmed") {
+    } else if (status === "confirmed") {
       order.items[index].confirmDate = new Date();
+    } else if (status == "shipped") {
+      order.items[index].shippedDate = new Date();
     }
 
     await order.save();

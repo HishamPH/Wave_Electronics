@@ -61,7 +61,9 @@ module.exports = {
 
   getDetailPage: async (req, res) => {
     let id = req.params.id;
-    let pd = await Products.findById(id).select("-__v");
+    let pd = await Products.findById(id)
+      .populate("offer category")
+      .select("-__v");
     const defaultVariant = pd.variant.find((variant) => variant.default);
     const colorSet = new Set();
     const storageSet = new Set();
@@ -259,7 +261,7 @@ module.exports = {
       let product = await Products.find({ status: true })
         .populate("offer")
         .sort({ defaultPrice: 1 })
-        .limit(8);
+        .limit(1);
       let cat = await Category.find();
       let wish = user.Wishlist;
       let wishlist = [];
@@ -272,9 +274,7 @@ module.exports = {
       product.forEach((item) => {
         item.defaultVariant = item.variant.find((variant) => variant.default);
       });
-      let totalPages = Math.ceil(noOfDocs / 8);
-      console.log(totalPages);
-      console.log(product[0].defaultVariant);
+      let totalPages = Math.ceil(noOfDocs / 1);
       res.render("user/searchresult", {
         product,
         cat,
@@ -306,7 +306,7 @@ module.exports = {
       wish.forEach((item) => {
         wishlist.push(item.product.toString());
       });
-      const limit = 8;
+      const limit = 1;
       let products = null;
       let totalDocs = 0;
       if (sort == "lth" || sort == "htl") {
@@ -332,13 +332,13 @@ module.exports = {
           productName: { $regex: new RegExp(query, "i") },
         });
         let currentSort;
-        if (sort == "lth") currentSort = 1;
+        if (sort == "az") currentSort = 1;
         else currentSort = -1;
         products = await Products.find({
           category: { $in: filters },
           productName: { $regex: new RegExp(query, "i") },
         })
-          .sort({ defaultPrice: currentSort })
+          .sort({ productName: currentSort })
           .collation({ locale: "en", strength: 2 })
           .populate("offer")
           .skip((page - 1) * limit)

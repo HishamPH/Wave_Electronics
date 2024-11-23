@@ -171,19 +171,14 @@
 })();
 
 $(document).ready(function () {
-  const links = $("a"); // jQuery selector for all anchor tags
+  const links = $("a");
   const loadingOverlay = $("#loadingOverlay");
-
   links.on("click", function (event) {
-    event.preventDefault(); // Prevent default navigation to see the loader effect
+    event.preventDefault();
     loadingOverlay.removeClass("d-none");
-    //loadingOverlay.css("display", "flex"); // Show the loader
-
-    const href = $(this).attr("href"); // Get the link's href
-
-    // Optional: Delay navigation slightly for better effect
+    const href = $(this).attr("href");
     setTimeout(() => {
       window.location.href = href;
-    }, 50); // Adjust delay as needed
+    }, 50);
   });
 });

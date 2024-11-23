@@ -1,7 +1,7 @@
 <%- include('../essentials/userHeader') %>
 
 
-    <link rel="stylesheet" href="/css/orderdetail.css">
+    <link rel="stylesheet" href="/css/orderTracker.css">
 
     <script src="https://unpkg.com/easyinvoice/dist/easyinvoice.min.js"></script>
 
@@ -10,6 +10,8 @@
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.17/jspdf.plugin.autotable.min.js"></script>
+
+
 
     <%- include('../essentials/userLayout') %>
     
@@ -32,61 +34,7 @@
         <div class="col-12">
           <div class="card ">
             <div class="card-body ">
-              <div class="col-12 d-flex justify-content-center  mt-3 ">
-                <div class="container">
-                  <div class="row">
-                    <div class="col-12 col-md-10 hh-grayBox pt45 pb20">
-                      <div class="row d-flex  justify-content-center ">
-                        <% if(pd.deliveryDate&&pd.confirmDate){ %>
-                          <div class="order-tracking completed">
-                            <span class="is-complete"></span>
-                            <p>Ordered<br><span id="date"><%= orderDate  %></span></p>
-                          </div>
-                          <div class="order-tracking completed">
-                            <span class="is-complete"></span>
-                            <p>Confirmed<br><span><%= pd.confirmDate.toLocaleString('en-US', { dateStyle: 'long' }) %></span></p>
-                          </div>
-                          <div class="order-tracking completed">
-                            <span class="is-complete"></span>
-                            <p>Delivered<br><span><%= pd.deliveryDate.toLocaleString('en-US', { dateStyle: 'long' }) %></span></p>
-                          </div>
-                        <% }else if(pd.confirmDate){%>
-                          <div class="order-tracking completed">
-                            <span class="is-complete"></span>
-                            <p>Ordered<br><span id="date"><%= orderDate  %></span></p>
-                          </div>
-                          <div class="order-tracking completed">
-                            <span class="is-complete"></span>
-                            <p>confirmed<br><span><%= pd.confirmDate.toLocaleString('en-US', { dateStyle: 'long' }) %></span></p>
-                          </div>
-                          <div class="order-tracking">
-                            <span class="is-complete"></span>
-                            <p>Delivered<br><span></span></p>
-                          </div>
-                        <% }else if(orderDate){ %>
-                          <div class="order-tracking completed">
-                            <span class="is-complete"></span>
-                            <p>Ordered<br><span id="date"><%= orderDate  %></span></p>
-                          </div>
-                          <div class="order-tracking">
-                            <span class="is-complete"></span>
-                            <p>Shipped<br><span></span></p>
-                          </div>
-                          <div class="order-tracking">
-                            <span class="is-complete"></span>
-                            <p>Delivered<br><span></span></p>
-                          </div>
-                        <% }%>
-
-                        
-                        
-                       
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-              </div>
+            
           
             </div>
             
@@ -215,6 +163,50 @@
           <button id="invoice">
             download invoice
           </button>
+
+
+
+
+
+<!-- ============================================================================== -->
+<div class="card h-auto">
+  <div class="order-tracker w-100">
+    <div class="steps">
+      <div class="step">
+        <div class="step-icon">✓</div>
+        <div class="step-label">Ordered</div>
+        <div class="step-details">Nov 23, 2024</div>
+      </div>
+  
+      <div class="step">
+        <div class="step-icon">✓</div>
+        <div class="step-label">Confirmed</div>
+        <div class="step-details">Nov 23, 2024</div>
+      </div>
+  
+      <div class="step">
+        <div class="step-icon">✓</div>
+        <div class="step-label">Shipped</div>
+        <div class="step-details">Nov 23, 2024</div>
+      </div>
+  
+      <div class="step">
+        <div class="step-icon">●</div>
+        <div class="step-label">Delivered</div>
+        <div class="step-details">Pending</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+<!-- ============================================================================================= -->
             
          
         </div><!-- End Left side columns -->
@@ -255,12 +247,38 @@
 
   <!-- Back to Top -->
   <button href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></button>
+  <script>
+    function updateProgress(currentStep) {
+        const totalSteps = document.querySelectorAll('.step').length; // Total steps in the tracker
+        const progressPercentage = ((currentStep - 1) / (totalSteps - 1)) * 90; // Calculate progress
+
+        // Update CSS variable for progress
+        const stepsContainer = document.querySelector('.steps');
+        stepsContainer.style.setProperty('--progress-width', `${progressPercentage}%`);
+
+        // Update step states
+        const steps = document.querySelectorAll('.step');
+        steps.forEach((step, index) => {
+          if (index < currentStep) {
+            step.classList.remove('incomplete');
+            step.querySelector('.step-icon').textContent = '✓'; // Mark as complete
+          } else {
+            step.classList.add('incomplete');
+            step.querySelector('.step-icon').textContent = '●'; // Mark as incomplete
+          }
+        });
+      }
+
+      // Example: Set progress to step 3
+      updateProgress(1);
 
 
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+  </script>
+
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <!-- Template Javascript -->
   <script type="module" src="/js/cartCount.js" defer></script>
+  <script type="module" src="/js/payment.js" defer></script>
   <script type="module" src="/js/payment.js" defer></script>
 
 <%- include('../essentials/userFooter') %>
