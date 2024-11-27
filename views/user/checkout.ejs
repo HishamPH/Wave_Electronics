@@ -1,320 +1,364 @@
 <%- include('../essentials/userHeader') %>
 
+<script src="https://cdn.jsdelivr.net/npm/js-image-zoom/js-image-zoom.min.js"></script>
+<style>
+  .coupon-card {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    width: 200px;
+  }
 
-    <script src="https://cdn.jsdelivr.net/npm/js-image-zoom/js-image-zoom.min.js"></script>
-  <style>
-    .coupon-card {
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-      width: 200px;
-    }
-  
-    .coupon-card::before {
-      content: '';
-      position: absolute;
+  .coupon-card::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 300%;
+    background: linear-gradient(
+      to bottom right,
+      rgba(255, 255, 255, 0.3) 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      transparent 100%
+    );
+    transform: rotate(45deg);
+    animation: lustre 5s infinite linear;
+  }
+
+  @keyframes lustre {
+    0% {
       top: -50%;
       left: -50%;
-      width: 200%;
-      height: 300%;
-      background: linear-gradient(to bottom right,
-          rgba(255, 255, 255, 0.3) 0%,
-          rgba(255, 255, 255, 0.1) 50%,
-          transparent 100%);
-      transform: rotate(45deg);
-      animation: lustre 5s infinite linear;
     }
-  
-    @keyframes lustre {
-      0% {
-        top: -50%;
-        left: -50%;
-      }
-  
-      100% {
-        top: 150%;
-        left: 150%;
-      }
+
+    100% {
+      top: 150%;
+      left: 150%;
     }
-  
-    .coupon-card.expired {
-      background-color: #b0504e;
-      /* Light red */
-    }
-  
-    .coupon-card.active {
-      background-color: #10bd10;
-      /* Light green */
-    }
-  
-    .coupon-card.unavailable {
-      background-color: #D3D3D3;
-      /* Light gray */
-    }
-  </style>
-    
+  }
+
+  .coupon-card.expired {
+    background-color: #b0504e;
+    /* Light red */
+  }
+
+  .coupon-card.active {
+    background-color: #10bd10;
+    /* Light green */
+  }
+
+  .coupon-card.unavailable {
+    background-color: #d3d3d3;
+    /* Light gray */
+  }
+</style>
+
 </head>
 
 <body>
   <%- include('../essentials/loader') %>
-    <!-- Topbar Start -->
-  <header id="header" class="header fixed-top d-flex align-items-center bg-light" style="height: 125px;">
+  <!-- Topbar Start -->
+  <header
+    id="header"
+    class="header fixed-top d-flex align-items-center bg-light"
+    style="height: 125px"
+  >
+    <div class="d-flex align-items-center justify-content-between">
+      <div class="col-lg-4 d-flex align-items-center">
+        <a href="/user/homepage" class="text-decoration-none">
+          <span class="h1 text-uppercase text-warning bg-dark px-2">WAVE</span>
+          <span class="h1 text-uppercase text-dark bg-warning px-2 ml-n1"
+            >ELECTRONICS</span
+          >
+        </a>
+        <!-- <i class="bi bi-list toggle-sidebar-btn"></i> -->
+      </div>
+    </div>
+    <!-- End Logo -->
 
-      <div class="d-flex align-items-center justify-content-between">
-        <div class="col-lg-4  d-flex align-items-center">
-          <a href="/user/homepage" class="text-decoration-none">
-            <span class="h1 text-uppercase text-warning bg-dark px-2">WAVE</span>
-            <span class="h1 text-uppercase text-dark bg-warning px-2 ml-n1">ELECTRONICS</span>
+    <div class="search-bar">
+      <form
+        class="search-form d-flex align-items-center"
+        method="POST"
+        action="#"
+      >
+        <input
+          type="text"
+          name="query"
+          placeholder="Search"
+          title="Enter search keyword"
+        />
+        <button type="submit" title="Search">
+          <i class="bi bi-search"></i>
+        </button>
+      </form>
+    </div>
+    <!-- End Search Bar -->
+
+    <nav class="header-nav ms-auto">
+      <ul class="d-flex align-items-center">
+        <li class="nav-item d-block d-lg-none">
+          <a class="nav-link nav-icon search-bar-toggle" href="#">
+            <i class="bi bi-search"></i>
           </a>
-          <!-- <i class="bi bi-list toggle-sidebar-btn"></i> -->
-        </div>
-        
-      </div><!-- End Logo -->
-  
-      <div class="search-bar">
-        <form class="search-form d-flex align-items-center" method="POST" action="#">
-          <input type="text" name="query" placeholder="Search" title="Enter search keyword">
-          <button type="submit" title="Search"><i class="bi bi-search"></i></button>
-        </form>
-      </div><!-- End Search Bar -->
-  
-      <nav class="header-nav ms-auto">
-        <ul class="d-flex align-items-center">
-  
-          <li class="nav-item d-block d-lg-none">
-            <a class="nav-link nav-icon search-bar-toggle " href="#">
-              <i class="bi bi-search"></i>
-            </a>
-          </li><!-- End Search Icon-->
-  
-        
-  
-    
-  
-          <li class="nav-item dropdown pe-3">
-  
-            <button class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-              <img src="/img/user.png" alt="Profile" class="rounded-circle">
-              <span class="d-none d-md-block dropdown-toggle ps-2"><%= name  %></span>
-            </button><!-- End Profile Iamge Icon -->
-  
-            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-              <li class="dropdown-header">
-                <h6><%= name  %></h6>
-                <span>Web Designer</span>
-              </li>
-          
-  
-              <li>
-                <a class="dropdown-item d-flex align-items-center" href="/user/userprofile/address">
-                  <i class="bi bi-person"></i>
-                  <span>My Profile</span>
-                </a>
-              </li>
-              <li >
-                <a class="dropdown-item d-flex align-items-center" href="/user/logout">
-                  <i class="bi bi-box-arrow-right text-danger"></i>
-                  <span class="text-danger">Sign Out</span>
-                </a>
-              </li>
-  
-            </ul><!-- End Profile Dropdown Items -->
-          </li><!-- End Profile Nav -->
-  
-        </ul>
-      </nav><!-- End Icons Navigation -->
-  
+        </li>
+        <!-- End Search Icon-->
+
+        <li class="nav-item dropdown pe-3">
+          <button
+            class="nav-link nav-profile d-flex align-items-center pe-0"
+            href="#"
+            data-bs-toggle="dropdown"
+          >
+            <img src="/img/user.png" alt="Profile" class="rounded-circle" />
+            <span class="d-none d-md-block dropdown-toggle ps-2"
+              ><%= name %></span
+            ></button
+          ><!-- End Profile Iamge Icon -->
+
+          <ul
+            class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile"
+          >
+            <li class="dropdown-header">
+              <h6><%= name %></h6>
+              <span>Web Designer</span>
+            </li>
+
+            <li>
+              <a
+                class="dropdown-item d-flex align-items-center"
+                href="/user/userprofile/address"
+              >
+                <i class="bi bi-person"></i>
+                <span>My Profile</span>
+              </a>
+            </li>
+            <li>
+              <a
+                class="dropdown-item d-flex align-items-center"
+                href="/user/logout"
+              >
+                <i class="bi bi-box-arrow-right text-danger"></i>
+                <span class="text-danger">Sign Out</span>
+              </a>
+            </li>
+          </ul>
+          <!-- End Profile Dropdown Items -->
+        </li>
+        <!-- End Profile Nav -->
+      </ul>
+    </nav>
+    <!-- End Icons Navigation -->
   </header>
-  <%// if(locals.news){ %>
-    <%// alert(locals.news) %>
-  <% //} %>
+  <%// if(locals.news){ %> <%// alert(locals.news) %> <% //} %>
 
-    <!-- Topbar End -->
-    
+  <!-- Topbar End -->
 
-  <section class="section dashboard position-relative mx-5" style="top:150px;"> 
-   
-      <div class="row">
-        <div class="col-lg-8 col-12">
-          
-          <div class="row overflow-auto bg-white " style="height: 250px; ">
-            <% if(address){ %>
-              <div class="col-xxl-6 col-md-12">
-                
-                <div class="card my-2 ">
-                  <h4 class="ms-3 mt-2 mb-0">Delivery Address</h4>
-                  <div class="card-body">
-                    <h5 class="card-title pb-0">
-                      <div style="font-weight: bold;"><%= address.name %></div>
-                    </h5>
-                    <p class="mb-0 py-0"><%= address.street %></p>
-                    <p class="m-0"><%= address.city %></p>
-                    <p class="m-0"><%= address.state %></p>
-                    <div class="d-flex justify-content-between mt-3 mb-2">
-                    
-                      
-                    </div>
-                  
-                  </div>
-                  
-                </div>
+  <section class="section dashboard position-relative mx-5" style="top: 150px">
+    <div class="row">
+      <div class="col-lg-8 col-12">
+        <div class="row overflow-auto bg-white" style="height: 250px">
+          <% if(address){ %>
+          <div class="col-xxl-6 col-md-12">
+            <div class="card my-2">
+              <h4 class="ms-3 mt-2 mb-0">Delivery Address</h4>
+              <div class="card-body">
+                <h5 class="card-title pb-0">
+                  <div style="font-weight: bold"><%= address.name %></div>
+                </h5>
+                <p class="mb-0 py-0"><%= address.street %></p>
+                <p class="m-0"><%= address.city %></p>
+                <p class="m-0"><%= address.state %></p>
+                <div class="d-flex justify-content-between mt-3 mb-2"></div>
               </div>
-            <% } %> 
+            </div>
           </div>
-          
-        </div><!-- End Recent Sales -->
-        <div class="col-12 col-lg-4">
-            
-              <div class="card">
-                <div class="card-body m-0">
-                  <div class="d-flex justify-content-between">
-                    <div class="h5 text-secondary fw-bold">
-                      Coupon
-                    </div>
-                    <div>
-                      
-                      <button type="button" class="btn btn-danger me-2" data-mdb-toggle="modal" data-mdb-target="#couponModal"
-                        data-mdb-ripple-init data-mdb-modal-init>
-                        show coupons
-                      </button>
-                    </div>
-                    
-                  </div>
-                  <div class="container mt-4">
-                    <div class="row g-3 align-items-center">
-                      <!-- Button -->
-                      <div class="col-auto">
-                        <button id="applyCoupon" class="btn btn-primary" type="button">Apply</button>
-                      </div>
-                      <!-- Input -->
-                      <div class="col">
-                        <input type="text" id="couponInput" class="form-control" placeholder="Enter coupon code" aria-label="Coupon Code">
-                      </div>
-                    </div>
-                  </div>
-                  
-                </div>
-              </div>
-              <div class="card mt-3">
-                <div class="card-body">
-                  <h5 class="text-secondary fw-bold mt-3">
-                    PRICE DETAILS
-                  </h5>
-                  <hr>
-                  <div class="d-flex justify-content-between m-3 ">
-                    <div class="">
-                      price(<%= total %> items)
-                    </div>
-                    <div class="" id="items-price">
-                      ₹ <%= totalPrice.toLocaleString('hi') %>
-                    </div>
-                  </div>
-                  <div class="d-flex justify-content-between m-3 ">
-                    <div class="">
-                      Discount
-                    </div>
-
-                    
-
-                    <div class="text-success " id="discount">
-                      – ₹<%= totalDiscount.toLocaleString('hi') %>
-                    </div>
-                  </div>
-                  <div class="d-flex justify-content-between mx-3">
-                  
-                    <div class="mr-5" id="couponname"></div>
-                    <div class="text-success" id="percent"></div>
-              
-                </div>
-                  <div class="d-flex justify-content-between m-3 ">
-                    <div class="">
-                      Delivery charges
-                    </div>
-                    <div class="" id="delivery-charge">
-                      <span class="text-secondary text-decoration-line-through ">₹200</span>
-                      <span class="text-success">Free</span>
-                    </div>
-                  </div>
-                  <hr>
-                  <div class="d-flex justify-content-between m-3 ">
-                    <div class="">
-                      Total amount
-                    </div>
-                    <div class="fw-bold" id="total-price" data-final-price="<%= fullPrice %>">
-                      ₹ <%= fullPrice.toLocaleString('hi') %>
-                    </div>
-                  </div>
-                
-                  <h5 class="text-secondary fw-bold mt-3 mb-3">
-                    PAYMENT METHODS
-                  </h5>
-                  <form id="paymentway" data-path="<%= cart._id%>">
-                    <div class="d-flex flex-column ">
-                      <div>
-                        <input type="radio" id="razorpay" name="method" value="card" checked>
-                        <label for="razorpay">Razorpay</label>
-                      </div>
-                      <div>
-                        <input type="radio" id="wallet" name="method" value="wallet">
-                        <label for="wallet">Wallet</label>
-                      </div>
-                      <div>
-                        <% if(fullPrice>10000){ %>
-                          <input type="radio" id="cod" name="method" value="COD" disabled>
-                          <label for="cod">Cash on Delivery<span class="text-danger">(COD not available for orders above
-                              10000)</span></label>
-                          <%} else{ %>
-                            <input type="radio" id="cod" name="method" value="COD">
-                            <label for="cod">Cash on Delivery</label>
-                            <% } %>
-                      </div>
-                
-                    </div>
-                
-                    <div class="d-flex justify-content-center mb-2">
-                      <button type="submit" class="btn btn-primary mt-3 mb-0 payment">
-                        PLACE ORDER
-                      </button>
-                    </div>
-                  </form>
-                
-                </div>
-              </div>
-                
-          
-            
+          <% } %>
         </div>
       </div>
-  </section>
- 
- 
+      <!-- End Recent Sales -->
+      <div class="col-12 col-lg-4">
+        <div class="card">
+          <div class="card-body m-0">
+            <div class="d-flex justify-content-between">
+              <div class="h5 text-secondary fw-bold">Coupon</div>
+              <div>
+                <button
+                  type="button"
+                  class="btn btn-danger me-2"
+                  data-mdb-toggle="modal"
+                  data-mdb-target="#couponModal"
+                  data-mdb-ripple-init
+                  data-mdb-modal-init
+                >
+                  show coupons
+                </button>
+              </div>
+            </div>
+            <div class="container mt-4">
+              <div class="row g-3 align-items-center">
+                <!-- Button -->
+                <div class="col-auto">
+                  <button
+                    id="applyCoupon"
+                    class="btn btn-primary"
+                    type="button"
+                  >
+                    Apply
+                  </button>
+                </div>
+                <!-- Input -->
+                <div class="col">
+                  <input
+                    type="text"
+                    id="couponInput"
+                    class="form-control"
+                    placeholder="Enter coupon code"
+                    aria-label="Coupon Code"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card mt-3">
+          <div class="card-body">
+            <h5 class="text-secondary fw-bold mt-3">PRICE DETAILS</h5>
+            <hr />
+            <div class="d-flex justify-content-between m-3">
+              <div class="">price(<%= total %> items)</div>
+              <div class="" id="total-price" data-total-price="<%= totalPrice %>">
+                ₹ <%= totalPrice.toLocaleString('hi') %>
+              </div>
+            </div>
+            <div class="d-flex justify-content-between m-3">
+              <div class="">Discount</div>
 
-  <div class="modal fade" id="couponModal" tabindex="-1" aria-labelledby="couponModalLabel" aria-hidden="true">
+              <div class="text-success" id="discount">
+                – ₹<%= totalDiscount.toLocaleString('hi') %>
+              </div>
+            </div>
+            <div class="d-flex justify-content-between mx-3">
+              <div class="mr-5" id="couponname"></div>
+              <div class="text-success" id="percent"></div>
+            </div>
+            <div class="d-flex justify-content-between m-3">
+              <div class="">Delivery charges</div>
+              <div class="" id="delivery-charge">
+                <span class="text-secondary text-decoration-line-through"
+                  >₹200</span
+                >
+                <span class="text-success">Free</span>
+              </div>
+            </div>
+            <hr />
+            <div class="d-flex justify-content-between m-3">
+              <div class="">Total amount</div>
+              <div
+                class="fw-bold"
+                id="final-price"
+                data-final-price="<%= fullPrice %>"
+              >
+                ₹ <%= fullPrice.toLocaleString('hi') %>
+              </div>
+            </div>
+
+            <h5 class="text-secondary fw-bold mt-3 mb-3">PAYMENT METHODS</h5>
+            <form id="paymentway" data-path="<%= cart._id%>">
+              <div class="d-flex flex-column">
+                <div>
+                  <input
+                    type="radio"
+                    id="razorpay"
+                    name="method"
+                    value="card"
+                    checked
+                  />
+                  <label for="razorpay">Razorpay</label>
+                </div>
+                <div>
+                  <input
+                    type="radio"
+                    id="wallet"
+                    name="method"
+                    value="wallet"
+                  />
+                  <label for="wallet">Wallet</label>
+                </div>
+                <div>
+                  <% if(fullPrice>10000){ %>
+                  <input
+                    type="radio"
+                    id="cod"
+                    name="method"
+                    value="COD"
+                    disabled
+                  />
+                  <label for="cod"
+                    >Cash on Delivery<span class="text-danger"
+                      >(COD not available for orders above 10000)</span
+                    ></label
+                  >
+                  <%} else{ %>
+                  <input type="radio" id="cod" name="method" value="COD" />
+                  <label for="cod">Cash on Delivery</label>
+                  <% } %>
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-center mb-2">
+                <button type="submit" class="btn btn-primary mt-3 mb-0 payment">
+                  PLACE ORDER
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div
+    class="modal fade"
+    id="couponModal"
+    tabindex="-1"
+    aria-labelledby="couponModalLabel"
+    aria-hidden="true"
+  >
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Coupons available</h5>
-          <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
+          <button
+            type="button"
+            class="btn-close"
+            data-mdb-dismiss="modal"
+          ></button>
         </div>
-        <div class="modal-body" style="height: 600px; overflow-y: auto;">
+        <div class="modal-body" style="height: 600px; overflow-y: auto">
           <div class="container">
             <div class="row">
               <% coupons.forEach((coupon)=>{ %>
-                <div class="col-lg-4 col-sm-6 col-12">
-                  <div class="card coupon-card h-100 active">
-                    <div class="card-body p-0">
-                      <h5 class="card-title"><%= coupon.discount %>% Off</h5>
-                      <p class="card-text m-0">Get <%= coupon.discount %>% off your next purchase</p>
-                      <p class="card-text m-0">
-                        <small class="text-muted">Expires: <%= coupon?.end.toLocaleString().slice(0,10)  %></small>
-                      </p>
-                      <p class="fw-bold text-white">code : <%= coupon.code  %></p>
-                    </div>
-                    
+              <div class="col-lg-4 col-sm-6 col-12">
+                <div class="card coupon-card h-100 active">
+                  <div class="card-body p-0">
+                    <h5 class="card-title"><%= coupon.discount %>% Off</h5>
+                    <p class="card-text m-0">
+                      Get <%= coupon.discount %>% off your next purchase
+                    </p>
+                    <p class="card-text m-0">
+                      <small class="text-muted"
+                        >Expires: <%= coupon?.end.toLocaleString().slice(0,10)
+                        %></small
+                      >
+                    </p>
+                    <p class="fw-bold text-white">code : <%= coupon.code %></p>
                   </div>
                 </div>
+              </div>
               <% }) %>
-              
+
               <!-- <div class="col-lg-4 col-sm-6 col-12">
                 <div class="card coupon-card h-100 expired">
                   <div class="card-body p-0">
@@ -347,10 +391,13 @@
   </div>
 
   <!-- Back to Top -->
-  <button href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></button>
-  <script src="https://checkout.razorpay.com/v1/checkout.js"></script> 
-    <script type="module" src="/js/payment.js" defer></script>
+  <button href="#" class="btn btn-primary back-to-top">
+    <i class="fa fa-angle-double-up"></i>
+  </button>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script type="module" src="/js/payment.js" defer></script>
 
   <!-- JavaScript Libraries -->
-  
-<%- include('../essentials/userFooter') %>
+
+  <%- include('../essentials/userFooter') %>
+

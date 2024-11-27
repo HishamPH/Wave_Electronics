@@ -7,12 +7,16 @@ const userAuth = async (req, res, next) => {
   try {
     const accessToken = req.cookies.accessToken;
     const decoded = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
+    const { _id, email } = decoded;
     if (!req.session.user) {
       console.log("there is no session so no party");
-      const user = await User.findById(decoded._id).select("-password -__v");
-      const cart = await Cart.findOne({ userId: decoded._id }).select("total");
+      const user = await User.findById(_id).select("-password -__v");
+      if (!user.status) {
+        return res.redirect("/user/logout");
+      }
+      const cart = await Cart.findOne({ userId: _id }).select("total");
       const { name, Wishlist } = user;
-      const { _id, email } = decoded;
+
       req.session.user = { _id, email, name };
       req.session.cartCount = cart?.total || 0;
       req.session.wishList = Wishlist.length || 0;

@@ -2,7 +2,7 @@ const Products = require("../models/productModel");
 const User = require("../models/userModel");
 
 module.exports = {
-  wishlist: async (req, res) => {
+  updateWishlist: async (req, res) => {
     try {
       const id = req.params.id;
       const { variant } = req.body;
@@ -24,7 +24,7 @@ module.exports = {
           item.color === currentVariant.color &&
           item.storage === currentVariant.storage
       );
-      let status = true;
+      let isAdded = true;
       if (index == -1) {
         user.Wishlist.push({
           product: id,
@@ -34,13 +34,13 @@ module.exports = {
         });
       } else {
         user.Wishlist.splice(index, 1);
-        status = false;
+        isAdded = false;
       }
       await user.save();
       const wishlist = user.Wishlist.length;
       req.session.wishList = wishlist;
       res.locals.wishList = req.session.wishList;
-      res.json({ status, wishlist });
+      res.status(200).json({ status: true, isAdded, wishlist });
     } catch (e) {
       console.error(e);
     }

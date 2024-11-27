@@ -139,10 +139,10 @@ $(document).ready(function () {
     const stockStatus = $("#stock-status");
     if (stock > 0) {
       stockStatus.text("In stock");
-      stockStatus.removeClass("text-danger").addClass("text-success");
+      stockStatus.removeClass("badge-danger").addClass("badge-success");
     } else {
       stockStatus.text("Out of stock");
-      stockStatus.removeClass("text-success").addClass("text-danger");
+      stockStatus.removeClass("badge-success").addClass("badge-danger");
     }
   }
 });

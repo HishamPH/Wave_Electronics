@@ -3,26 +3,27 @@ import { Success, Failed } from "./toast.js";
 $(document).ready(function () {
   $("#applyCoupon").click(function () {
     const code = $("#couponInput").val();
-    const fullPrice = $("#total-price").data("final-price");
-    applyCoupon(code, fullPrice);
+    const fullPrice = $("#final-price").data("final-price");
+    const totalPrice = $("#total-price").data("total-price");
+    applyCoupon(code, fullPrice, totalPrice);
   });
 
-  async function applyCoupon(code, fullPrice) {
+  async function applyCoupon(code, fullPrice, totalPrice) {
     try {
       const res = await axios.post(
         `/user/checkout/apply-coupon`,
-        { code, fullPrice },
+        { code, fullPrice, totalPrice },
         {
           headers: {
             "Content-Type": "application/json",
           },
         }
       );
-      const { status, finalPrice, couponDiscount, ID, message } = res.data;
+      const { status, finalPrice, percent, ID, message } = res.data;
       if (status) {
         $("#couponname").text("Coupon");
-        $("#percent").text(`-${couponDiscount}%`);
-        $("#total-price").text(`₹ ${finalPrice.toLocaleString("hi")}`);
+        $("#percent").text(`-${percent}%`);
+        $("#final-price").text(`₹ ${finalPrice.toLocaleString("hi")}`);
         Success(message);
       } else {
         Failed("some error occured");
@@ -33,11 +34,29 @@ $(document).ready(function () {
     }
   }
 
-  $("#paymentway").submit(function (e) {
+  $("#paymentway").submit(async function (e) {
     e.preventDefault();
-    let id = $(this).data("path");
-    let method = $(this).serialize();
-    newOrder(id, method);
+    const id = $(this).data("path");
+    const selectedMethod = $("input[name='method']:checked").val();
+    try {
+      const res = await axios.post(
+        `/user/placeorder/${id}`,
+        { method: selectedMethod },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const { type, key, newOrder, status } = res.data;
+      if (type == "card" && status) {
+        createOrder(newOrder, key);
+      }
+    } catch (err) {
+      Failed(err.response ? err.response.data.message : err.message);
+      console.log(err.message);
+    }
+    //newOrder(id, method);
   });
   function newOrder(id, method) {
     $.ajax({
@@ -114,16 +133,21 @@ function continuePaymentSuccess(id, res, status) {
   });
 }
 
-function paymentConfirm(or, order) {
+function createOrder(order, key) {
   var options = {
-    key: "rzp_test_3nb0fP5EBtY0f3",
-    amount: or.amount,
+    key: key,
+    amount: order.totalPrice * 100,
     currency: "INR",
     name: "Wave Electronics",
     description: "Test Transaction",
-    order_id: or.id,
+    order_id: order.orderId,
     handler: function (res) {
-      paymentSuccess(order, or.id);
+      const paymentData = {
+        razorpay_order_id: res.razorpay_order_id,
+        razorpay_payment_id: res.razorpay_payment_id,
+        razorpay_signature: res.razorpay_signature,
+      };
+      paymentSuccess(order, paymentData);
     },
     prefill: {
       name: "Hisham",
@@ -139,37 +163,66 @@ function paymentConfirm(or, order) {
   };
   var rzp1 = new Razorpay(options);
   rzp1.on("payment.failed", function (res) {
-    alert(res.error.code);
-    alert("there has been a payment failure");
-    paymentFailure(order, or.id);
-    //location.href = '/user/checkout'
+    paymentFailure(order);
   });
   rzp1.open();
 }
 
-function paymentFailure(order, id) {
-  let data = JSON.stringify(order);
-  $.ajax({
-    url: `/user/paymentfailed/${id}`,
-    method: "post",
-    contentType: "application/json",
-    data: data,
-    success: function (res) {
-      if (res.status) location.href = "/user/userprofile/orders";
-    },
-  });
+async function paymentFailure(order) {
+  try {
+    const res = await axios.post(
+      "/user/payment-failed",
+      {
+        order,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const { status, message } = res.data;
+    if (status) {
+      await Swal.fire({
+        icon: "error",
+        title: message,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      window.location.href = "/user/userprofile/orders";
+    }
+  } catch (err) {
+    Failed(err.response ? err.response.data.message : err.message);
+    console.log(err.message);
+  }
 }
 
-function paymentSuccess(order, id) {
-  let data = JSON.stringify(order);
-  // console.log(data)
-  $.ajax({
-    url: `/user/paymentsuccess/${id}`,
-    method: "post",
-    contentType: "application/json",
-    data: data,
-    success: function (res) {
-      location.href = "/user/userprofile/orders";
-    },
-  });
+async function paymentSuccess(order, paymentData) {
+  try {
+    const res = await axios.post(
+      "/user/payment-success",
+      {
+        order,
+        paymentData,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const { status, message } = res.data;
+    if (status) {
+      await Swal.fire({
+        icon: "success",
+        title: message,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      window.location.href = "/user/userprofile/orders";
+    }
+  } catch (err) {
+    Failed(err.response ? err.response.data.message : err.message);
+    console.log(err.message);
+  }
 }

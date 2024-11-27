@@ -140,7 +140,7 @@ module.exports = {
       res.render("user/cart", { msg: "your cart is empty" });
     }
   },
-  deleteFromCart: async (req, res) => {
+  deleteFromCart: async (req, res, next) => {
     try {
       console.log("deleting from cart");
       let id = req.params.id;
@@ -188,7 +188,7 @@ module.exports = {
         count: cart.total,
       });
     } catch (err) {
-      console.log(err);
+      next(err);
     }
   },
   changeQuantity: async (req, res) => {
@@ -200,18 +200,22 @@ module.exports = {
       }).populate("items.productId");
 
       let pdIndex = cart.items.findIndex((a) => a._id.toString() === id);
+      const currentCart = cart.items[pdIndex];
       cart.coupon = null;
-
-      const product = await Products.findById(cart.items[pdIndex].productId);
-      if (action === "increment" && cart.items[pdIndex].quantity < 2) {
-        if (product.stock <= 0) {
+      const product = await Products.findById(currentCart.productId._id);
+      const currentVariant = product.variant.find(
+        (item) =>
+          item.color == currentCart.color && item.storage == currentCart.storage
+      );
+      if (action === "increment" && currentCart.quantity < 2) {
+        if (currentVariant.stock < 2) {
           return res
             .status(404)
             .json({ status: false, message: "no stock available" });
         }
-        cart.items[pdIndex].quantity++;
+        currentCart.quantity++;
       } else if (action === "decrement" && value > 1) {
-        cart.items[pdIndex].quantity--;
+        currentCart.quantity--;
       }
       await cart.save();
       let price;
@@ -395,7 +399,7 @@ module.exports = {
     }
   },
   applyCoupon: async (req, res) => {
-    const { code, fullPrice } = req.body;
+    const { code, fullPrice, totalPrice } = req.body;
     const userId = req.session.user._id;
     const user = await User.findById(userId);
     let cart = await Cart.findOne({ userId: user._id }).populate(
@@ -429,10 +433,12 @@ module.exports = {
     }
     let ID = coupon._id;
 
-    const couponDiscount = coupon.discount;
-    console.log(couponDiscount, fullPrice);
-    const fullDiscount = fullPrice * (couponDiscount / 100);
-    const finalPrice = fullPrice - fullDiscount;
+    const percent = coupon.discount;
+    const currentDiscount = totalPrice - fullPrice;
+    console.log(percent, currentDiscount);
+    const fullDiscount =
+      Math.floor(totalPrice * (percent / 100)) + currentDiscount;
+    const finalPrice = totalPrice - fullDiscount;
     coupon.count--;
     req.session.totalPrice = finalPrice;
     cart.coupon = coupon._id;
@@ -443,7 +449,7 @@ module.exports = {
       status: true,
       message: "coupon applied",
       finalPrice,
-      couponDiscount,
+      percent,
       ID,
     });
   },

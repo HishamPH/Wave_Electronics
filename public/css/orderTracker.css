@@ -26,7 +26,7 @@
   width: 35px;
   height: 35px;
   border-radius: 50%;
-  background: #4CAF50;
+  background: #4caf50;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -60,7 +60,7 @@
 
 /* Gray line for the full bar */
 .steps::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 17px;
   left: 40px;
@@ -72,14 +72,52 @@
 
 /* Green progress line */
 .steps::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 17px;
   left: 40px;
   height: 3px;
-  background: #4CAF50;
+  background: #4caf50;
   width: var(--progress-width);
   /* Use CSS variable for dynamic width */
   z-index: 0;
   transition: width 0.5s ease-in-out;
+}
+
+/* ======= STAR RATING CSS======================= */
+
+.rate {
+  float: left;
+  height: 46px;
+  padding: 0 10px;
+}
+.rate:not(:checked) > input {
+  position: absolute;
+  top: -9999px;
+}
+.rate:not(:checked) > label {
+  float: right;
+  width: 1em;
+  overflow: hidden;
+  white-space: nowrap;
+  cursor: pointer;
+  font-size: 30px;
+  color: #ccc;
+}
+.rate:not(:checked) > label:before {
+  content: "★ ";
+}
+.rate > input:checked ~ label {
+  color: #ffc700;
+}
+.rate:not(:checked) > label:hover,
+.rate:not(:checked) > label:hover ~ label {
+  color: #deb217;
+}
+.rate > input:checked + label:hover,
+.rate > input:checked + label:hover ~ label,
+.rate > input:checked ~ label:hover,
+.rate > input:checked ~ label:hover ~ label,
+.rate > label:hover ~ input:checked ~ label {
+  color: #c59b08;
 }

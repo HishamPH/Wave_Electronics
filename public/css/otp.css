@@ -15,9 +15,11 @@
   text-align: center;
   border: 1px solid #ddd;
 }
+
 .otp-field input:focus {
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
 }
+
 .otp-field input::-webkit-inner-spin-button,
 .otp-field input::-webkit-outer-spin-button {
   display: none;
@@ -27,26 +29,21 @@
   font-size: 12px;
 }
 
-.cd__main{
+.cd__main {
   background: #fff;
   padding: 20px;
+  display: flex;
+  width: 100%;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
-  
 }
 
-.cd__main{
-    display: flex;
-    width: 100%;
+@media only screen and (min-width: 1360px) {
+  .cd__main {
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 24px;
+  }
 }
-
-@media only screen and (min-width: 1360px){
-    .cd__main{
-      max-width: 1280px;
-      margin-left: auto;
-      margin-right: auto; 
-      padding: 24px;
-    }
-}
-

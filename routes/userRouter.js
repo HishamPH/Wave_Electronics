@@ -33,7 +33,7 @@ router
   .post(authController.postAddUser);
 
 router
-  .route("/emailverification")
+  .route("/email-verification")
   .get(authController.getEmailVerification)
   .post(authController.postEmailVerification);
 
@@ -101,7 +101,11 @@ router.get("/wishlist", userAuth, wishlistController.getWishlist);
 
 router.get("/wishlist/delete/:id", userAuth, wishlistController.deleteWishlist);
 
-router.get("/addwishlist/:id", userAuth, wishlistController.wishlist);
+router.post(
+  "/update-wishlist/:id",
+  userAuth,
+  wishlistController.updateWishlist
+);
 
 //===================== CHECKOUT ======================
 
@@ -127,11 +131,11 @@ router.get("/userprofile/orders", userAuth, orderController.getUserOrders);
 
 router.post("/placeorder/:id", userAuth, orderController.placeOrder);
 
-router.post("/paymentfailed/:id", userAuth, orderController.paymentFailed);
+router.post("/payment-failed", userAuth, orderController.paymentFailed);
 
-router.post("/paymentsuccess/:id", userAuth, orderController.paymentSuccess);
+router.post("/payment-success", userAuth, orderController.paymentSuccess);
 
-router.get("/orders/cancelorders/:id", userAuth, orderController.cancelOrders);
+router.put("/order/cancel-order/:id", userAuth, orderController.cancelOrders);
 
 router.post("/orders/returnorder/:id", userAuth, orderController.returnOrder);
 
@@ -142,6 +146,10 @@ router.post(
   userAuth,
   orderController.continuePayment
 );
+
+//===================== REVIEWS ========================
+
+router.post("/review-product/:id", userAuth, orderController.reviewProduct);
 
 //===================== Profile ============================
 

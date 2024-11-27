@@ -13,6 +13,7 @@ const shippedAddressSchema = new mongoose.Schema({
 const ordersSchema = new mongoose.Schema({
   userId: { type: Schema.Types.ObjectId, ref: "User" },
   status: { type: String, default: "Order Placed" },
+  orderId: { type: String },
   items: [
     {
       orderId: { type: String },
@@ -22,7 +23,7 @@ const ordersSchema = new mongoose.Schema({
         required: true,
       },
       color: { type: String, required: true },
-      storage: { type: String, required: true },
+      storage: { type: String, default: null },
       image: { type: String, required: true },
       quantity: { type: Number },
       price: { type: Number },

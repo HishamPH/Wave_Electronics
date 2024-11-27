@@ -1,25 +1,22 @@
 <%- include('../essentials/userHeader') %>
 
+<link rel="stylesheet" href="/css/orderTracker.css" />
 
-    <link rel="stylesheet" href="/css/orderTracker.css">
+<script src="https://unpkg.com/easyinvoice/dist/easyinvoice.min.js"></script>
 
-    <script src="https://unpkg.com/easyinvoice/dist/easyinvoice.min.js"></script>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
+  integrity="sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRhy5X5AAOnx5S09ydFYWWNSfcEqDTTHgtNA=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.17/jspdf.plugin.autotable.min.js"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRhy5X5AAOnx5S09ydFYWWNSfcEqDTTHgtNA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<%- include('../essentials/userLayout') %>
 
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.17/jspdf.plugin.autotable.min.js"></script>
-
-
-
-    <%- include('../essentials/userLayout') %>
-    
-  
-  <main id="main" class="main" style="top:300px;">
-   
-
-    <!-- <div class="pagetitle">
+<main id="main" class="main" style="top: 300px">
+  <!-- <div class="pagetitle">
       <h1>Dashboard</h1>
       <nav>
         <ol class="breadcrumb">
@@ -29,256 +26,295 @@
       </nav>
     </div> -->
 
-    <section class="section dashboard position-relative" style="top:70px">
-      <div class="row">
-        <div class="col-12">
-          <div class="card ">
-            <div class="card-body ">
-            
-          
+  <section class="section dashboard position-relative" style="top: 70px">
+    <div class="row">
+      <div class="card">
+        <div class="card-body d-flex justify-content-between align-items-top">
+          <div class="ms-3">
+            <h5 class="fw-bold">Delivery Address</h5>
+            <div id="name"><%= address.name %>,</div>
+            <div id="address"><%= address.street %>,</div>
+            <div id="zip"><%= address.pincode %>,</div>
+            <div class="d-flex">
+              <div id="city"><%= address.city %>,</div>
+              <div id="country"><%= address.state %></div>
             </div>
-            
           </div>
-          <div class="card ">
-            <div class="card-body ">
-              <div class="col-12 d-flex justify-content-start  mt-3 ">
-                <div class="d-flex " style="width: 400px;">
-                  <img src="/images/<%= pd.image %>" style="width: 120px;" alt="">
-                  <div class="mt-3 ms-2">
-                    <h6 id="pdname"><%= pd.productId.productName  %></h6>
-                    <p>₹<%= pd.price.toLocaleString('hi') %></p>
-                    <p >quantity : <span id="pdq">
-                      <%= pd.quantity  %>
-                    </span></p>
-                  </div>
-                  <div class="d-none " id="orderId">
-                    <%= pd._id  %>
-                  </div>
-                  <div class="d-none " id="pdprice">
-                    <%= pd.price  %>
-                  </div>
-                  <div class="d-none " id="coupon">
-                    <%= coupon  %>
-                  </div>
-
-                  <div class="d-none " id="orderId">
-                    <%= pd.orderId  %>
-                  </div>
-                  
-                </div>
-                
-                <div class="" style="width: 180px;">
-                  <div class="fw-bold mb-3 ">
-                    status
-                  </div>
-                
-
-                    <% if(pd.status == 'cancelled') {%>
-                      <span class="badge bg-danger">
-                        <%= pd.status %>
-                      </span>
-                    <%}else if(pd.status=='confirmed'){%>
-                      <span class="badge bg-warning ">
-                        <%= pd.status %>
-                      </span>
-                    <%}else if(pd.status=='shipped'){%>
-                      <span class="badge bg-info ">
-                        <%= pd.status %>
-                      </span>
-                    <%}else if(pd.status=='delivered'){%>
-                      <span class="badge bg-success">
-                      <%= pd.status %>
-                      </span>
-                
-                      <% if(checkDate&&(new Date() < checkDate)){%>
-                      <button type="button" class="btn btn-warning"   data-bs-toggle="modal" data-bs-target="#returnReason">
-                        return
-                      </button>
-                      <% }  %>
-
-                    <%}else if(pd.status == 'Order Placed') {%>
-                      <span class="badge bg-success p-2 bg-opacity-25 text-success  ">
-                        <%= pd.status %>
-                      </span>
-                      <a href="/user/orders/cancelorders/<%= pd._id  %>">
-                        <button id="cancelOrder" class="btn btn-danger ">
-                          cancel
-                        </button>
-                      </a>
-                    <% }else if(pd.status == 'returned') {%>
-                      <span class="badge bg-warning  ">
-                        <%= pd.status %>
-                      </span>
-                    <% }else if(pd.status == 'return request'){ %>
-                      <span class="badge bg-warning  ">
-                        <%= pd.status %>
-                      </span>
-                    <% }else if(pd.status == 'Payment Failed'){ %>
-                      <span class="badge bg-secondary bg-opacity-25  p-2 text-black  ">
-                        <%= pd.status %>
-                      </span>
-                      <a href="/user/orders/cancelorders/<%= pd._id %>">
-                        <button id="cancelOrder" class="btn btn-danger p-1 ">
-                          cancel
-                        </button>
-                      </a>
-                      <div class="d-flex justify-content-center mt-2 ">
-                    
-                        <button class="btn btn-secondary shadow-sm rounded-pill " id="continuePayment" data-path="<%= pd._id  %>">
-                          Pay now
-                        </button>
-                        
-                      </div>
-                      
-                    <% }else{%>
-                      <span class="badge bg-secondary p-2 rounded-pill   ">
-                        <%= pd.status %>
-                      </span>
-                    <% }  %>
-                
-                </div>
-                <div class="border-start  border-dark">
-                </div>
-                <div class="ms-3 ">
-                  <h5 class="fw-bold ">Delivery Address</h5>
-
-                  <div id="name"> <%= address.name  %>,</div>
-                  <div id="address"><%= address.street  %>,</div>
-                  <div id="zip"> <%= address.pincode  %>,</div>
-                  <div class="d-flex ">
-                    <div id="city"><%= address.city %>, </div>
-                    <div id="country"> <%= address.state  %></div>
-                  </div>
-                  
-                 
-                  
-                 
-
-                </div>
+          <div>
+            <button id="invoice" class="btn btn-primary px-3 py-2 my-0">
+              download invoice
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="card my-3">
+        <div class="card-body">
+          <div class="d-flex justify-content-between mt-3">
+            <div class="d-flex">
+              <img src="/images/<%= pd.image %>" style="width: 120px" alt="" />
+              <div class="mt-3 ms-2">
+                <h6 id="pdname"><%= pd.productId.productName %></h6>
+                <p>₹<%= pd.price.toLocaleString('hi') %></p>
+                <p>quantity : <span id="pdq"> <%= pd.quantity %> </span></p>
               </div>
-          
             </div>
-            
+            <div class="d-flex flex-column align-items-center">
+              <div class="fw-bold mb-3">Status</div>
+              <% if(pd.status=='cancelled' ) {%>
+              <div class="badge bg-danger"><%= pd.status %></div>
+              <%}else if(pd.status=='confirmed' ){%>
+              <div class="badge bg-warning"><%= pd.status %></div>
+              <%}else if(pd.status=='shipped' ){%>
+              <div class="badge bg-info"><%= pd.status %></div>
+              <%}else if(pd.status=='delivered' ){%>
+              <div class="badge bg-success"><%= pd.status %></div>
+
+              <%}else if(pd.status=='Order Placed' ) {%>
+              <span class="badge bg-success p-2 bg-opacity-25 text-success">
+                <%= pd.status %>
+              </span>
+              <% }else if(pd.status=='returned' ) {%>
+              <span class="badge bg-warning"> <%= pd.status %> </span>
+              <% }else if(pd.status=='return request' ){ %>
+              <span class="badge bg-warning"> <%= pd.status %> </span>
+              <% }else if(pd.status=='Payment Failed' ){ %>
+              <span class="badge bg-secondary bg-opacity-25 p-2 text-black">
+                <%= pd.status %>
+              </span>
+
+              <% }else{%>
+              <span class="badge bg-secondary p-2 rounded-pill">
+                <%= pd.status %>
+              </span>
+              <% } %>
+            </div>
+
+            <div class="d-flex flex-column align-items-center">
+              <div class="fw-bold mb-3">Action</div>
+              <% if(pd.status =="Payment Failed") { %>
+              <button
+                id="cancelOrder"
+                class="btn btn-danger rounded-pill"
+                data-cancel-id="<%= pd._id %>"
+              >
+                cancel
+              </button>
+              <button
+                class="btn btn-secondary shadow-sm rounded-pill mt-2"
+                id="continuePayment"
+                data-path="<%= pd._id  %>"
+              >
+                Pay now
+              </button>
+              <% } else if(pd.status == "delivered") { %> <%if(checkDate&&(new
+              Date() < checkDate)){%>
+              <button
+                type="button"
+                class="btn btn-danger me-2"
+                data-mdb-toggle="modal"
+                data-mdb-target="#returnModal"
+                data-mdb-ripple-init
+                data-mdb-modal-init
+              >
+                return
+              </button>
+              <% } %>
+              <button
+                class="btn btn-primary"
+                data-mdb-toggle="modal"
+                data-mdb-target="#reviewModal"
+                data-mdb-ripple-init
+                data-mdb-modal-init
+              >
+                Rate and Review
+              </button>
+              <% }else if(pd.status === "Order Placed") { %>
+              <button
+                id="cancelOrder"
+                class="btn btn-danger rounded-pill"
+                data-cancel-id="<%= pd._id %>"
+              >
+                cancel
+              </button>
+              <%}else{ %>
+              <div class="badge badge-secondary p-3">No Action</div>
+              <% } %>
+            </div>
           </div>
-          <button id="invoice">
-            download invoice
-          </button>
-
-
-
-
-
-<!-- ============================================================================== -->
-<div class="card h-auto">
-  <div class="order-tracker w-100">
-    <div class="steps">
-      <div class="step">
-        <div class="step-icon">✓</div>
-        <div class="step-label">Ordered</div>
-        <div class="step-details">Nov 23, 2024</div>
+        </div>
       </div>
-  
-      <div class="step">
-        <div class="step-icon">✓</div>
-        <div class="step-label">Confirmed</div>
-        <div class="step-details">Nov 23, 2024</div>
+
+      <!-- ==================================hidden items====================== -->
+
+      <div class="d-none" id="orderId"><%= pd._id %></div>
+      <div class="d-none" id="pdprice"><%= pd.price %></div>
+      <div class="d-none" id="coupon"><%= coupon %></div>
+
+      <div class="d-none" id="orderId"><%= pd.orderId %></div>
+
+      <!-- ============================== -->
+
+      <!-- ============================================================================== -->
+      <div class="card h-auto">
+        <div class="order-tracker w-100">
+          <div class="steps">
+            <div class="step">
+              <div class="step-icon">✓</div>
+              <div class="step-label">Ordered</div>
+              <div class="step-details">Nov 23, 2024</div>
+            </div>
+
+            <div class="step">
+              <div class="step-icon">✓</div>
+              <div class="step-label">Confirmed</div>
+              <div class="step-details">Nov 23, 2024</div>
+            </div>
+
+            <div class="step">
+              <div class="step-icon">✓</div>
+              <div class="step-label">Shipped</div>
+              <div class="step-details">Nov 23, 2024</div>
+            </div>
+
+            <div class="step">
+              <div class="step-icon">●</div>
+              <div class="step-label">Delivered</div>
+              <div class="step-details">Pending</div>
+            </div>
+          </div>
+        </div>
       </div>
-  
-      <div class="step">
-        <div class="step-icon">✓</div>
-        <div class="step-label">Shipped</div>
-        <div class="step-details">Nov 23, 2024</div>
+
+      <!-- ============================================================================================= -->
+    </div>
+  </section>
+</main>
+<!-- End #main -->
+<!-- Button trigger modal -->
+
+<div
+  class="modal fade"
+  id="returnModal"
+  tabindex="-1"
+  aria-labelledby="returnModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">New message</h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-mdb-dismiss="modal"
+          aria-label="Close"
+        ></button>
       </div>
-  
-      <div class="step">
-        <div class="step-icon">●</div>
-        <div class="step-label">Delivered</div>
-        <div class="step-details">Pending</div>
+      <div class="modal-body">
+        <form action="/user/orders/returnorder/<%= pd._id %>" method="post">
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">
+              Recipient:
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              name="return"
+              id="recipient-name"
+            />
+          </div>
+          <button type="submit" class="btn btn-primary">Send message</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-mdb-dismiss="modal"
+        >
+          Close
+        </button>
       </div>
     </div>
   </div>
 </div>
 
-
-
-
-
-
-
-
-<!-- ============================================================================================= -->
-            
-         
-        </div><!-- End Left side columns -->
+<div
+  class="modal fade"
+  id="reviewModal"
+  tabindex="-1"
+  aria-labelledby="reviewModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">
+          Review the product
+        </h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-mdb-dismiss="modal"
+          aria-label="Close"
+        ></button>
       </div>
-    </section>
+      <div class="modal-body">
+        <form
+          id="review-form"
+          data-order-id="<%= pd._id %>"
+          class="d-flex flex-column align-items-start"
+        >
+          <div class="rate">
+            <input type="radio" id="star5" name="rating" value="5" required />
+            <label for="star5" title="text">5 stars</label>
+            <input type="radio" id="star4" name="rating" value="4" />
+            <label for="star4" title="text">4 stars</label>
+            <input type="radio" id="star3" name="rating" value="3" />
+            <label for="star3" title="text">3 stars</label>
+            <input type="radio" id="star2" name="rating" value="2" />
+            <label for="star2" title="text">2 stars</label>
+            <input type="radio" id="star1" name="rating" value="1" />
+            <label for="star1" title="text">1 star</label>
+          </div>
+          <div class="w-100">
+            <label for="recipient-name" class="col-form-label"> title </label>
+            <input
+              type="text"
+              class="form-control"
+              name="title"
+              id="recipient-name"
+              required
+            />
+          </div>
+          <div class="mb-3 w-100">
+            <label for="recipient-name" class="col-form-label">
+              Description
+            </label>
+            <textarea
+              type="textarea"
+              class="form-control"
+              name="description"
+              id="recipient-name"
+              required
+            ></textarea>
+          </div>
 
-  </main><!-- End #main -->
-  <!-- Button trigger modal -->
-
-
-
-
-  <div class="modal fade" id="returnReason" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">New message</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form action="/user/orders/returnorder/<%= pd._id %>" method="post">
-            <div class="mb-3">
-              <label for="recipient-name" class="col-form-label">Recipient:</label>
-              <input type="text" class="form-control" name="return" id="recipient-name">
-            </div>
-            <button type="submit" class="btn btn-primary">Send message</button>
-       
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          
-          
-        </div>
+          <button type="submit" class="btn btn-primary">Send Review</button>
+        </form>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Back to Top -->
-  <button href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></button>
-  <script>
-    function updateProgress(currentStep) {
-        const totalSteps = document.querySelectorAll('.step').length; // Total steps in the tracker
-        const progressPercentage = ((currentStep - 1) / (totalSteps - 1)) * 90; // Calculate progress
+<!-- Back to Top -->
+<button href="#" class="btn btn-primary back-to-top">
+  <i class="fa fa-angle-double-up"></i>
+</button>
 
-        // Update CSS variable for progress
-        const stepsContainer = document.querySelector('.steps');
-        stepsContainer.style.setProperty('--progress-width', `${progressPercentage}%`);
-
-        // Update step states
-        const steps = document.querySelectorAll('.step');
-        steps.forEach((step, index) => {
-          if (index < currentStep) {
-            step.classList.remove('incomplete');
-            step.querySelector('.step-icon').textContent = '✓'; // Mark as complete
-          } else {
-            step.classList.add('incomplete');
-            step.querySelector('.step-icon').textContent = '●'; // Mark as incomplete
-          }
-        });
-      }
-
-      // Example: Set progress to step 3
-      updateProgress(1);
-
-
-  </script>
-
-  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-  <!-- Template Javascript -->
-  <script type="module" src="/js/cartCount.js" defer></script>
-  <script type="module" src="/js/payment.js" defer></script>
-  <script type="module" src="/js/payment.js" defer></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<!-- Template Javascript -->
+<script type="module" src="/js/payment.js" defer></script>
+<script type="module" src="/js/user/orderStatus.js" defer></script>
 
 <%- include('../essentials/userFooter') %>

@@ -47,10 +47,10 @@
                     </div>
                     <div class="card rounded-0 ">
                       
-                      <img src="/images/<%= row.pd.images[0]  %>" class="card-img-top card-img-auto" alt="Product Image" style="object-fit: cover;">
+                      <img src="/images/<%= row.pd.variant[0].images[0]  %>" class="card-img-top card-img-auto" alt="Product Image" style="object-fit: cover;">
                       <div class="card-body bg-white" >
                        
-                        <div class="card-title m-0 text-truncate fw-bold "><%= row.pd.ProductName  %></div>
+                        <div class="card-title m-0 text-truncate fw-bold "><%= row.pd.productName  %></div>
                         
                       
                       
@@ -82,7 +82,7 @@
                       <i class="mx-1 fs-4  bi-star-fill text-warning "></i>
                       <% } %>
                     </div>
-                    <div class="bg-secondary text-white fw-bold  p-5 shadow-sm "><%= row.pd.Name  %></div>
+                    <div class="bg-secondary text-white fw-bold  p-5 shadow-sm "><%= row.pd  %></div>
                     <div class="d-flex justify-content-center mt-4 fs-5 "><%= row.count %> items sold
                     </div>
                   </div>

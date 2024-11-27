@@ -177,11 +177,11 @@
                     <p class="h6 mt-1">
                         Available offers
                     </p>
-                    <p class="text-success my-0" style="font-size: 15px;"><i class="fa fa-tag"></i><%= pd.discount %>% off on this prouduct</p>
+                    <p class="text-success my-0" style="font-size: 15px;"><i class="fa fa-tag"></i> <%= pd.discount %>% off on this prouduct</p>
                     <% if(pd.offer){ %>
-                        <p class="text-success my-0" style="font-size: 15px;"><i class="fa fa-tag"></i><%= pd.offer.percentage %>% off on all <%= pd.category.categoryName  %></p>
+                        <p class="text-success my-0" style="font-size: 15px;"><i class="fa fa-tag"></i> <%= pd.offer.percentage %>% off on all <%= pd.category.categoryName  %> </p>
                     <% } %>
-                    <p id="stock-status" class="my-4 badge fs-6 <%= defaultVariant.stock > 0 ? "badge-success":"badge-danger"  %>"><%= defaultVariant.stock > 0 ? "In stock":"Out of stock" %> </p>
+                    <p id="stock-status" class="my-4 badge fs-6 <%= defaultVariant.stock > 0 ? "badge-success":"badge-danger"%>"><%= defaultVariant.stock > 0 ? "In stock":"Out of stock" %> </p>
             
             
                     <div class="d-flex mb-4">
@@ -200,7 +200,7 @@
 
                     <div class="d-flex align-items-center mb-2 pt-2">
                         <% if(isUser) { %>
-                            <button data-path="<%= pd._id %>" class="btn btn-primary px-3 rounded-pill addtocart">
+                            <button data-path="<%= pd._id %>" class="btn btn-primary px-3 rounded-pill addtocart" data-mdb-ripple-init>
                                 <i class="fa fa-shopping-cart mr-1"></i> Add To cart
                             </button>
                             <% } else { %>

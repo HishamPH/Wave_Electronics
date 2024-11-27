@@ -48,8 +48,8 @@ $(document).ready(function () {
 
       $(`#pd-${id}`).text(quantity);
       $(`#it${id}`).text((quantity * price).toLocaleString("hi"));
-      $("#items-price").text(`₹ ${totalPrice.toLocaleString("hi")}`);
-      $("#total-price").text(
+      $("#total-price").text(`₹ ${totalPrice.toLocaleString("hi")}`);
+      $("#final-price").text(
         `₹ ${(totalPrice - totalDiscount).toLocaleString("hi")}`
       );
       $("#discount").text(`– ₹${totalDiscount.toLocaleString("hi")}`);
@@ -90,14 +90,14 @@ $(document).ready(function () {
         } else if (res.applied) {
           $("#couponname").text("Coupon");
           $("#percent").text(`-${res.discount}%`);
-          $("#total-price").text(`₹ ${res.fullPrice.toLocaleString("hi")}`);
+          $("#final-price").text(`₹ ${res.fullPrice.toLocaleString("hi")}`);
           $(`#applyCoupon${res.ID}`).addClass("d-none");
           $(`#removeCoupon${res.ID}`).removeClass("d-none");
           alert("coupon applied");
         } else {
           $("#couponname").text("");
           $("#percent").text("");
-          $("#total-price").text(`₹ ${res.fullPrice.toLocaleString("hi")}`);
+          $("#final-price").text(`₹ ${res.fullPrice.toLocaleString("hi")}`);
           $(`#applyCoupon${res.ID}`).removeClass("d-none");
           $(`#removeCoupon${res.ID}`).addClass("d-none");
           alert("Coupon removed");
@@ -139,8 +139,8 @@ $(document).ready(function () {
         if (row.length > 0) {
           row.remove();
           $("#items-count").text(`price(${count} items)`);
-          $("#items-price").text(`₹ ${totalPrice.toLocaleString("hi")}`);
-          $("#total-price").text(
+          $("#total-price").text(`₹ ${totalPrice.toLocaleString("hi")}`);
+          $("#final-price").text(
             `₹ ${(totalPrice - totalDiscount).toLocaleString("hi")}`
           );
           $("#discount").text(`– ₹${totalDiscount.toLocaleString("hi")}`);

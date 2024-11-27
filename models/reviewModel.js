@@ -6,7 +6,7 @@ const reviewSchema = new mongoose.Schema(
   {
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     productId: { type: Schema.Types.ObjectId, ref: "Product", required: true },
-    storage: { type: String, required: true },
+    storage: { type: String, default: null },
     color: { type: String, required: true },
     rating: { type: Number, required: true },
     title: { type: String, required: true },

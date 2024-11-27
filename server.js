@@ -3,17 +3,14 @@ const session = require("express-session");
 const bodyParser = require("body-parser");
 const { v4: uuidv4 } = require("uuid");
 const nocache = require("nocache");
-const PORT = 3000;
 const app = express();
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const { config } = require("dotenv");
 const { EventEmitter } = require("events");
-
 const adminRouter = require("./routes/adminRouter");
 const userRouter = require("./routes/userRouter");
 const guestRouter = require("./routes/guestRouter");
-
 config();
 
 const createServer = async () => {

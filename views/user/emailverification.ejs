@@ -37,17 +37,15 @@
               <div class="card-body p-5 text-center">
                 <h4>Verify</h4>
                 <p>Your code was sent to you via email</p>
-                <form action="/user/emailverification" method="post" id="add-form">
+                <form action="/user/emailverification" method="post" id="otp-form">
                     
                     <div class="otp-field mb-4">
-                    
                         <input name="otp" type="number">
                         <input name="otp" type="number" disabled />
                         <input name="otp" type="number" disabled />
                         <input name="otp" type="number" disabled /> 
-                    
                     </div>
-                    <button type="submit" class="btn btn-primary mb-3">Verify</button>
+                    <button type="submit" id="otp-button" class="btn btn-primary mb-3">Verify</button>
                 </form>
                 <!-- <form action="/user/emailverification" method="post" id="add-form">
                   <div class="form-group">
@@ -82,6 +80,7 @@
 
 
     <script src="/js/otpver.js"></script>
+    <script type="module" src="/js/formValidation.js" defer></script>
     <!-- Footer End -->
      
 <%- include('../essentials/userFooter') %>

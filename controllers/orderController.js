@@ -1,72 +1,62 @@
 const Products = require("../models/productModel");
 // const Coupon = require('../models/coupon')
 const Cart = require("../models/cartModel");
-
 const Order = require("../models/orderModel");
 const User = require("../models/userModel");
-
 const Wallet = require("../models/walletModel");
+const { createOrder, verifyPayment } = require("../utility/payment");
+const Review = require("../models/reviewModel");
 
-require("dotenv").config();
-const Razorpay = require("razorpay");
-const { RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET } = process.env;
-var instance = new Razorpay({
-  key_id: RAZORPAY_KEY_ID,
-  key_secret: RAZORPAY_KEY_SECRET,
-});
 module.exports = {
-  placeOrder: async (req, res) => {
+  placeOrder: async (req, res, next) => {
     try {
-      let id = req.params.id;
-      let cart = await Cart.findById(id).populate("items.productId coupon");
-      let price = 0,
-        discount = 0;
-      console.log(req.body.method);
-      cart.items.forEach(async (item) => {
-        price += Number(item.productId.Price) * Number(item.quantity);
-        discount += Number(item.productId.discount) * Number(item.quantity);
-      });
-      let coupon = cart.coupon ?? null;
-      console.log("hello");
-      let totalPrice = req.session.totalPrice ?? price - discount;
-      let user = await User.findById(cart.userId);
-      let adIndex = user.Address.findIndex((item) => item.main === true);
-      let address = user.Address[adIndex];
-      let date = new Date();
-      const order = new Order({
+      const id = req.params.id;
+      const { method } = req.body;
+      const cart = await Cart.findById(id);
+      const totalPrice = req.session.totalPrice;
+      const user = await User.findById(cart.userId);
+      const adIndex = user.Address.findIndex((item) => item.main === true);
+      const address = user.Address[adIndex];
+      const date = new Date();
+      const newOrder = new Order({
         userId: cart.userId,
         items: cart.items,
         paymentMethod: "COD",
         orderDate: date,
         Address: address,
         totalPrice: totalPrice,
-        coupon: coupon,
+        coupon: cart.coupon,
       });
 
-      console.log(order._id);
-
-      let status = true;
-      if (req.body.method === "card") {
-        var options = {
-          amount: order.totalPrice * 100,
-          currency: "INR",
-          receipt: order._id,
-        };
-        let or = await new Promise((resolve, reject) => {
-          instance.orders.create(options, (err, order) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(order);
+      if (method === "card") {
+        const { order, key } = await createOrder(totalPrice);
+        if (order && key) {
+          for (const item of newOrder.items) {
+            let pd = await Products.findById(item.productId);
+            const currentVariant = pd.variant.find(
+              (variant) =>
+                variant.color == item.color && variant.storage == item.storage
+            );
+            if (currentVariant.stock < item.quantity) {
+              return res.status(401).json({
+                status: false,
+                message: `only ${currentVariant.stock} stock available for ${pd.productName}(${item.color},${item.storage})`,
+              });
             }
-          });
-        });
-        console.log(or);
-        req.session.orderId = or.id;
-        status = false;
-        res.json({ status, or, order });
+            currentVariant.stock -= item.quantity;
+            await pd.save();
+          }
+          newOrder.orderId = order.id;
+          await newOrder.save();
+          req.session.orderId = newOrder._id;
+          res.status(200).json({ status: true, type: "card", newOrder, key });
+        } else {
+          res
+            .status(401)
+            .json({ status: false, message: "order amount limit exceeds" });
+        }
       } else {
-        if (req.body.method === "wallet") {
+        if (method === "wallet") {
           let wallet = await Wallet.findOne({ userId: user._id });
           if (wallet.balance >= totalPrice) {
             wallet.transactions.push({
@@ -76,138 +66,97 @@ module.exports = {
             });
             wallet.balance -= totalPrice;
             await wallet.save();
-            order.paymentStatus = "success";
-            order.paymentMethod = "Wallet";
+            newOrder.paymentStatus = "success";
+            newOrder.paymentMethod = "Wallet";
           } else {
-            res.json({ wallet: true });
+            res
+              .status(401)
+              .json({ status: false, message: "not enough walled balance" });
           }
         }
-        order.items.forEach(async (item) => {
-          let pd = await Products.findById(item.productId._id);
-          console.log(pd.stock);
-          if (req.body.method === "wallet") {
+        for (const item of newOrder.items) {
+          let pd = await Products.findById(item.productId);
+          const currentVariant = pd.variant.find(
+            (variant) =>
+              variant.color == item.color && variant.storage == item.storage
+          );
+          if (currentVariant.stock < item.quantity) {
+            return res.status(401).json({
+              status: false,
+              message: `only ${currentVariant.stock} stock available for ${pd.productName}(${item.color},${item.storage})`,
+            });
+          }
+          currentVariant.stock -= item.quantity;
+          await pd.save();
+          if (method === "wallet") {
             item.paymentStatus = "success";
           }
-          pd.stock -= item.quantity;
-          if (pd.stock === 0) pd.Status = "Out of stock";
-          await pd.save();
-        });
+        }
         cart.items = [];
         cart.total = 0;
         cart.coupon = null;
         req.session.cartCount = 0;
         req.session.totalPrice = null;
         await cart.save();
-        await order.save();
-        res.json({ status });
+        await newOrder.save();
+        res.status(200).json({ status: true, message: "order placed" });
       }
-    } catch (e) {
-      console.error(e);
+    } catch (err) {
+      console.error(err);
       console.log("this is the catch for placeOrder in order.js");
-      res.redirect("/user/checkout");
+      next(err);
     }
   },
-  paymentSuccess: async (req, res) => {
-    let or = req.body;
-    let orderId = req.params.id;
-    console.log(orderId);
-    let cart = await Cart.findOne({ userId: or.userId }).populate(
-      "items.productId"
-    );
-    let order = new Order({
-      userId: or.userId,
-      status: "Order Placed",
-      items: or.items,
-      paymentMethod: "razorpay",
-      orderDate: or.orderDate,
-      totalPrice: or.totalPrice,
-      Address: or.Address,
-      coupon: cart.coupon,
-      paymentStatus: "success",
-    });
-    // order.items.forEach(async(item)=>{
-    //   let pd = await Products.findById(item.productId._id);
-    //   console.log(pd.stock)
-    //   pd.stock -=  item.quantity;
-    //   item.paymentStatus = 'success';
-    //   if(pd.stock === 0)
-    //     pd.Status = 'Out of stock';
-    //   await pd.save();
-    // });
-    // await order.save();
-
-    for (const item of order.items) {
-      let pd = await Products.findById(item.productId._id);
-      pd.stock -= item.quantity;
-      item.orderId = orderId;
-      item.paymentStatus = "success";
-      if (pd.stock === 0) {
-        pd.Status = "Out of stock";
-      }
-      await pd.save();
-    }
-    await order.save();
-
-    cart.items = [];
-    cart.total = 0;
-    cart.coupon = null;
-    req.session.cartCount = 0;
-    await cart.save();
-    res.json({ status: true });
-  },
-  paymentFailed: async (req, res) => {
+  paymentSuccess: async (req, res, next) => {
     try {
-      let orderId = req.params.id;
-      console.log(orderId);
-      let or = req.body;
-      let cart = await Cart.findOne({ userId: or.userId }).populate(
-        "items.productId"
-      );
-      let order = new Order({
-        userId: or.userId,
-        status: "Payment Failed",
-        items: or.items,
-        paymentMethod: "razorpay",
-        orderDate: or.orderDate,
-        totalPrice: or.totalPrice,
-        Address: or.Address,
-        coupon: cart.coupon,
-        paymentStatus: "failed",
-      });
-      for (const item of order.items) {
-        let pd = await Products.findById(item.productId._id);
-        pd.stock -= item.quantity;
-        item.orderId = orderId;
-        item.status = "Payment Failed";
-        item.paymentStatus = "failed";
-        if (pd.stock === 0) {
-          pd.Status = "Out of stock";
+      const { order, paymentData } = req.body;
+      const isVerified = await verifyPayment(paymentData);
+      console.log(isVerified);
+      const currentOrder = await Order.findById(order._id);
+      let cart = await Cart.findOne({ userId: order.userId });
+      if (isVerified) {
+        currentOrder.paymentStatus = "success";
+        for (const item of currentOrder.items) {
+          item.paymentStatus = "success";
         }
-        await pd.save();
+      } else {
+        currentOrder.paymentStatus = "failed";
+        currentOrder.status = "Payment Failed";
+        for (const item of currentOrder.items) {
+          item.paymentStatus = "failed";
+        }
       }
-      await order.save();
-      // order.items.forEach(async(item)=>{
-      //   let pd = await Products.findById(item.productId._id);
-      //   pd.stock -=  item.quantity;
-      //   item.status = 'Payment Failed';
-      //   item.paymentStatus = 'failed';
-      //   console.log(item.status)
-
-      //   if(pd.stock === 0)
-      //     pd.Status = 'Out of stock';
-      //   await pd.save();
-      // });
-      // console.log(order.items)
-      // await order.save();
+      await currentOrder.save();
       cart.items = [];
       cart.total = 0;
       cart.coupon = null;
       req.session.cartCount = 0;
       await cart.save();
-      res.json({ status: true });
-    } catch (e) {
-      console.log("this is the catch of payment failed");
-      console.error(e);
+      res.status(200).json({ status: true, message: "payment completed" });
+    } catch (error) {
+      next(error);
+    }
+  },
+  paymentFailed: async (req, res, next) => {
+    try {
+      const { order } = req.body;
+      let cart = await Cart.findOne({ userId: order.userId });
+      const currentOrder = await Order.findById(order._id);
+      currentOrder.paymentStatus = "failed";
+      currentOrder.status = "Payment Failed";
+      for (const item of currentOrder.items) {
+        item.paymentStatus = "failed";
+        item.status = "Payment Failed";
+      }
+      await currentOrder.save();
+      cart.items = [];
+      cart.total = 0;
+      cart.coupon = null;
+      req.session.cartCount = 0;
+      await cart.save();
+      res.status(200).json({ status: true, message: "payment failed" });
+    } catch (error) {
+      next(error);
     }
   },
 
@@ -230,22 +179,17 @@ module.exports = {
     res.json({ subStatus });
   },
 
-  getUserOrders: async (req, res) => {
+  getUserOrders: async (req, res, next) => {
     try {
       const userId = req.session.user._id;
       const user = await User.findById(userId);
-      let cart = await Cart.findOne({ userId: user._id });
-      let orders = await Order.find({ userId: user._id })
+      const cart = await Cart.findOne({ userId: user._id });
+      const orders = await Order.find({ userId: user._id })
         .populate("items.productId userId")
         .sort({ orderDate: -1 });
-      let q = 0;
-      if (cart !== null) q = cart.total ?? 0;
-      let status = true;
-      res.render("user/orders", { activePage: "orders", orders, q });
-    } catch (e) {
-      console.error(e);
-      console.log("this is the catch for getUserOrders");
-      res.redirect("/user/userprofile");
+      res.render("user/orders", { activePage: "orders", orders });
+    } catch (error) {
+      next(error);
     }
   },
   getAdminOrders: async (req, res) => {
@@ -361,11 +305,12 @@ module.exports = {
       await pd.save();
       order.items[index].status = "cancelled";
       await order.save();
-      console.log(order.items[index].productId.ProductName + " was cancelled");
-      res.redirect(`/user/orderdetails/${id}`);
-    } catch (e) {
-      console.error(e);
-      res.redirect("/user/userprofile/orders");
+      console.log(order.items[index].productId.productName + " was cancelled");
+      return res
+        .status(200)
+        .json({ status: true, message: "the order was cancelled" });
+    } catch (error) {
+      next(error);
     }
   },
   returnOrder: async (req, res) => {
@@ -425,5 +370,31 @@ module.exports = {
     }
 
     res.redirect(`/admin/orderdetails/${order._id}`);
+  },
+  reviewProduct: async (req, res, next) => {
+    try {
+      const itemId = req.params.id;
+      const { rating, title, description } = req.body;
+
+      const order = await Order.findOne({
+        "items._id": itemId,
+      });
+      let itemIndex = order.items.findIndex((a) => a._id.toString() === itemId);
+      const currentProduct = order.items[itemIndex];
+      const review = await Review.create({
+        userId: order.userId,
+        productId: currentProduct.productId,
+        storage: currentProduct.storage,
+        color: currentProduct.color,
+        rating: Number(rating),
+        title,
+        description,
+      });
+      return res
+        .status(200)
+        .json({ status: true, message: "product reviewed" });
+    } catch (error) {
+      next(error);
+    }
   },
 };
