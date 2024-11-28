@@ -1,111 +1,184 @@
-<%- include('../essentials/adminHeader') %>
-  <%- include('../essentials/adminLayout') %>
-  
-  <main id="main" class="main">
+<%- include('../essentials/adminHeader') %> <%-
+include('../essentials/adminLayout') %>
 
-    <div class="pagetitle">
-      <h1>Category</h1>
-      <nav>
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/admin/panel">Home</a></li>
-          <li class="breadcrumb-item active">category</li>
-        </ol>
-      </nav>
-    </div><!-- End Page Title -->
+<main id="main" class="main">
+  <div class="pagetitle">
+    <h1>Cateogories</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/admin/panel">home</a></li>
+        <li class="breadcrumb-item active">categories</li>
+      </ol>
+    </nav>
+  </div>
+  <!-- End Page Title -->
+  <div class="d-flex justify-content-end">
+    <button
+      type="button"
+      class="btn btn-primary mb-3"
+      data-mdb-toggle="modal"
+      data-mdb-target="#categoryModal"
+      data-mdb-ripple-init
+      data-mdb-modal-init
+    >
+      Add Category
+    </button>
+  </div>
+  <% if(categories?.length>0){%>
+  <table class="table table-bordered table-hover mt-3">
+    <thead class="table-dark">
+      <tr class="text-center">
+        <th>name</th>
+        <th>offer</th>
+        <th style="width: 150px">Status</th>
+        <th style="width: 160px">Action</th>
+      </tr>
+    </thead>
+    <tbody id="category-table" class="align-middle text-center">
+      <% categories?.forEach((row,index)=>{ %>
+      <tr>
+        <td><%= row.categoryName %></td>
+        <td><%= row.offer %></td>
+        <td>
+          <button class="btn rounded-pill blockCategory <%= row.status ? "btn-success" :"btn-danger"  %>" data-category-id="<%= row._id %>"><%= row.status ? "active":"blocked"  %></button>
+        </td>
+        <td class="d-flex align-items-center">
+          <button
+            type="button"
+            class="btn btn-secondary rounded-pill"
+            data-mdb-toggle="modal"
+            data-mdb-target="#categoryrEditModal<%= row._id %>"
+            data-mdb-ripple-init
+            data-mdb-modal-init
+          >
+            Edit
+          </button>
+        </td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <% categories.forEach((row)=>{%>
+  <div
     
-    <div class="d-flex justify-content-center ">
-      <div class="col-12 col-lg-9">
-        <div class="card info-card sales-card mb-2">
-          <div class="card-body">
-            <div class="container mt-3 ">
-              <div class="d-flex justify-content-between">
-                  <h1 class="icons">Categories</h1>
-                  <button type="button" class="btn btn-primary" id="addCategoryButton"
-                    data-mdb-ripple-init>
-                    Add Category
-                  </button>
-              </div>
-              
-              <hr>
-              <div class="justify-content-between my-3 row gy-3" id="categoryContainer">
-                
-             
-                
-              </div>
-             
-        
-             
-                
-            </div>
-          </div>
-        </div> 
-      </div>
-    </div>
-  </main>
-
-
-
-
-  <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    class="modal fade"
+    id="categoryrEditModal<%= row._id %>"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Add Category</h5>
-          <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
+          <h5 class="modal-title" id="exampleModalLongTitle">Edit Category</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-mdb-dismiss="modal"
+          ></button>
         </div>
         <div class="modal-body">
-          <form id="categoryForm">
-            <div class="mb-3">
-              <label class="form-label">Category</label>
-              <input type="text" class="form-control" id="categoryName" name="categoryName" required>
+          <form class="edit-category" data-category-id="<%= row._id %>">
+            <div class="form-group">
+              <label for="category">category:</label>
+              <input
+                type="text"
+                name="category"
+                class="form-control bg-light"
+                id="category"
+                placeholder="Enter category"
+                value="<%= row.categoryName %>"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="offer">offer:</label>
+              <input
+                type="number"
+                name="offer"
+                class="form-control bg-light"
+                id="offer"
+                placeholder="Enter offer"
+                value="<%= row.offer %>"
+                required
+              />
+            </div>
+
+            <div class="d-flex justify-content-center mb-3">
+              <button type="submit" class="btn btn-primary mt-3 mb-0">
+                Edit Category
+              </button>
             </div>
           </form>
-        </div>
-        
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary addCategory" id="addCategory">submit</button>
         </div>
       </div>
     </div>
   </div>
-
-
-
-
-  <div class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+  <% }) %> <% } %>
+  <div
+    class="modal fade"
+    id="categoryModal"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Edit Category</h5>
-          <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
+          <h5 class="modal-title" id="exampleModalLongTitle">
+            Add Category
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-mdb-dismiss="modal"
+          ></button>
         </div>
         <div class="modal-body">
-          <form id="editCategoryForm">
-            <div class="mb-3">
-              <label class="form-label">Category</label>
-              <input type="text" class="form-control" id="editCategoryName" name="categoryName" required>
+          <form id="add-category">
+            <div class="form-group">
+              <label for="category">category:</label>
+              <input
+                type="text"
+                name="category"
+                class="form-control bg-light"
+                id="category"
+                placeholder="Enter category"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="offer">offer:</label>
+              <input
+                type="number"
+                name="offer"
+                class="form-control bg-light"
+                id="offer"
+                placeholder="Enter offer"
+                required
+              />
+            </div>
+
+            <div class="d-flex justify-content-center mb-3">
+              <button type="submit" class="btn btn-primary mt-3 mb-0">
+                Add Category
+              </button>
             </div>
           </form>
-        </div>
-  
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" id="editCategorySubmit">submit</button>
         </div>
       </div>
     </div>
   </div>
+</main>
+<!-- ======= Footer ======= -->
 
-    <!-- ======= Footer ======= -->
- <!-- End Footer -->
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"
+  ><i class="bi bi-arrow-up-short"></i
+></a>
 
-  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+<script type="module" src="/js/admin/category.js" defer></script>
+<!-- Template Main JS File -->
 
- <script defer>
-    const cat = `<%- JSON.stringify(cat) %>`;
- </script>
- <script type="module" src="/js/admin/category.js" defer></script>
-  <!-- JS File -->
- 
 <%- include('../essentials/adminFooter') %>

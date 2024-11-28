@@ -26,7 +26,7 @@ const userschema = new mongoose.Schema({
         required: true,
       },
       color: { type: String, required: true },
-      storage: { type: String, required: true },
+      storage: { type: String, default: null },
       image: { type: String, required: true },
     },
   ],

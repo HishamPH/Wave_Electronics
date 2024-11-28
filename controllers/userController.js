@@ -10,9 +10,19 @@ module.exports = {
       res.redirect("/user/homepage");
       return;
     }
-    let pd = await Products.find({ status: true }).populate("offer").limit(8);
+    let pd = await Products.find({ status: true })
+      .populate("category")
+      .limit(8);
     pd.forEach((item) => {
-      item.defaultVariant = item.variant.find((variant) => variant.default);
+      const currentVariant = item.variant.find((variant) => variant.default);
+      item.defaultVariant = currentVariant;
+      const fullPrice =
+        parseInt(item.basePrice) + parseInt(currentVariant.price);
+      const discount = parseInt((item.basePrice * item.discount) / 100) || 0;
+      const offer =
+        parseInt((item.basePrice * item.category?.offer) / 100) || 0;
+      const totalDiscount = Number(offer + discount);
+      item.finalPrice = fullPrice - totalDiscount;
     });
     res.render("user/landpage", { pd });
   },
@@ -21,7 +31,9 @@ module.exports = {
     try {
       const userId = req.session.user._id;
       const user = await User.findById(userId);
-      let pd = await Products.find({ status: true }).populate("offer").limit(8);
+      let pd = await Products.find({ status: true })
+        .populate("category")
+        .limit(8);
       let cat = await Category.find();
       let wish = user.Wishlist;
       let wishlist = [];
@@ -29,7 +41,15 @@ module.exports = {
         wishlist.push(item.product.toString());
       });
       pd.forEach((item) => {
-        item.defaultVariant = item.variant.find((variant) => variant.default);
+        const currentVariant = item.variant.find((variant) => variant.default);
+        item.defaultVariant = currentVariant;
+        const fullPrice =
+          parseInt(item.basePrice) + parseInt(currentVariant.price);
+        const discount = parseInt((item.basePrice * item.discount) / 100) || 0;
+        const offer =
+          parseInt((item.basePrice * item.category?.offer) / 100) || 0;
+        const totalDiscount = Number(offer + discount);
+        item.finalPrice = fullPrice - totalDiscount;
       });
       res.render("user/homepage", {
         message: req.session.name,
@@ -61,19 +81,30 @@ module.exports = {
 
   getDetailPage: async (req, res) => {
     let id = req.params.id;
-    let pd = await Products.findById(id)
-      .populate("offer category")
-      .select("-__v");
+    let pd = await Products.findById(id).populate("category").select("-__v");
     const defaultVariant = pd.variant.find((variant) => variant.default);
     const colorSet = new Set();
     const storageSet = new Set();
     pd.variant.forEach((item) => {
       colorSet.add(item.color);
-      storageSet.add(item.storage);
+      if (item.storage.trim() !== "") {
+        storageSet.add(item.storage);
+      }
     });
     const color = [...colorSet];
     const storage = [...storageSet];
-    res.render("user/productdetail", { pd, defaultVariant, storage, color });
+    const fullPrice = Number(pd.basePrice) + Number(defaultVariant.price || 0);
+    const offer = parseInt((pd.basePrice * pd.category?.offer) / 100) || 0;
+    const discount = parseInt((pd.basePrice * pd.discount) / 100);
+    const totalDiscount = Number(offer + discount);
+    res.render("user/productdetail", {
+      pd,
+      defaultVariant,
+      storage,
+      color,
+      fullPrice,
+      totalDiscount,
+    });
   },
 
   review: async (req, res) => {
@@ -255,32 +286,44 @@ module.exports = {
 
   getSearch: async (req, res, next) => {
     try {
-      console.log("helloe");
-      const userId = req.session.user._id;
-      const user = await User.findById(userId);
+      const userId = req.session?.user?._id;
       let product = await Products.find({ status: true })
-        .populate("offer")
+        .populate("category")
         .sort({ defaultPrice: 1 })
-        .limit(1);
-      let cat = await Category.find();
-      let wish = user.Wishlist;
+        .limit(4)
+        .lean();
+      let cat = await Category.find({ status: true });
       let wishlist = [];
-      wish.forEach((item) => {
-        wishlist.push(item.product.toString());
-      });
+      if (userId) {
+        const user = await User.findById(userId);
+        const wish = user.Wishlist;
+        wish.forEach((item) => {
+          wishlist.push(item.product.toString());
+        });
+      }
       currentPage = 1;
       console.log(product.length);
       let noOfDocs = await Products.find({ status: true }).countDocuments();
       product.forEach((item) => {
-        item.defaultVariant = item.variant.find((variant) => variant.default);
+        const currentVariant = item.variant.find((variant) => variant.default);
+        item.defaultVariant = currentVariant;
+        const fullPrice =
+          parseInt(item.basePrice) + parseInt(currentVariant.price);
+        const discount = parseInt((item.basePrice * item.discount) / 100) || 0;
+        const offer =
+          parseInt((item.basePrice * item.category?.offer) / 100) || 0;
+        const totalDiscount = Number(offer + discount);
+        item.finalPrice = fullPrice - totalDiscount;
       });
-      let totalPages = Math.ceil(noOfDocs / 1);
+      let totalPages = Math.ceil(noOfDocs / 4);
+      const isUser = req?.session?.isUser;
       res.render("user/searchresult", {
         product,
         cat,
         wishlist,
         currentPage,
         totalPages,
+        isUser,
       });
     } catch (error) {
       next(error);
@@ -296,17 +339,19 @@ module.exports = {
   },
   filterProducts: async (req, res, next) => {
     try {
-      const userId = req.session.user._id;
+      const userId = req.session?.user?._id;
       const { sort, query, page } = req.query;
       const { filters } = req.body;
-      console.log(req.query, req.body);
-      const user = await User.findById(userId);
-      const wish = user.Wishlist;
       let wishlist = [];
-      wish.forEach((item) => {
-        wishlist.push(item.product.toString());
-      });
-      const limit = 1;
+      if (userId) {
+        const user = await User.findById(userId);
+        const wish = user.Wishlist;
+        wish.forEach((item) => {
+          wishlist.push(item.product.toString());
+        });
+      }
+
+      const limit = 4;
       let products = null;
       let totalDocs = 0;
       if (sort == "lth" || sort == "htl") {
@@ -323,9 +368,10 @@ module.exports = {
         })
           .sort({ defaultPrice: currentSort })
           .collation({ locale: "en", strength: 2 })
-          .populate("offer")
+          .populate("category")
           .skip((page - 1) * limit)
-          .limit(limit);
+          .limit(limit)
+          .lean();
       } else if (sort == "az" || sort == "za") {
         totalDocs = await Products.countDocuments({
           category: { $in: filters },
@@ -340,12 +386,25 @@ module.exports = {
         })
           .sort({ productName: currentSort })
           .collation({ locale: "en", strength: 2 })
-          .populate("offer")
+          .populate("category")
           .skip((page - 1) * limit)
-          .limit(limit);
+          .limit(limit)
+          .lean();
+      }
+      for (const item of products) {
+        const currentVariant = item.variant.find((variant) => variant.default);
+        item.defaultVariant = currentVariant;
+        const fullPrice =
+          parseInt(item.basePrice) + parseInt(currentVariant.price);
+        const discount = parseInt((item.basePrice * item.discount) / 100) || 0;
+        const offer =
+          parseInt((item.basePrice * item.category?.offer) / 100) || 0;
+        const totalDiscount = Number(offer + discount);
+        item.finalPrice = fullPrice - totalDiscount;
       }
       const totalPages = Math.ceil(totalDocs / limit);
-      res.json({ products, wishlist, currentPage: page, totalPages });
+      const isUser = req?.session?.isUser;
+      res.json({ products, wishlist, currentPage: page, totalPages, isUser });
     } catch (err) {
       next(err);
     }

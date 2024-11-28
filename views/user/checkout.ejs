@@ -197,12 +197,11 @@
               </div>
             </div>
             <div class="container mt-4">
-              <div class="row g-3 align-items-center">
+              <div id="coupon-container" class="row g-3 align-items-center">
                 <!-- Button -->
                 <div class="col-auto">
                   <button
-                    id="applyCoupon"
-                    class="btn btn-primary"
+                    class="btn btn-primary applyCoupon"
                     type="button"
                   >
                     Apply
@@ -212,8 +211,7 @@
                 <div class="col">
                   <input
                     type="text"
-                    id="couponInput"
-                    class="form-control"
+                    class="form-control couponInput"
                     placeholder="Enter coupon code"
                     aria-label="Coupon Code"
                   />
@@ -319,6 +317,10 @@
     </div>
   </section>
 
+  <!-- <button class="btn btn-primary removeCoupon" data-coupon-id="${ID}">
+    Remove Coupon
+  </button> -->
+
   <div
     class="modal fade"
     id="couponModal"
@@ -396,7 +398,7 @@
   </button>
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <script type="module" src="/js/payment.js" defer></script>
-
+  <script type="module" src="/js/checkout.js" defer></script>
   <!-- JavaScript Libraries -->
 
   <%- include('../essentials/userFooter') %>

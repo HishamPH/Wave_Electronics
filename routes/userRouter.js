@@ -95,6 +95,8 @@ router.delete("/cart/delete/:id", userAuth, cartController.deleteFromCart);
 
 router.post("/checkout/apply-coupon", userAuth, cartController.applyCoupon);
 
+router.put("/checkout/remove-coupon", userAuth, cartController.removeCoupon);
+
 //====================== Wish List ======================
 
 router.get("/wishlist", userAuth, wishlistController.getWishlist);
@@ -142,7 +144,7 @@ router.post("/orders/returnorder/:id", userAuth, orderController.returnOrder);
 router.get("/orderdetails/:id", userAuth, orderController.userOrderDetails);
 
 router.post(
-  "/orders/continuepayment/:id",
+  "/orders/continue-payment/:id",
   userAuth,
   orderController.continuePayment
 );

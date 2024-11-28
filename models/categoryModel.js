@@ -17,7 +17,6 @@ const categorySchema = new mongoose.Schema({
     },
     default: 0,
   },
-  offerStatus: { type: Boolean, default: true },
   status: { type: Boolean, default: true },
 });
 

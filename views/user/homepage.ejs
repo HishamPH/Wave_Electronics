@@ -144,16 +144,16 @@
 
 
 
-<div class="container mx-3 mt-5">
+<div class="mx-5 mt-5">
 
   <div class="row" id="searchResult">
 
     <% pd.forEach((row,index)=>{%>
-      <div class="col-xl-3 col-lg-4 col-md-6 ">
+      <div class="col-xl-3 col-lg-4 col-md-6 mt-4">
         <div class="card rounded-0 ">
-          <% if (row.offer) { %>
+          <% if (row.category?.offer > 0 ) { %>
             <span class="badge position-absolute  p-2  bg-danger w-auto rounded-0  " style="top: 15px; right: 15px;">
-              - <%= row.offer.percentage %>%
+              - <%= row.category.offer %>%
             </span>
 
             <% } %>
@@ -164,7 +164,7 @@
                   <div class="card-title m-0 text-truncate fw-bold ">
                     <%= row.productName %>
                   </div>
-                  <p class="card-text fw-bold text-dark mb-2 ">₹<%= row.defaultPrice.toLocaleString('hi') %>
+                  <p class="card-text fw-bold text-dark mb-2 ">₹<%= row.finalPrice.toLocaleString('hi') %>
                   </p>
                   <p class="card-text text-black text-truncate" style="height: 48px;">
                     <%= row.spec1 %>

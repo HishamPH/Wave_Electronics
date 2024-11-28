@@ -3,50 +3,43 @@ const Category = require("../models/categoryModel");
 module.exports = {
   getCategories: async (req, res, next) => {
     try {
-      const cat = await Category.find();
-      res.render("admin/category", { activePage: "category", cat });
+      const categories = await Category.find();
+      res.render("admin/category", { activePage: "category", categories });
     } catch (error) {
       next(error);
     }
   },
   postAddCategory: async (req, res, next) => {
     try {
-      const { categoryName } = req.body;
+      const { category, offer } = req.body;
 
-      if (!categoryName || categoryName.trim() === "") {
-        return;
+      if (!category || category.trim() === "") {
+        return res.status(401).json({
+          status: false,
+          message: "category cannot be an empty string",
+        });
       }
-      const category = await Category.create({ categoryName });
-
+      const newCategory = await Category.create({
+        categoryName: category,
+        offer: Number(offer),
+      });
       res.status(200).json({
         status: true,
-        category,
         message: "category addedd successfully",
       });
     } catch (error) {
       next(error);
     }
   },
-  deleteCategory: async (req, res, next) => {
-    try {
-      let id = req.params.id;
-      await Category.findByIdAndDelete(id);
-      res
-        .status(200)
-        .json({ status: true, message: "category deleted successfully" });
-    } catch (error) {
-      next(error);
-    }
-  },
   postEditCategory: async (req, res) => {
     try {
-      const id = req.params.id;
-      const { categoryName } = req.body;
-      const category = await Category.findByIdAndUpdate(
-        id,
+      const categoryId = req.params.id;
+      const { category, offer } = req.body;
+      const newCategory = await Category.findByIdAndUpdate(
+        categoryId,
         [
           {
-            $set: { categoryName: categoryName },
+            $set: { categoryName: category, offer: offer },
           },
         ],
         {
@@ -55,7 +48,30 @@ module.exports = {
       );
       res.status(200).json({
         status: true,
-        category,
+        newCategory,
+        message: "category updated successfully",
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+  blockCategory: async (req, res, next) => {
+    try {
+      const categoryId = req.params.id;
+      const newCategory = await Category.findByIdAndUpdate(
+        categoryId,
+        [
+          {
+            $set: { status: { $not: "$status" } },
+          },
+        ],
+        {
+          new: true,
+        }
+      );
+      res.status(200).json({
+        status: true,
+        newCategory,
         message: "category updated successfully",
       });
     } catch (error) {

@@ -5,9 +5,8 @@ const Category = require("../models/categoryModel");
 module.exports = {
   getOffer: async (req, res) => {
     try {
-      let cat = await Category.find();
-      let offer = await Offer.find().populate("category");
-      res.render("admin/offer", { activePage: "offers", cat, offer });
+      const categories = await Category.find();
+      res.render("admin/offer", { activePage: "offers", categories });
     } catch (error) {
       next(error);
     }

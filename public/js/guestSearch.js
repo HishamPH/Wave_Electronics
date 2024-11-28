@@ -1,6 +1,4 @@
 import { Success, Failed } from "./toast.js";
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
 $(document).ready(function () {
   $("#search-input").on(
     "input",
@@ -31,9 +29,8 @@ $(document).ready(function () {
     const page = Number(currPage);
     try {
       loading.removeClass("d-none");
-      //await delay(2000);
       const res = await axios.post(
-        "/user/filters",
+        "/guest/filters",
         { filters },
         {
           params: {
@@ -48,15 +45,14 @@ $(document).ready(function () {
           },
         }
       );
-      const { totalPages, currentPage, products, wishlist, isUser } = res.data;
+      const { totalPages, currentPage, products } = res.data;
       console.log(res.data);
-      updateProducts(products, wishlist, totalPages, currentPage, isUser);
+      updateProducts(products, totalPages, currentPage);
       loading.addClass("d-none");
     } catch (err) {
       Failed(err.response ? err.response.data.message : err.message);
       console.log(err.message);
     }
-    console.log("Searching for:", query);
   }
 
   $(".filter").on("change", function (e) {
@@ -70,7 +66,7 @@ $(document).ready(function () {
   });
 });
 
-function updateProducts(products, wishlist, totalPages, currentPage, isUser) {
+function updateProducts(products, totalPages, currentPage) {
   const container = $("#searchResult");
   container.empty();
   const page = $("#pagination-buttons");
@@ -87,10 +83,6 @@ function updateProducts(products, wishlist, totalPages, currentPage, isUser) {
 
   products.forEach((row) => {
     row.defaultVariant = row.variant.find((variant) => variant.default);
-    let wishImage = "heart-white";
-    if (wishlist.includes(row._id.toString())) {
-      wishImage = "heart";
-    }
     const html = `
       <div class="col-xl-3 col-lg-4 col-md-6 ">
         <div class="card rounded-0 ">
@@ -106,7 +98,7 @@ function updateProducts(products, wishlist, totalPages, currentPage, isUser) {
             row.defaultVariant.images[0]
           }" class="card-img-top card-img-auto" alt="Product Image" style="object-fit: cover;">
           <div class="card-body bg-white" style="height: 220px;">
-            <a href="/user/detail/${row._id}">
+            <a href="/user/detail-guest/${row._id}">
                 <div class="card-title m-0 text-truncate fw-bold ">${
                   row.productName
                 }</div>
@@ -119,13 +111,13 @@ function updateProducts(products, wishlist, totalPages, currentPage, isUser) {
                 
             </a>
             <div class="d-flex justify-content-between mt-3">
-              <button data-path="${
-                row._id
-              }" class="btn btn-dark rounded-pill addtocart" data-mdb-ripple-init>Add to cart</button>
+              <a href="/user/login">
+                                    <button class="btn btn-primary px-3 rounded-pill">
+                                        <i class="fa fa-shopping-cart mr-1"></i> Add To cart
+                                    </button>
+                                </a>
               
-                <button data-path="${
-                  row._id
-                }" class="btn d-flex justify-content-center align-items-center rounded-circle wishlist" style="height: 50px; width: 50px;background-color:#dadada;"><img src="/img/${wishImage}.png" style="width: 30px; height: 30px;" alt="heart"></button>
+                
             </div>
           </div>
         </div>

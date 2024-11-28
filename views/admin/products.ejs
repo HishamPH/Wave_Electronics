@@ -1,73 +1,65 @@
-<%- include('../essentials/adminHeader') %>
-  <%- include('../essentials/adminLayout') %>
+<%- include('../essentials/adminHeader') %> <%-
+include('../essentials/adminLayout') %>
 
-  
-  <main id="main" class="main">
+<main id="main" class="main">
+  <div class="pagetitle">
+    <h1>Products</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/admin/panel">Home</a></li>
+        <li class="breadcrumb-item active">products</li>
+      </ol>
+    </nav>
+    <div class="d-flex align-items-center justify-content-end">
+      <a href="/admin/addproduct" class="btn btn-primary">add product</a>
+    </div>
+  </div>
+  <!-- End Page Title -->
 
-    <div class="pagetitle">
-      <h1>Products</h1>
-      <nav>
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/admin/panel">Home</a></li>
-          <li class="breadcrumb-item active">products</li>
-        </ol>
-      </nav>
-      <div class="d-flex align-items-center justify-content-end">
-        <a href="/admin/addproduct" class="btn btn-primary ">add product</a>
-      </div>
-      
-    </div><!-- End Page Title -->
-    
-    <table class="table table-striped table-bordered  table-hover mt-3">
-      <thead class="table-dark">
-          <tr>
-              <th>Serial No</th>
-              <th>Product Name</th>
-              <th>Category</th>
-              <th>Available Quantity</th>
-              <th>Status</th>
-              <th style="width: 160px;">Action</th>
-          </tr>
-      </thead>
-      <tbody>
-        <% pd.forEach((row,index) => { %>
-            <tr class="align-middle text-center ">
-                <td><%= index+1 %></td>
-                <td><%= row.productName %></td>
-                <td><%= row.category.name %></td>
-                <td><%= row.status %></td>
-                <td><%= row.status %></td>
-                <td>
-                  <div class="d-flex">
-<a href="/admin/editproduct/<%= row._id%>">
-  <button class="btn btn-secondary rounded-pill ">
-    edit
-  </button>
-</a>
-<a href="/admin/products/block/<%= row._id%>">
-  <% if(row.status){ %>
-    <button class="btn btn-success rounded-pill ">active
-    </button>
-    <% }else{ %>
-      <button class="btn btn-danger rounded-pill ">blocked
-      </button>
-      <% } %>
-</a>
-                  </div>
-                                               
-                </td>
-            </tr>
-        <% }) %>
+  <table class="table table-striped table-bordered table-hover mt-3">
+    <thead class="table-dark">
+      <tr class="align-middle text-center">
+        <th>Serial No</th>
+        <th>Product Name</th>
+        <th>Category</th>
+
+        <th>Status</th>
+        <th style="width: 160px">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% pd.forEach((row,index) => { %>
+      <tr class="align-middle text-center">
+        <td><%= index+1 %></td>
+        <td><%= row.productName %></td>
+        <td><%= row.category.categoryName %></td>
+        <td>
+          <a href="/admin/products/block/<%= row._id%>">
+            <% if(row.status){ %>
+            <button class="btn btn-success rounded-pill">active</button>
+            <% }else{ %>
+            <button class="btn btn-danger rounded-pill">blocked</button>
+            <% } %>
+          </a>
+        </td>
+        <td>
+          <a href="/admin/editproduct/<%= row._id%>">
+            <button class="btn btn-secondary rounded-pill">edit</button>
+          </a>
+        </td>
+      </tr>
+      <% }) %>
     </tbody>
-    </table> 
-    
-  
+  </table>
 
-    <!-- ======= Footer ======= -->
-  
+  <!-- ======= Footer ======= -->
 
-  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+  <a
+    href="#"
+    class="back-to-top d-flex align-items-center justify-content-center"
+    ><i class="bi bi-arrow-up-short"></i
+  ></a>
 
- 
   <!-- Template Main JS File -->
-<%- include('../essentials/adminFooter') %>
+  <%- include('../essentials/adminFooter') %>
+</main>

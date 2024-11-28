@@ -15,12 +15,7 @@
 
     </div><!-- End Logo -->
 
-    <div class="search-bar">
-      <form class="search-form d-flex align-items-center" method="POST" action="#">
-        <input type="text" name="query" placeholder="Search" title="Enter search keyword">
-        <button type="submit" title="Search"><i class="bi bi-search"></i></button>
-      </form>
-    </div><!-- End Search Bar -->
+    
 
     <nav class="header-nav ms-auto">
       <ul class="d-flex align-items-center">
@@ -109,13 +104,13 @@
       </li><!-- End Dashboard Nav -->
       <li class="nav-item">
         <a class="nav-link <%= activePage === 'address' ? '' : 'collapsed' %>" href="/user/userprofile/address">
-          <i class="bi bi-person"></i>
+          <i class="fas fa-home"></i>
           <span>address management</span>
         </a>
       </li>
       <li class="nav-item">
         <a class="nav-link <%= activePage === 'orders' ? '' : 'collapsed' %>" href="/user/userprofile/orders">
-          <i class="bi bi-person"></i>
+          <i class="fas fa-box-open"></i>
           <span>Orders</span>
 
         </a>
@@ -123,14 +118,14 @@
 
       <li class="nav-item">
         <a class="nav-link <%= activePage === 'wishlist' ? '' : 'collapsed' %>" href="/user/wishlist">
-          <i class="bi bi-person"></i>
+          <i class="fas fa-star"></i>
           <span>Wishlist</span>
 
         </a>
       </li>
       <li class="nav-item">
         <a class="nav-link <%= activePage === 'wallet' ? '' : 'collapsed' %>" href="/user/wallet">
-          <i class="bi bi-person"></i>
+          <i class="fas fa-wallet"></i>
           <span>Wallet</span>
         </a>
       </li>

@@ -6,7 +6,7 @@
   <%- include('../essentials/loader') %>
 
     
-  <header id="header" class="header fixed-top d-flex align-items-center bg-black " style="height: 95px;">
+  <header id="header" class="header fixed-top d-flex align-items-center bg-black justify-content-between" style="height: 90px;">
 
       <div class="d-flex align-items-center justify-content-between">
         <div class="col-lg-4  d-flex align-items-center">
@@ -19,79 +19,15 @@
         
       </div><!-- End Logo -->
   
-      <!-- <div class="search-bar">
-        <form class="search-form d-flex align-items-center filter">
-          <input type="search" name="name" placeholder="Search" title="Enter search keyword" id="searchInput" >
-          <button type="submit" title="Search"><i class="bi bi-search"></i></button>
-        </form>
-      </div> -->
-  
-      <nav class="header-nav ms-auto">
-        <ul class="d-flex align-items-center">
-  
+     
+      <div class="d-flex justify-content-end">
           
+            <a href="/user/login"><button class="btn btn-primary rounded-pill mx-3">Login</button></a>
+            <a href="/user/signup"><button class="btn btn-secondary rounded-pill me-3">SignUp</button></a>
           
-          <li class="nav-item dropdown mx-3">
-              <div class="d-flex align-items-center gap-2 text-dark">
-                <!-- <h6 class="text text-dark">cart</h6> -->
-                <a href="/user/cart">
-                <div class="nav-link nav-icon">
-                
-                  <i class="bi bi-cart fs-3 text-white "></i>
-                  
-                    <span class="badge bg-danger badge-number fs-7 rounded-circle" id="cartCount">
-                    
-                      <%= cartCount  %>
-                      
-                    </span>
-                  
-                </div>
-                </a>
-                <a href="/user/wishlist">
-                  <div class="nav-link nav-icon">
-                    <i class="bi bi-heart fs-3 text-white "></i>
-                    <span class="badge bg-danger badge-number fs-7 rounded-circle" id="wishCount">
-                    
-                      <%= wishList  %>
-                      
-                    </span>
-                  </div>
-                </a>
-              </div>
-          </li>
-          <!-- End Notification Nav -->
-          <li class="nav-item dropdown pe-3">
-  
-            <button class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-              <img src="/img/user.png" alt="Profile" class="rounded-circle">
-              <span class="d-none d-md-block dropdown-toggle ps-2"></span>
-          </button><!-- End Profile Iamge Icon -->
-  
-            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-              <li class="dropdown-header">
-                <h6><%= name %></h6>
-                <span>Web Designer</span>
-              </li>
-          
-  
-              <li>
-                <a class="dropdown-item d-flex align-items-center" href="/user/userprofile/address">
-                  <i class="bi bi-person"></i>
-                  <span>My Profile</span>
-                </a>
-              </li>
-              <li >
-                <a class="dropdown-item d-flex align-items-center" href="/user/logout">
-                  <i class="bi bi-box-arrow-right text-danger"></i>
-                  <span class="text-danger">Sign Out</span>
-                </a>
-              </li>
-  
-            </ul><!-- End Profile Dropdown Items -->
-          </li><!-- End Profile Nav -->
-  
-        </ul>
-      </nav><!-- End Icons Navigation -->
+            
+        </div>
+      
   
   </header>
 
@@ -170,7 +106,7 @@
           
             <img src="/images/<%= row.defaultVariant.images[0] %>" class="card-img-top card-img-auto" alt="Product Image" style="object-fit: cover;">
             <div class="card-body bg-white" style="height: 220px;">
-              <a href="/user/detail/<%= row._id %>">
+              <a href="/user/detail-guest/<%= row._id %>">
                 <div class="card-title m-0 text-truncate fw-bold "><%= row.productName %></div>
                 <p class="card-text fw-bold text-dark mb-2 ">₹<%= row.finalPrice.toLocaleString("hi") %></p>
                 <p class="card-text text-black text-truncate" style="height: 48px;"><%= row.spec1 %> </p>
@@ -179,12 +115,12 @@
               <div class="d-flex justify-content-between mt-3">
                 
               
-                  <button data-path="<%= row._id %>" class="btn btn-dark rounded-pill addtocart" data-mdb-ripple-init>
-                  Add to cart
-                </button>
-                   <button data-path="<%=  row._id %>" class="btn d-flex justify-content-center align-items-center rounded-circle wishlist" style="height: 50px; width: 50px;background-color:#dadada;">
-                  <img src="/img/heart<%= wishlist.includes(row._id.toString()) ? "":"-white" %>.png" style="width: 30px; height: 30px;" alt="heart"></button>
-               
+                  <a href="/user/login">
+                                    <button class="btn btn-primary px-3 rounded-pill">
+                                        <i class="fa fa-shopping-cart mr-1"></i> Add To cart
+                                    </button>
+                                </a>
+         
               </div>
             </div>
           </div>
@@ -220,9 +156,9 @@
 
    <%- include('../essentials/footer') %>
  
-  <script type="module" src="/js/pagination.js" defer></script>
+  <script type="module" src="/js/guestSearch.js" defer></script>
   <!-- Template Javascript -->
-  <script type="module" src="/js/cartCount.js" defer></script>
+
  
 
 

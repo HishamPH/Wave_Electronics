@@ -109,7 +109,7 @@ module.exports = {
       { $unwind: "$product" },
       {
         $group: {
-          _id: "$product.Category",
+          _id: "$product.category",
           totalQuantity: { $sum: "$items.quantity" },
         },
       },
@@ -124,12 +124,14 @@ module.exports = {
       bestSellingProducts.push(obj);
     });
     let p2 = b.map(async (item) => {
+      console.log(item);
       let x = await Category.findById(item._id);
       let obj = { pd: x, count: item.totalQuantity };
       bestSellingCategories.push(obj);
     });
     await Promise.all(p1);
     await Promise.all(p2);
+    console.log(bestSellingCategories);
     res.render("admin/index", {
       activePage: "index",
       pdCount,

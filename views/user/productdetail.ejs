@@ -1,8 +1,8 @@
 <%- include('../essentials/userHeader') %>
 
 
-    <script src="https://cdn.jsdelivr.net/npm/js-image-zoom/js-image-zoom.min.js"></script>
-    
+
+ 
     
 </head>
 
@@ -91,7 +91,13 @@
                 </ul><!-- End Profile Dropdown Items -->
                 </li><!-- End Profile Nav -->
             <% }else{ %>
-                <div>Hello</div>
+                <div class="d-flex justify-content-end">
+          
+            <a href="/user/login"><button class="btn btn-primary rounded-pill mx-3">Login</button></a>
+            <a href="/user/signup"><button class="btn btn-secondary rounded-pill me-3">SignUp</button></a>
+          
+            
+        </div>
             <% } %>
     
           </ul>
@@ -113,13 +119,13 @@
 
 
             <div class="col-lg-5 mb-30 ">
-                <div id="carouselExampleIndicators" class="carousel slide" data-mdb-ride="carousel" data-mdb-carousel-init>
+                <div id="productCarousel" class="carousel slide" data-mdb-ride="carousel" data-mdb-carousel-init>
                     <!-- <div class="carousel-indicators">
-                        <button type="button" data-mdb-target="#carouselExampleIndicators" data-mdb-slide-to="0" class="active"
+                        <button type="button" data-mdb-target="#productCarousel" data-mdb-slide-to="0" class="active"
                             aria-current="true" aria-label="Slide 1"></button>
-                        <button type="button" data-mdb-target="#carouselExampleIndicators" data-mdb-slide-to="1"
+                        <button type="button" data-mdb-target="#productCarousel" data-mdb-slide-to="1"
                             aria-label="Slide 2"></button>
-                        <button type="button" data-mdb-target="#carouselExampleIndicators" data-mdb-slide-to="2"
+                        <button type="button" data-mdb-target="#productCarousel" data-mdb-slide-to="2"
                             aria-label="Slide 3"></button>
                     </div> -->
                     <div class="carousel-inner" id="product-images">
@@ -133,18 +139,18 @@
                             <img id="image-3" src="/images/<%= defaultVariant.images[2]  %>" class="d-block w-100" alt="Exotic Fruits" />
                         </div>
                     </div>
-                    <button class="carousel-control-prev" type="button" data-mdb-target="#carouselExampleIndicators"
+                    <button class="carousel-control-prev" type="button" data-mdb-target="#productCarousel"
                         data-mdb-slide="prev">
                         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                         <span class="visually-hidden">Previous</span>
                     </button>
-                    <button class="carousel-control-next" type="button" data-mdb-target="#carouselExampleIndicators"
+                    <button class="carousel-control-next" type="button" data-mdb-target="#productCarousel"
                         data-mdb-slide="next">
                         <span class="carousel-control-next-icon" aria-hidden="true"></span>
                         <span class="visually-hidden">Next</span>
                     </button>
                 </div>
-                <div id="yourcar" style="position: relative;top:-500px;">
+                <div id="yourcar" style="position: relative;top:-500px; z-index: 100; ">
 
                 </div>
             </div>
@@ -165,11 +171,11 @@
                         <small class="pt-1">(99 Reviews)</small>
                     </div>
                     <div class="d-flex">
-                        <div id="discount-price" class="fw-bold me-1 text-black h3 mb-0">₹<%= pd.defaultPrice.toLocaleString('hi') %>
+                        <div id="discount-price" class="fw-bold me-1 text-black h3 mb-0">₹<%= (fullPrice-totalDiscount).toLocaleString('hi') %>
                         </div>
                         <h4 class="fs-6 text-decoration-line-through text-muted d-flex align-items-end">
                             <div id="full-price" class="">
-                                ₹<%= pd.basePrice.toLocaleString('hi') %>
+                                ₹<%= fullPrice.toLocaleString('hi') %>
                             </div>
                         </h4>
                     </div>
@@ -178,8 +184,8 @@
                         Available offers
                     </p>
                     <p class="text-success my-0" style="font-size: 15px;"><i class="fa fa-tag"></i> <%= pd.discount %>% off on this prouduct</p>
-                    <% if(pd.offer){ %>
-                        <p class="text-success my-0" style="font-size: 15px;"><i class="fa fa-tag"></i> <%= pd.offer.percentage %>% off on all <%= pd.category.categoryName  %> </p>
+                    <% if(pd.category?.offer > 0){ %>
+                        <p class="text-success my-0" style="font-size: 15px;"><i class="fa fa-tag"></i> <%= pd.category.offer %>% off on all <%= pd.category.categoryName  %>S </p>
                     <% } %>
                     <p id="stock-status" class="my-4 badge fs-6 <%= defaultVariant.stock > 0 ? "badge-success":"badge-danger"%>"><%= defaultVariant.stock > 0 ? "In stock":"Out of stock" %> </p>
             
@@ -340,31 +346,24 @@
     <!-- Back to Top -->
     <button href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></button>
 
-   
+      <script src="https://unpkg.com/js-image-zoom@0.7.0/js-image-zoom.js" type="application/javascript"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/js-image-zoom/js-image-zoom.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/js-image-zoom/js-image-zoom.min.js"></script> -->
     <!-- Template Javascript -->
 
     <!-- <script type="module" src="/js/cartCount.js" defer></script> -->
-    
 
     <script type="module" defer>
-
-        
         var options1 = {
-            width:100,
-            zoomWidth:30,
-            offset: {vertical: 0, horizontal: 10},
-            zoomContainer:document.getElementById('yourcar'),
+            zoomWidth: 100,
+            offset: { vertical: 0, horizontal: 10 }, 
+            zoomContainer: document.getElementById('yourcar') 
             
         };
         let images = document.querySelectorAll('.carousel-item');
         images.forEach((item)=>{
             new ImageZoom(item,options1)
         })
-        // new ImageZoom(document.querySelector(".carousel-item"), options1);
-        // new ImageZoom(document.getElementById("zoom2"), options1);
-        // new ImageZoom(document.getElementById("zoom3"), options1);
     </script>
     <script type="module" src="/js/productDetail.js" defer></script>
 

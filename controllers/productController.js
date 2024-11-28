@@ -28,11 +28,8 @@ module.exports = {
       const files = req.files;
       mapFilesToVariants(variant, files);
       const cat = await Category.findOne({ categoryName: category });
-      const categoryOffer = await Offer.findOne({ category: cat._id });
-
       const defaultVariant = variant.find((item) => item.default);
       defaultPrice = Number(basePrice) + Number(defaultVariant?.price || 0);
-
       const product = await Product.create({
         productName,
         description,
@@ -40,10 +37,8 @@ module.exports = {
         spec1,
         spec2,
         spec3,
-        offer: categoryOffer?._id || null,
         basePrice,
         discount,
-        offerPrice: 1000,
         variant: variant,
         defaultPrice,
       });
@@ -86,8 +81,6 @@ module.exports = {
     const files = req.files;
     mapFilesToVariants(variant, files);
     const cat = await Category.findOne({ categoryName: category });
-    const categoryOffer = await Offer.findOne({ category: cat._id });
-
     const defaultVariant = variant.find((item) => item.default);
     defaultPrice = Number(basePrice) + Number(defaultVariant?.price || 0);
 
@@ -101,8 +94,6 @@ module.exports = {
           spec2,
           spec3,
           category: cat._id || null,
-          offer: categoryOffer?._id || null,
-          offerPrice: 1000,
           variant: variant,
           discount,
           defaultPrice,
@@ -117,7 +108,7 @@ module.exports = {
     try {
       const id = req.params.id;
       const { color, storage } = req.body;
-      const pd = await Product.findById(id).populate("offer");
+      const pd = await Product.findById(id).populate("category");
       const currentVariant = pd.variant.find(
         (variant) => variant.color == color && variant.storage == storage
       );
@@ -131,7 +122,7 @@ module.exports = {
       const fullPrice =
         Number(pd.basePrice) + Number(currentVariant.price || 0);
       console.log(fullPrice);
-      const offer = parseInt((pd.basePrice * pd?.offer?.percentage) / 100) || 0;
+      const offer = parseInt((pd.basePrice * pd.category?.offer) / 100) || 0;
 
       const discount = parseInt((pd.basePrice * pd.discount) / 100);
       const totalDiscount = Number(offer + discount);

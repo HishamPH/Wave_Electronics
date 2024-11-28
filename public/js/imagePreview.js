@@ -113,7 +113,7 @@ $(document).ready(function () {
       let isDefault = $("#variantDefault").prop("checked");
       const stock = $("#variantStock").val();
       console.log(color, storage, price, stock, isDefault);
-      if (color && storage) {
+      if (color) {
         if (isDefault) variants.forEach((v) => (v.default = false));
         if (variants.length === 0) isDefault = true;
         variants.push({

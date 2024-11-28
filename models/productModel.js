@@ -9,7 +9,7 @@ const variantSchema = new Schema(
     },
     storage: {
       type: String,
-      required: true,
+      default: null,
     },
     stock: {
       type: Number,
@@ -58,15 +58,8 @@ const ProductsSchema = new mongoose.Schema(
     spec1: { type: String },
     spec2: { type: String },
     spec3: { type: String },
-    offer: {
-      type: Schema.Types.ObjectId,
-      ref: "Offer",
-    },
     basePrice: { type: Number, required: true },
     discount: { type: Number },
-    offerPrice: {
-      type: Number,
-    },
     variant: [variantSchema],
     rating: { type: Number },
     reviews: { type: Array },

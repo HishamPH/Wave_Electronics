@@ -38,11 +38,7 @@ router.post(
   adminAuth,
   categoryController.postEditCategory
 );
-router.delete(
-  "/delete-category/:id",
-  adminAuth,
-  categoryController.deleteCategory
-);
+router.put("/block-category/:id", adminAuth, categoryController.blockCategory);
 
 //======================== products ===================
 

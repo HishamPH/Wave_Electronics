@@ -27,26 +27,11 @@ module.exports = {
         totalPrice: totalPrice,
         coupon: cart.coupon,
       });
-
       if (method === "card") {
         const { order, key } = await createOrder(totalPrice);
         if (order && key) {
-          for (const item of newOrder.items) {
-            let pd = await Products.findById(item.productId);
-            const currentVariant = pd.variant.find(
-              (variant) =>
-                variant.color == item.color && variant.storage == item.storage
-            );
-            if (currentVariant.stock < item.quantity) {
-              return res.status(401).json({
-                status: false,
-                message: `only ${currentVariant.stock} stock available for ${pd.productName}(${item.color},${item.storage})`,
-              });
-            }
-            currentVariant.stock -= item.quantity;
-            await pd.save();
-          }
           newOrder.orderId = order.id;
+          newOrder.paymentMethod = "razorpay";
           await newOrder.save();
           req.session.orderId = newOrder._id;
           res.status(200).json({ status: true, type: "card", newOrder, key });
@@ -68,6 +53,9 @@ module.exports = {
             await wallet.save();
             newOrder.paymentStatus = "success";
             newOrder.paymentMethod = "Wallet";
+            // return res
+            //   .status(200)
+            //   .json({ status: true, message: "Wallet Payment Successful" });
           } else {
             res
               .status(401)
@@ -117,6 +105,19 @@ module.exports = {
       if (isVerified) {
         currentOrder.paymentStatus = "success";
         for (const item of currentOrder.items) {
+          let pd = await Products.findById(item.productId);
+          const currentVariant = pd.variant.find(
+            (variant) =>
+              variant.color == item.color && variant.storage == item.storage
+          );
+          if (currentVariant.stock < item.quantity) {
+            return res.status(401).json({
+              status: false,
+              message: `only ${currentVariant.stock} stock available for ${pd.productName}(${item.color},${item.storage})`,
+            });
+          }
+          currentVariant.stock -= item.quantity;
+          await pd.save();
           item.paymentStatus = "success";
         }
       } else {
@@ -160,23 +161,48 @@ module.exports = {
     }
   },
 
-  continuePayment: async (req, res) => {
-    let id = req.params.id;
-    console.log(req.body);
-    let mainStatus = "Order Placed";
-    let subStatus = "success";
-    if (req.body.status == "failed") {
-      mainStatus = "Payment Failed";
-      subStatus = "failed";
+  continuePayment: async (req, res, next) => {
+    try {
+      let id = req.params.id;
+      const { paymentStatus, paymentData } = req.body;
+      // console.log(req.body);
+      // let isVerified = false;
+      // if (paymentData) {
+      //   isVerified = await verifyPayment(paymentData);
+      // }
+      if (paymentStatus == "success") {
+        const order = await Order.findOne({
+          "items._id": id,
+        }).populate("items.productId");
+        const index = order.items.findIndex((a) => a._id.toString() === id);
+        const currentOrder = order.items[index];
+        const pd = await Products.findById(currentOrder.productId._id);
+        const currentVariant = pd.variant.find(
+          (variant) =>
+            variant.color == currentOrder.color &&
+            variant.storage == currentOrder.storage
+        );
+        if (currentVariant.stock < currentOrder.quantity) {
+          return res.status(401).json({
+            status: false,
+            message: `stock not available for ${pd.productName}(${currentOrder.color},${currentOrder.storage})`,
+            //message: `only ${currentVariant.stock} stock available for ${pd.productName}(${item.color},${item.storage})`,
+          });
+        }
+        currentOrder.status = "Order Placed";
+        currentOrder.paymentStatus = "success";
+        await order.save();
+        return res
+          .status(200)
+          .json({ status: true, message: "payment successful" });
+      } else {
+        return res
+          .status(401)
+          .json({ status: false, message: "payment failed" });
+      }
+    } catch (error) {
+      next(error);
     }
-    let order = await Order.findOne({
-      "items._id": id,
-    }).populate("items.productId");
-    let index = order.items.findIndex((a) => a._id.toString() === id);
-    order.items[index].status = mainStatus;
-    order.items[index].paymentStatus = subStatus;
-    await order.save();
-    res.json({ subStatus });
   },
 
   getUserOrders: async (req, res, next) => {

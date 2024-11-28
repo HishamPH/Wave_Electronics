@@ -3,6 +3,7 @@ const User = require("../models/userModel");
 const Products = require("../models/productModel");
 // const Coupon = require('../models/coupon')
 const Cart = require("../models/cartModel");
+const Category = require("../models/categoryModel");
 
 const Coupon = require("../models/couponModel");
 const Offer = require("../models/offerModel");
@@ -15,7 +16,7 @@ module.exports = {
       const { variant } = req.body;
       const userId = req.session.user._id;
       const user = await User.findById(userId);
-      const pd = await Products.findById(id).populate("offer");
+      const pd = await Products.findById(id).populate("category");
       let currentVariant;
       if (variant) {
         currentVariant = pd.variant.find(
@@ -36,7 +37,7 @@ module.exports = {
       const fullPrice =
         Number(pd.basePrice) + Number(currentVariant.price || 0);
       console.log(fullPrice);
-      const offer = parseInt((pd.basePrice * pd?.offer?.percentage) / 100) || 0;
+      const offer = parseInt((pd.basePrice * pd.category?.offer) / 100) || 0;
 
       const discount = parseInt((pd.basePrice * pd.discount) / 100);
       const totalDiscount = Number(offer + discount);
@@ -59,6 +60,9 @@ module.exports = {
           });
           cart.total++;
         } else {
+          if (currentVariant.stock <= exist.quantity) {
+            return res.status(402).json({ message: "no stock available" });
+          }
           if (exist?.quantity >= 2) {
             return res.status(403).json({ message: "product limit reached" });
           }
@@ -113,12 +117,11 @@ module.exports = {
         const fullPrice =
           Number(item.productId.basePrice) + Number(currentVariant.price || 0);
 
-        const currOffer = await Offer.findById(item.productId.offer);
-        // console.log(currOffer);
+        const currCategory = await Category.findById(item.productId.category);
+        // console.log(currCategory);
 
         const offer =
-          parseInt((item.productId.basePrice * currOffer?.percentage) / 100) ||
-          0;
+          parseInt((item.productId.basePrice * currCategory?.offer) / 100) || 0;
         const discount = parseInt(
           (item.productId.basePrice * item.productId.discount) / 100
         );
@@ -163,12 +166,11 @@ module.exports = {
         const fullPrice =
           Number(item.productId.basePrice) + Number(currentVariant.price || 0);
 
-        const currOffer = await Offer.findById(item.productId.offer);
-        // console.log(currOffer);
+        const currCategory = await Category.findById(item.productId.category);
+        // console.log(currCategory);
 
         const offer =
-          parseInt((item.productId.basePrice * currOffer?.percentage) / 100) ||
-          0;
+          parseInt((item.productId.basePrice * currCategory?.offer) / 100) || 0;
         const discount = parseInt(
           (item.productId.basePrice * item.productId.discount) / 100
         );
@@ -229,12 +231,11 @@ module.exports = {
         const fullPrice =
           Number(item.productId.basePrice) + Number(currentVariant.price || 0);
 
-        const currOffer = await Offer.findById(item.productId.offer);
-        // console.log(currOffer);
+        const currCategory = await Category.findById(item.productId.category);
+        // console.log(currCategory);
 
         const offer =
-          parseInt((item.productId.basePrice * currOffer?.percentage) / 100) ||
-          0;
+          parseInt((item.productId.basePrice * currCategory?.offer) / 100) || 0;
         const discount = parseInt(
           (item.productId.basePrice * item.productId.discount) / 100
         );
@@ -293,12 +294,11 @@ module.exports = {
         const fullPrice =
           Number(item.productId.basePrice) + Number(currentVariant.price || 0);
 
-        const currOffer = await Offer.findById(item.productId.offer);
+        const currOffer = await Category.findById(item.productId.category);
         // console.log(currOffer);
 
         const offer =
-          parseInt((item.productId.basePrice * currOffer?.percentage) / 100) ||
-          0;
+          parseInt((item.productId.basePrice * currOffer?.offer) / 100) || 0;
         const discount = parseInt(
           (item.productId.basePrice * item.productId.discount) / 100
         );
@@ -406,13 +406,19 @@ module.exports = {
       "items.productId"
     );
     const now = new Date();
-    let coupon = await Coupon.findOne({
-      code: code,
-      start: { $lt: now },
-      end: { $gt: now },
-      count: { $gt: 0 },
-      status: true,
-    });
+    let coupon = await Coupon.findOneAndUpdate(
+      {
+        code: code,
+        start: { $lt: now },
+        end: { $gt: now },
+        count: { $gt: 0 },
+        status: true,
+      },
+      {
+        $addToSet: { usedBy: userId },
+      },
+      { new: true }
+    );
     if (!coupon) {
       return res.status(401).json({
         status: false,
@@ -432,7 +438,6 @@ module.exports = {
       });
     }
     let ID = coupon._id;
-
     const percent = coupon.discount;
     const currentDiscount = totalPrice - fullPrice;
     console.log(percent, currentDiscount);
@@ -453,12 +458,27 @@ module.exports = {
       ID,
     });
   },
-  removeCoupon: async (req, res) => {
-    let id = req.params.id;
-    let cart = await Cart.findById(id);
-    cart.coupon = null;
-    res
-      .status(200)
-      .json({ status: true, message: "coupon removed successfully" });
+  removeCoupon: async (req, res, next) => {
+    try {
+      const userId = req.session.user._id;
+      const { finalPrice } = req.body;
+      const cart = await Cart.findOne({ userId: userId });
+      console.log();
+      const coupon = await Coupon.findByIdAndUpdate(
+        cart.coupon,
+        { $pull: { usedBy: userId } },
+        { new: true }
+      );
+
+      cart.coupon = null;
+      await coupon.save();
+      await cart.save();
+      req.session.totalPrice = finalPrice;
+      res
+        .status(200)
+        .json({ status: true, message: "coupon removed successfully" });
+    } catch (error) {
+      next(error);
+    }
   },
 };
