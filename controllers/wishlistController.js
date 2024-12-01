@@ -2,7 +2,7 @@ const Products = require("../models/productModel");
 const User = require("../models/userModel");
 
 module.exports = {
-  updateWishlist: async (req, res) => {
+  updateWishlist: async (req, res, next) => {
     try {
       const id = req.params.id;
       const { variant } = req.body;
@@ -41,22 +41,21 @@ module.exports = {
       req.session.wishList = wishlist;
       res.locals.wishList = req.session.wishList;
       res.status(200).json({ status: true, isAdded, wishlist });
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      next(error);
     }
   },
-  getWishlist: async (req, res) => {
+  getWishlist: async (req, res, next) => {
     try {
       const userId = req.session.user._id;
       const user = await User.findById(userId).populate("Wishlist.product");
       let wish = user.Wishlist.reverse() ?? false;
       res.render("user/wishlist", { activePage: "wishlist", wish });
-    } catch (e) {
-      console.error(e);
-      console.log("catch in wishlist 40");
+    } catch (error) {
+      next(error);
     }
   },
-  deleteWishlist: async (req, res) => {
+  deleteWishlist: async (req, res, next) => {
     try {
       const userId = req.session.user._id;
       const user = await User.findById(userId);
@@ -67,10 +66,8 @@ module.exports = {
       req.session.wishList = user.Wishlist.length;
       res.locals.wishList = req.session.wishList;
       res.redirect("/user/wishlist");
-    } catch (e) {
-      console.error(e);
-      res.redirect("/user/wihslist");
-      console.log("this is the catch inside wishlist 55");
+    } catch (error) {
+      next(error);
     }
   },
 };

@@ -115,7 +115,7 @@
               <% } %>
               <img src="/images/<%= row.defaultVariant.images[0]  %>" class="card-img-top card-img-auto" alt="Product Image" style="object-fit: cover;">
               <div class="card-body bg-white p-3" style="height: 220px;">
-                <a href="/user/detail-guest/<%= row._id %>">
+                <a href="/guest/product-detail/<%= row._id %>">
                     <div class="card-title m-0 p-0 text-truncate fw-bold "><%= row.productName  %></div>
                     <p class="card-text m-0 fw-bold text-dark">₹<%= row.finalPrice.toLocaleString('hi')  %></p>
                     <p class="card-text text-black text-truncate" style="height: 48px;"><%= row.spec1 %></p>

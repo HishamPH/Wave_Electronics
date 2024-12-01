@@ -104,6 +104,33 @@ module.exports = {
       .status(200)
       .json({ status: true, message: "product edited successfully" });
   },
+  getDetailPage: async (req, res) => {
+    let id = req.params.id;
+    let pd = await Product.findById(id).populate("category").select("-__v");
+    const defaultVariant = pd.variant.find((variant) => variant.default);
+    const colorSet = new Set();
+    const storageSet = new Set();
+    pd.variant.forEach((item) => {
+      colorSet.add(item.color);
+      if (item.storage.trim() !== "") {
+        storageSet.add(item.storage);
+      }
+    });
+    const color = [...colorSet];
+    const storage = [...storageSet];
+    const fullPrice = Number(pd.basePrice) + Number(defaultVariant.price || 0);
+    const offer = parseInt((pd.basePrice * pd.category?.offer) / 100) || 0;
+    const discount = parseInt((pd.basePrice * pd.discount) / 100);
+    const totalDiscount = Number(offer + discount);
+    res.render("user/productdetail", {
+      pd,
+      defaultVariant,
+      storage,
+      color,
+      fullPrice,
+      totalDiscount,
+    });
+  },
   changeVariant: async (req, res, next) => {
     try {
       const id = req.params.id;

@@ -34,7 +34,7 @@ $(document).ready(function () {
     }
   });
 
-  updateProgress(3);
+  //updateProgress(3);
   $("#invoice").click(async function (e) {
     e.preventDefault();
     const company = $("#name").text();

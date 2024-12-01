@@ -2,50 +2,47 @@ const express = require("express");
 const router = express.Router();
 
 const authController = require("../controllers/authController");
-
 const userController = require("../controllers/userController");
 const cartController = require("../controllers/cartController");
 const orderController = require("../controllers/orderController");
-const walletController = require("../controllers/walletController");
 const wishlistController = require("../controllers/wishlistController");
+const productController = require("../controllers/productController");
+const searchController = require("../controllers/searchController");
 
 const userAuth = require("../middlewares/userAuth");
-const productController = require("../controllers/productController");
-
-const guestController = require("../controllers/guestController");
+function checkAuthenticated(req, res, next) {
+  if (req.cookies.accessToken) {
+    res.redirect("/user/homepage");
+    return;
+  }
+  next();
+}
 
 //======================= LOGIN ===========================
 
 router
   .route("/login")
-  .get(authController.getLogin)
+  .get(checkAuthenticated, authController.getLogin)
   .post(authController.postLogin);
-
-router.get("/homepage", userAuth, userController.getHomePage);
-
-router.get("/homepage/:id", userAuth, userController.categorySort);
-
-//====================== SIGN UP =========================
 
 router
   .route("/signup")
-  .get(authController.getaddUser)
+  .get(checkAuthenticated, authController.getaddUser)
   .post(authController.postAddUser);
 
-router
-  .route("/email-verification")
-  .get(authController.getEmailVerification)
-  .post(authController.postEmailVerification);
+router.post("/email-verification", authController.postEmailVerification);
 
 router.route("/resendotp").get(authController.resendOTP);
 
+//====================== HOME PAGE =========================
+
+router.get("/homepage", userAuth, userController.getHomePage);
+
 //================== PRODUCT DETAILS =====================
 
-router.get("/detail-guest/:id", guestController.getGuestDetailPage);
+router.get("/product-detail/:id", userAuth, productController.getDetailPage);
 
-router.get("/detail/:id", userAuth, userController.getDetailPage);
-
-router.post("/review/:id", userAuth, userController.review);
+router.post("/product/change-variant/:id", productController.changeVariant);
 
 //=================== ADDRESS MANAGEMENT ===================
 
@@ -74,8 +71,6 @@ router.get(
 );
 
 //====================== PRODUCTS ======================
-
-router.post("/product/change-variant/:id", productController.changeVariant);
 
 //====================== CART ===========================
 
@@ -167,15 +162,15 @@ router.post(
 
 //======================== Wallet ======================
 
-router.get("/wallet", userAuth, walletController.getWallet);
+router.get("/wallet", userAuth, userController.getWallet);
 
 //======================= Search ========================
 
-router.get("/getsearch", userAuth, userController.getSearch);
+router.get("/getsearch", userAuth, searchController.getSearch);
 
-router.get("/search", userAuth, userController.searchProduct);
+router.get("/search", userAuth, searchController.searchProduct);
 
-router.post("/filters", userAuth, userController.filterProducts);
+router.post("/filters", userAuth, searchController.filterProducts);
 
 //========================= Logout ======================
 

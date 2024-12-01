@@ -61,31 +61,23 @@
             <div class="d-flex flex-column align-items-center">
               <div class="fw-bold mb-3">Status</div>
               <% if(pd.status=='cancelled' ) {%>
-              <div class="badge bg-danger"><%= pd.status %></div>
+              <div class="badge badge-danger p-2"><%= pd.status %></div>
               <%}else if(pd.status=='confirmed' ){%>
-              <div class="badge bg-warning"><%= pd.status %></div>
+              <div class="badge badge-warning p-2"><%= pd.status %></div>
               <%}else if(pd.status=='shipped' ){%>
-              <div class="badge bg-info"><%= pd.status %></div>
+              <div class="badge badge-info p-2"><%= pd.status %></div>
               <%}else if(pd.status=='delivered' ){%>
-              <div class="badge bg-success"><%= pd.status %></div>
-
+              <div class="badge badge-success p-2"><%= pd.status %></div>
               <%}else if(pd.status=='Order Placed' ) {%>
-              <span class="badge bg-success p-2 bg-opacity-25 text-success">
-                <%= pd.status %>
-              </span>
+              <span class="badge badge-success p-2"> <%= pd.status %> </span>
               <% }else if(pd.status=='returned' ) {%>
               <span class="badge bg-warning"> <%= pd.status %> </span>
               <% }else if(pd.status=='return request' ){ %>
               <span class="badge bg-warning"> <%= pd.status %> </span>
               <% }else if(pd.status=='Payment Failed' ){ %>
-              <span class="badge bg-secondary bg-opacity-25 p-2 text-black">
-                <%= pd.status %>
-              </span>
-
+              <span class="badge badge-secondary p-2"> <%= pd.status %> </span>
               <% }else{%>
-              <span class="badge bg-secondary p-2 rounded-pill">
-                <%= pd.status %>
-              </span>
+              <span class="badge badge-secondary p-2"> <%= pd.status %> </span>
               <% } %>
             </div>
 

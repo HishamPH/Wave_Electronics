@@ -1,4 +1,8 @@
 import { Success, Failed } from "./toast.js";
+
+const loading = $("#loadingOverlay");
+const container = $("#searchResult");
+const page = $("#pagination-buttons");
 $(document).ready(function () {
   $("#search-input").on(
     "input",
@@ -10,7 +14,10 @@ $(document).ready(function () {
   });
 
   async function handleSearch(currPage = 1) {
-    const loading = $("#loadingOverlay");
+    page.empty();
+    container.html(
+      `<span class="spinner-border text-primary" role="status" aria-hidden="true"></span>`
+    );
     const query = $("#search-input").val().trim();
     const sort = $(`input[name="order"]:checked`).val();
     const checked = $(`#filter input[name="filter"][type="checkbox"]:checked`);
@@ -26,9 +33,8 @@ $(document).ready(function () {
         })
         .get();
     }
-    const page = Number(currPage);
+    const pageNumber = Number(currPage);
     try {
-      loading.removeClass("d-none");
       const res = await axios.post(
         "/guest/filters",
         { filters },
@@ -36,7 +42,7 @@ $(document).ready(function () {
           params: {
             sort: sort,
             query: query,
-            page: page,
+            page: pageNumber,
           },
         },
         {
@@ -48,7 +54,6 @@ $(document).ready(function () {
       const { totalPages, currentPage, products } = res.data;
       console.log(res.data);
       updateProducts(products, totalPages, currentPage);
-      loading.addClass("d-none");
     } catch (err) {
       Failed(err.response ? err.response.data.message : err.message);
       console.log(err.message);
@@ -67,9 +72,7 @@ $(document).ready(function () {
 });
 
 function updateProducts(products, totalPages, currentPage) {
-  const container = $("#searchResult");
   container.empty();
-  const page = $("#pagination-buttons");
   page.empty();
   if (products.length === 0) {
     const html = `<div class="d-flex justify-content-center align-items-center ">
@@ -98,7 +101,7 @@ function updateProducts(products, totalPages, currentPage) {
             row.defaultVariant.images[0]
           }" class="card-img-top card-img-auto" alt="Product Image" style="object-fit: cover;">
           <div class="card-body bg-white" style="height: 220px;">
-            <a href="/user/detail-guest/${row._id}">
+            <a href="/guest/product-detail/${row._id}">
                 <div class="card-title m-0 text-truncate fw-bold ">${
                   row.productName
                 }</div>

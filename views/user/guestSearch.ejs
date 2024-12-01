@@ -93,7 +93,7 @@
       </div>
     </div>
     <div class="col-lg-10 col-lg-9  col-md-8">
-      <div class="row h-100" id="searchResult">
+      <div class="row h-100 d-flex align-items-center justify-content-center" id="searchResult">
         <% product.forEach((row)=>{ %>
         
         <div class="col-xl-3 col-lg-4 col-md-6 ">
@@ -106,7 +106,7 @@
           
             <img src="/images/<%= row.defaultVariant.images[0] %>" class="card-img-top card-img-auto" alt="Product Image" style="object-fit: cover;">
             <div class="card-body bg-white" style="height: 220px;">
-              <a href="/user/detail-guest/<%= row._id %>">
+              <a href="/guest/product-detail/<%= row._id %>">
                 <div class="card-title m-0 text-truncate fw-bold "><%= row.productName %></div>
                 <p class="card-text fw-bold text-dark mb-2 ">₹<%= row.finalPrice.toLocaleString("hi") %></p>
                 <p class="card-text text-black text-truncate" style="height: 48px;"><%= row.spec1 %> </p>

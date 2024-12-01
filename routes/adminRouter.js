@@ -7,7 +7,6 @@ const productController = require("../controllers/productController");
 const { uploadImage } = require("../middlewares/multer");
 const orderController = require("../controllers/orderController");
 const couponController = require("../controllers/couponController");
-const offerController = require("../controllers/offerController");
 const adminAuth = require("../middlewares/adminAuth");
 
 function checkAuthenticated(req, res, next) {
@@ -89,12 +88,6 @@ router.put(
 );
 router.post("/coupons/edit/:id", adminAuth, couponController.editCoupon);
 router.delete("/coupons/delete/:id", adminAuth, couponController.deleteCoupon);
-
-//=========================== OFFERS =======================
-
-router.get("/offers", adminAuth, offerController.getOffer);
-router.post("/offers/addoffer", adminAuth, offerController.addOffer);
-router.post("/offers/edit/:id", adminAuth, offerController.editOffer);
 
 //============================= SALES ======================
 

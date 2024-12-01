@@ -1,6 +1,8 @@
 import { Success, Failed } from "./toast.js";
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
+const loading = $("#loadingOverlay");
+const container = $("#searchResult");
+const page = $("#pagination-buttons");
 $(document).ready(function () {
   $("#search-input").on(
     "input",
@@ -11,8 +13,22 @@ $(document).ready(function () {
     handleSearch();
   });
 
+  $(".filter").on("change", function (e) {
+    handleSearch();
+  });
+
+  $("#pagination-buttons").on("click", ".page-link", function (e) {
+    e.preventDefault();
+    let page = $(this).text();
+    handleSearch(page);
+  });
+
   async function handleSearch(currPage = 1) {
-    const loading = $("#loadingOverlay");
+    page.empty();
+    container.html(
+      `<span class="spinner-border text-primary" role="status" aria-hidden="true"></span>`
+    );
+    //await delay(1000);
     const query = $("#search-input").val().trim();
     const sort = $(`input[name="order"]:checked`).val();
     const checked = $(`#filter input[name="filter"][type="checkbox"]:checked`);
@@ -28,10 +44,8 @@ $(document).ready(function () {
         })
         .get();
     }
-    const page = Number(currPage);
+    const pageNumber = Number(currPage);
     try {
-      loading.removeClass("d-none");
-      //await delay(2000);
       const res = await axios.post(
         "/user/filters",
         { filters },
@@ -39,7 +53,7 @@ $(document).ready(function () {
           params: {
             sort: sort,
             query: query,
-            page: page,
+            page: pageNumber,
           },
         },
         {
@@ -51,29 +65,16 @@ $(document).ready(function () {
       const { totalPages, currentPage, products, wishlist, isUser } = res.data;
       console.log(res.data);
       updateProducts(products, wishlist, totalPages, currentPage, isUser);
-      loading.addClass("d-none");
     } catch (err) {
       Failed(err.response ? err.response.data.message : err.message);
       console.log(err.message);
     }
     console.log("Searching for:", query);
   }
-
-  $(".filter").on("change", function (e) {
-    handleSearch();
-  });
-
-  $("#pagination-buttons").on("click", ".page-link", function (e) {
-    e.preventDefault();
-    let page = $(this).text();
-    handleSearch(page);
-  });
 });
 
 function updateProducts(products, wishlist, totalPages, currentPage, isUser) {
-  const container = $("#searchResult");
   container.empty();
-  const page = $("#pagination-buttons");
   page.empty();
   if (products.length === 0) {
     const html = `<div class="d-flex justify-content-center align-items-center ">
@@ -106,7 +107,7 @@ function updateProducts(products, wishlist, totalPages, currentPage, isUser) {
             row.defaultVariant.images[0]
           }" class="card-img-top card-img-auto" alt="Product Image" style="object-fit: cover;">
           <div class="card-body bg-white" style="height: 220px;">
-            <a href="/user/detail/${row._id}">
+            <a href="/user/product-detail/${row._id}">
                 <div class="card-title m-0 text-truncate fw-bold ">${
                   row.productName
                 }</div>

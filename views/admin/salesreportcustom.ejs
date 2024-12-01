@@ -17,7 +17,7 @@
         </ol>
       </nav>
     </div><!-- End Page Title -->
-    <section class="section dashboard">
+    <section class="section dashboard mb-3">
       <div class="row">
 
         <!-- Left side columns -->
@@ -148,9 +148,7 @@
             <%= row.orderDate.toJSON().slice(0,10)  %>
           </td>
           <td><%= row.totalPrice %></td>
-          <td><%= (row.items.reduce((acc,item)=>{
-                  return acc + item.productId.Price*item.quantity
-              },0))-row.totalPrice %>
+          <td><%= row.discount %>
           </td>
           <td>
             <% if(row.coupon){ %>

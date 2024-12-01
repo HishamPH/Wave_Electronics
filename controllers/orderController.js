@@ -189,8 +189,10 @@ module.exports = {
             //message: `only ${currentVariant.stock} stock available for ${pd.productName}(${item.color},${item.storage})`,
           });
         }
+        currentVariant.stock -= currentOrder.quantity;
         currentOrder.status = "Order Placed";
         currentOrder.paymentStatus = "success";
+        await pd.save();
         await order.save();
         return res
           .status(200)

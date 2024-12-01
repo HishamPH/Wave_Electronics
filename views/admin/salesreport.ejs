@@ -1,114 +1,111 @@
 <%- include('../essentials/adminHeader') %>
 
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
+  integrity="sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRhy5X5AAOnx5S09ydFYWWNSfcEqDTTHgtNA=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRhy5X5AAOnx5S09ydFYWWNSfcEqDTTHgtNA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script> -->
 
-  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.17/jspdf.plugin.autotable.min.js"></script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.17/jspdf.plugin.autotable.min.js"></script>
+<%- include('../essentials/adminLayout') %>
 
+<main id="main" class="main">
+  <div class="pagetitle">
+    <h1>Sales</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/admin/panel">Home</a></li>
+        <li class="breadcrumb-item active">Sales</li>
+      </ol>
+    </nav>
+  </div>
+  <!-- End Page Title -->
 
+  <section class="section dashboard mb-3">
+    <div class="row">
+      <!-- Left side columns -->
+      <div class="col-lg-12">
+        <div class="row">
+          <!-- Sales Card -->
+          <div class="col-xxl-4 col-md-6">
+            <div class="card info-card sales-card">
+              <div class="card-body">
+                <h5 class="card-title">Sales <span>| This Month</span></h5>
 
-
-  <%- include('../essentials/adminLayout') %>
-
- 
-
-  <main id="main" class="main">
-    <div class="pagetitle">
-      <h1>Sales</h1>
-      <nav>
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/admin/panel">Home</a></li>
-          <li class="breadcrumb-item active">Sales</li>
-        </ol>
-      </nav>
-      
-      
-    </div><!-- End Page Title -->
-    
- 
-
-
-    <section class="section dashboard">
-      <div class="row">
-
-        <!-- Left side columns -->
-        <div class="col-lg-12">
-          <div class="row">
-
-            <!-- Sales Card -->
-            <div class="col-xxl-4 col-md-6">
-              <div class="card info-card sales-card">
-
-
-
-                <div class="card-body">
-                  <h5 class="card-title">Sales <span>| This Month</span></h5>
-
-                  <div class="d-flex align-items-center">
-                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                      <i class="bi bi-cart"></i>
-                    </div>
-                    <div class="ps-3">
-                      <h6 id="salesCount"><%= q  %></h6>
-                      <span class="text-success small pt-1 fw-bold">12%</span> <span class="text-muted small pt-2 ps-1">increase</span>
-
-                    </div>
+                <div class="d-flex align-items-center">
+                  <div
+                    class="card-icon rounded-circle d-flex align-items-center justify-content-center"
+                  >
+                    <i class="bi bi-cart"></i>
+                  </div>
+                  <div class="ps-3">
+                    <h6 id="salesCount"><%= q %></h6>
+                    <span class="text-success small pt-1 fw-bold">12%</span>
+                    <span class="text-muted small pt-2 ps-1">increase</span>
                   </div>
                 </div>
-
-              </div>
-            </div><!-- End Sales Card -->
-
-            <!-- Revenue Card -->
-            <div class="col-xxl-4 col-md-6">
-              <div class="card info-card revenue-card">
-
-     
-
-                <div class="card-body">
-                  <h5 class="card-title">Revenue <span>| This Month</span></h5>
-
-                  <div class="d-flex align-items-center">
-                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                      <i class="bi bi-currency-rupee"></i>
-                    </div>
-                    <div class="ps-3">
-                      <h6 >₹<span id="salesMoney"><%= tp.toLocaleString('hi') %></span></h6>
-                      <span class="text-success small pt-1 fw-bold">8%</span> <span class="text-muted small pt-2 ps-1">increase</span>
-
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </div><!-- End Revenue Card -->
-
-            <!-- Customers Card -->
-            <div class="col-xxl-4 col-md-6">
-              <div class="card info-card revenue-card">
-
-     
-
-                <div class="card-body">
-                  <h5 class="card-title">Discount <span>| This Month</span></h5>
-
-                  <div class="d-flex align-items-center">
-                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                      <i class="bi bi-currency-rupee"></i>
-                    </div>
-                    <div class="ps-3">
-                      <h6 >-₹<span id=""><%= full_discount.toLocaleString('hi') %></span></h6>
-                      <span class="text-success small pt-1 fw-bold">8%</span> <span class="text-muted small pt-2 ps-1">increase</span>
-
-                    </div>
-                  </div>
-                </div>
-
               </div>
             </div>
-            <!-- <div class="col-xxl-4 col-xl-12">
+          </div>
+          <!-- End Sales Card -->
+
+          <!-- Revenue Card -->
+          <div class="col-xxl-4 col-md-6">
+            <div class="card info-card revenue-card">
+              <div class="card-body">
+                <h5 class="card-title">Revenue <span>| This Month</span></h5>
+
+                <div class="d-flex align-items-center">
+                  <div
+                    class="card-icon rounded-circle d-flex align-items-center justify-content-center"
+                  >
+                    <i class="bi bi-currency-rupee"></i>
+                  </div>
+                  <div class="ps-3">
+                    <h6>
+                      ₹<span id="salesMoney"
+                        ><%= tp.toLocaleString('hi') %></span
+                      >
+                    </h6>
+                    <span class="text-success small pt-1 fw-bold">8%</span>
+                    <span class="text-muted small pt-2 ps-1">increase</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- End Revenue Card -->
+
+          <!-- Customers Card -->
+          <div class="col-xxl-4 col-md-6">
+            <div class="card info-card revenue-card">
+              <div class="card-body">
+                <h5 class="card-title">Discount <span>| This Month</span></h5>
+
+                <div class="d-flex align-items-center">
+                  <div
+                    class="card-icon rounded-circle d-flex align-items-center justify-content-center"
+                  >
+                    <i class="bi bi-currency-rupee"></i>
+                  </div>
+                  <div class="ps-3">
+                    <h6>
+                      -₹<span id=""
+                        ><%= full_discount.toLocaleString('hi') %></span
+                      >
+                    </h6>
+                    <span class="text-success small pt-1 fw-bold">8%</span>
+                    <span class="text-muted small pt-2 ps-1">increase</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- <div class="col-xxl-4 col-xl-12">
 
               <div class="card info-card customers-card">
 
@@ -132,107 +129,82 @@
 
             </div>-->
 
-         
-
-         
-
-            <!-- Top Selling -->
-            
-
-          </div>
-        </div><!-- End Left side columns -->
-
-      
-
+          <!-- Top Selling -->
+        </div>
       </div>
-    </section>
-
-
-    
-
-
-    <div class="d-flex justify-content-between ">
-      <a href="/admin/sales/month">
-        <button href="" type="button" class="btn btn-secondary rounded-pill">
-          last month
-        </button>
-      </a>
-      <a href="/admin/sales/week">
-        <button href="" type="button" class="btn btn-secondary rounded-pill">
-          last week
-        </button>
-      </a>
-      
-      <a href="/admin/sales/day">
-        <button href="" type="button" class="btn btn-secondary rounded-pill">
-          last day
-        </button>
-      </a>
-      
-      <form action="/admin/sales/custom" method="get">
-        <input type="date" name="startDate">
-        <input type="date" name="endDate">
-        <button type="submit" class="btn btn-secondary rounded-pill">
-          custom range
-        </button>
-      </form>
-      
+      <!-- End Left side columns -->
     </div>
-    <% if(orders){%>
-    <table class="table table-bordered table-hover mt-3" id="myTable">
-      <thead class="table-dark">
-          <tr class="text-center ">
-              <th style="width: 70px;">Sl no.</th>
-              <th>Name</th>
-              <th>date</th>
-              <th>Total</th>
-              <th style="width: 150px;">discount</th>
-              <th>coupon</th>
-              <th style="width: 160px;">Payment method</th>
-          </tr>
-      </thead>
-      <tbody class="align-middle text-center ">
-        <% orders.forEach((row,index)=>{ %>
-        <tr>
-          <td>
-            <%= index+1 %>
-          </td>
-          <td>
-            <%= row.userId.name %>
-          </td>
-          <td>
-            <%= row.orderDate.toJSON().slice(0,10)  %>
-          </td>
-          <td><%= row.totalPrice %></td>
-          <td><%= (row.items.reduce((acc,item)=>{
-            return acc + item.productId.Price*item.quantity},0))-row.totalPrice %>
-          </td>
-          <td>
-            <% if(row.coupon){ %>
-              applied
-            <% }else{ %>
-              nil
-            <% } %>
-          </td>
-          <td><%= row.paymentMethod  %></td>
-        </tr>
-        <% }) %>
-      </tbody>
-    </table> 
-    <% }  %>
-    <div class="d-flex justify-content-end ">
-      <button class="btn btn-primary " id="downloadPDF">Download PDF</button>
-      <button class="btn btn-primary ms-2 " id="downloadCSV">Download CSV</button>
-    </div>
-    
-   
-    <!-- ======= Footer ======= -->
-  
+  </section>
 
-  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+  <div class="d-flex justify-content-between">
+    <a href="/admin/sales/month">
+      <button href="" type="button" class="btn btn-secondary rounded-pill">
+        last month
+      </button>
+    </a>
+    <a href="/admin/sales/week">
+      <button href="" type="button" class="btn btn-secondary rounded-pill">
+        last week
+      </button>
+    </a>
+
+    <a href="/admin/sales/day">
+      <button href="" type="button" class="btn btn-secondary rounded-pill">
+        last day
+      </button>
+    </a>
+
+    <form action="/admin/sales/custom" method="get">
+      <input type="date" name="startDate" />
+      <input type="date" name="endDate" />
+      <button type="submit" class="btn btn-secondary rounded-pill">
+        custom range
+      </button>
+    </form>
+  </div>
+  <% if(orders){%>
+  <table class="table table-bordered table-hover mt-3" id="myTable">
+    <thead class="table-dark">
+      <tr class="text-center">
+        <th style="width: 70px">Sl no.</th>
+        <th>Name</th>
+        <th>date</th>
+        <th>Total</th>
+        <th style="width: 150px">discount</th>
+        <th>coupon</th>
+        <th style="width: 160px">Payment method</th>
+      </tr>
+    </thead>
+    <tbody class="align-middle text-center">
+      <% orders.forEach((row,index)=>{ %>
+      <tr>
+        <td><%= index+1 %></td>
+        <td><%= row.userId.name %></td>
+        <td><%= row.orderDate.toJSON().slice(0,10) %></td>
+        <td><%= row.totalPrice %></td>
+        <td><%= row.discount %></td>
+        <td><% if(row.coupon){ %> applied <% }else{ %> nil <% } %></td>
+        <td><%= row.paymentMethod %></td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <% } %>
+  <div class="d-flex justify-content-end">
+    <button class="btn btn-primary" id="downloadPDF">Download PDF</button>
+    <button class="btn btn-primary ms-2" id="downloadCSV">Download CSV</button>
+  </div>
+
+  <!-- ======= Footer ======= -->
+
+  <a
+    href="#"
+    class="back-to-top d-flex align-items-center justify-content-center"
+    ><i class="bi bi-arrow-up-short"></i
+  ></a>
 
   <script src="/js/salesreport.js" defer></script>
 
- 
   <!-- Template Main JS File -->
-<%- include('../essentials/adminFooter') %>
+  <%- include('../essentials/adminFooter') %>
+</main>
